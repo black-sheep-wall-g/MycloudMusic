@@ -4,7 +4,7 @@
             <Header>
                 <cloud-top></cloud-top>
             </Header>
-            <Content :style="{padding: '24px 0', minHeight: '280px', background: '#fff'}">
+            <Content :style="{minHeight: '280px', background: '#fff'}">
                 <cloud-sidebar></cloud-sidebar>
             </Content>
             <template>
@@ -44,6 +44,7 @@
     }
     .ivu-layout-header{
         padding: 0 25px;
+        height: 60px;
     }
 
     .layout-footer-center {
