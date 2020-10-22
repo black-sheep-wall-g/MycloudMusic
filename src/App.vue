@@ -5,4 +5,7 @@
 </template>
 
 <style>
+  #app{
+    height: 670px;
+  }
 </style>

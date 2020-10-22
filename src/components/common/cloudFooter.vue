@@ -1,54 +1,52 @@
 <template>
-    <Footer class="layout-footer-center">
+    <Footer class="layout_footer_audio">
         <Row>
-            <Col span="4" class="footer_left">
-                <svg class="icon index_footer_icon" aria-hidden="true">
-                    <use xlink:href="#icon-shangyishou"></use>
-                </svg>
-                <svg class="icon index_footer_icon" aria-hidden="true">
-                    <use xlink:href="#icon-zanting"></use>
-                </svg>
-                <svg class="icon index_footer_icon" aria-hidden="true">
-                    <use xlink:href="#icon-xiayishou"></use>
-                </svg>
+            <audio></audio>
+            <Col span="6" class="footer_left">
+                <div class="audio_left">
+                    <div class="audio_thumbnail">
+                        <img src="~assets/img/sl3.jpg" alt="">
+                    </div>
+                    <div class="audio_song_info">
+                        <div class="audio_song_name">sonder</div>
+                        <div class="audio_song_author">司南</div>
+                    </div>
+                    <div class="audio_like">
+                        <svg class="icon footer_left_icon" aria-hidden="true">
+                            <use xlink:href="#icon-xihuan"></use>
+                        </svg>
+                    </div>
+                </div>
             </Col>
-            <Col span="11">
-
-
-                <div class="audio">
-                    <audio></audio>
-                    <div class="audio-controller">
-                        <span class="audio-prev"></span>
-                        <span class="audio-state"></span>
-                        <span class="audio-next"></span>
-                    </div>
-                    <div class="audio-bar">
-                        <span class="audio-time-current"></span>
-                        <div class="audio-progress">
-                            <div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                        <span class="audio-time-duration"></span>
-                    </div>
-                    <div class="audio-volume">
-                        <span class="audio-volume-icon"></span>
-                        <div class="audio-volume-adjust">
-                            <div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
+            <Col span="12">
                 <div class="footer_center">
-                    <audio></audio>
+                    <div class="audio_control">
+                        <div class="audio_control_info">
+                            <svg class="icon index_footer_icon" aria-hidden="true">
+                                <use xlink:href="#icon-liebiaoxunhuan"></use>
+                            </svg>
+                            <svg class="icon index_footer_icon" aria-hidden="true">
+                                <use xlink:href="#icon-shangyishou1"></use>
+                            </svg>
+                            <svg class="icon index_footer_icon" aria-hidden="true">
+                                <use xlink:href="#icon-zanting1"></use>
+                            </svg>
+                            <svg class="icon index_footer_icon" aria-hidden="true">
+                                <use xlink:href="#icon-xiayishou1"></use>
+                            </svg>
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-cibeifen"></use>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="audio_progress">
+                        <label class="audio_article_start">0.0</label>
+                        <Slider class="audio_article"></Slider>
+                        <label class="audio_article_end">3.41</label>
+                    </div>
                 </div>
-            </col>
-            <Col span="8">3</col>
+            </Col>
+            <Col span="6">3</Col>
         </Row>
     </Footer>
 </template>
@@ -57,62 +55,72 @@
     export default {
         name: "cloudFooter",
         methods:{
-            'mousedown': function(event) {
-                event.stopPropagation();
-                that.dragStart(event);
-                addEventListener('mousemove', function(e) {
-                    that.dragging(e);
-                });
-                addEventListener('mouseup', function() {
-                    that.dragEnd();
-                });
-            },
-            setPosition: function(clientX) {
-                const { sliderBox, thumbBox } = this;
-                const contentWidth = sliderBox.offsetWidth;
-                // 计算当前拖动位置与初始拖动位置的距离
-                const diff = clientX - this.startX;
-                // 计算差距占精度条的百分比
-                const percent = (diff / contentWidth).toFixed(6) * 100;
-                this.currentPosition = Math.max(0, Math.min(
-                    this.startPosition + percent, 100));
-                this.updateView();
-            },
-            dragStart: function(event) {
-                this.isDragging = true;
-                this.startX = event.clientX;
-                this.startPosition = this.currentPosition;
-            },
-            dragging: function(event) {
-                if (!this.isDragging) return;
-                this.setPosition(event.clientX);
-                if (!this.isBuffer) {
-                    this.changeAudioAbort();
-                }
-            },
-            dragEnd: function() {
-                this.changeAudioAbort();
-                this.isDragging = false;
-                removeEventListener('mousemove', this.dragging);
-                removeEventListener('mouseup', this.dragEnd);
-            }
-
         }
     }
 </script>
 
-<style scoped>
+<style scoped lang="less">
     .ivu-layout-footer{
-        padding: 15px 25px;
+        padding: 12px;
+        background-color: #222225;
     }
     .footer_left{
-        display: flex;
-        justify-content: space-evenly;
-    }
-    .index_footer_icon{
-        font-size: 30px;
+        /*width: 106.5px;*/
+       .audio_left{
+           display: flex;
+           .audio_thumbnail{
+               width: 45px;
+               height: 45px;
+               img{
+                   width: 100%;
+                   border-radius: 3px;
+               }
+           }
+           .audio_song_info{
+               margin-left: 12px;
+               display: flex;
+               flex-direction: column;
+               justify-content: space-between;
+               color: antiquewhite;
+               .audio_song_name{}
+               .audio_song_author{}
+           }
+           .audio_like{
+               margin-left: 10px;
+               svg{
+                   font-size: 18px;
+                   margin-top: 2px;
+               }
+           }
+       }
     }
     .footer_center{
-        width: 100%;
+        height: 45px;
+        .audio_control{
+            display: flex;
+            justify-content: center;
+            .audio_control_info{
+                display: flex;
+                justify-content: space-evenly;
+                width: 300px;
+                .index_footer_icon{
+                    font-size: 20px;
+                }
+            }
+        }
+        .audio_progress{
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            .audio_article_start {
+                padding: 7px 10px 0 0;
+            }
+            .audio_article{
+                width: 395px;
+            }
+            .audio_article_end{
+                padding: 7px 0 0 10px;
+            }
+        }
     }
 </style>
