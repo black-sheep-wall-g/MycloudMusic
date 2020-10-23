@@ -125,7 +125,6 @@
                     console.log(res);
                 });
             },
-
         }
     }
 </script>

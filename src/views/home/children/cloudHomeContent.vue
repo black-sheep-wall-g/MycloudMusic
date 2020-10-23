@@ -1,7 +1,7 @@
 <template>
     <div class="home_content">
         <div class="home_content_title">
-            <Menu mode="horizontal" active-name="1">
+            <Menu mode="horizontal" :active-name="0" >
                 <MenuItem v-for="(item,index) in homeTitleList" :key="index" :name="index">
                     {{item}}
                 </MenuItem>
