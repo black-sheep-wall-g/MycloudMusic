@@ -34,7 +34,7 @@
                             <svg class="icon index_footer_icon" aria-hidden="true">
                                 <use xlink:href="#icon-xiayishou1"></use>
                             </svg>
-                            <svg class="icon" aria-hidden="true">
+                            <svg class="icon" aria-hidden="true" style="margin-top: 3px">
                                 <use xlink:href="#icon-cibeifen"></use>
                             </svg>
                         </div>

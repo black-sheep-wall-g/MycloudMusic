@@ -16,29 +16,130 @@
                         <Icon color="white" size="20" type="ios-arrow-forward"/>
                     </span>
                 </div>
-                <Input search placeholder="搜索音乐，视频，歌词，电台"/>
+                <Input style="width: 250px" search placeholder="搜索音乐，视频，歌词，电台"/>
             </div>
         </col>
-        <Col span="8">3</col>
+        <Col span="8">
+            <div class="nav_right">
+                <div class="user_login" @click="toLogin" v-if="!userState">
+                    <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
+                    <i>未登录</i>
+                    <Icon type="ios-arrow-down"></Icon>
+                </div>
+                <div v-else>
+                    <Avatar :src="userInfo.profile.avatarUrl"/>
+                    <Dropdown trigger="click" style="margin-left: 15px">
+                        <a href="javascript:void(0)">
+                            {{userInfo.profile.nickname}}
+                            <Icon type="ios-arrow-down"></Icon>
+                        </a>
+                        <DropdownMenu slot="list">
+                            <DropdownItem>驴打滚</DropdownItem>
+                            <DropdownItem>炸酱面</DropdownItem>
+                            <DropdownItem>豆汁儿</DropdownItem>
+                            <DropdownItem>冰糖葫芦</DropdownItem>
+                            <DropdownItem>北京烤鸭</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+            </div>
+        </col>
     </Row>
 </template>
 
 <script>
+
+    import {getLogin, getUserInfo} from "../../network/home";
+
     export default {
-        name: "cloudTop"
+        name: "cloudTop",
+        data() {
+            return {
+                phone: '',
+                pwd:'',
+                //用户信息
+                userInfo:[],
+                //登录状态
+                userState:false
+            }
+        },
+        methods: {
+            // 用户登录操作
+            toLogin() {
+                const _this = this;
+                this.$Modal.confirm({
+                    render: (h) => {
+                        return h('div',[
+                            h('Input', {
+                                props: {
+                                    autofocus: true,
+                                    placeholder: '请输入电话号码'
+                                },
+                                style:{
+                                    margin:'0 0 15px 0'
+                                },
+                                on: {
+                                    input: (val) => {
+                                        this.phone = val;
+                                    }
+                                }
+                            }),
+                            h('Input', {
+                                props: {
+                                    value: _this.pwd,
+                                    autofocus: true,
+                                    placeholder: '请输入密码',
+                                    type:"password",
+                                    password:true
+                                },
+                                on: {
+                                    input: (val) => {
+                                        this.pwd = val;
+                                    }
+                                }
+                            })
+                        ])
+                    },
+                    okText: '登录',
+                    onOk(){
+                        _this.indexLogin()
+                    }
+                })
+            },
+            //用户登录
+            indexLogin(){
+                this.getLogin()
+            },
+            //获取用户信息
+            getLogin(){
+                getLogin(this.phone,this.pwd).then(res => {
+                    console.log(res);
+                    this.userState = true
+                    this.userInfo = res
+                    this.getUserInfo()
+                });
+            },
+            //通过用户id获取用户信息
+            getUserInfo(){
+                getUserInfo(this.userInfo.profile.userId).then(res => {
+                    console.log(res);
+                });
+            },
+
+        }
     }
 </script>
 
-<style scoped>
+<style scoped lang="less">
     .nav_left {
         display: flex;
         align-items: center;
-    }
 
-    .nav_left i {
-        margin-left: 5px;
-        color: aquamarine;
-        font-size: 20px;
+        i {
+            margin-left: 5px;
+            color: aquamarine;
+            font-size: 20px;
+        }
     }
 
     .nav_center {
@@ -49,13 +150,24 @@
     .nav_go {
         display: flex;
         margin-right: 20px;
-    }
 
-    .nav_go i {
-        border: 1px solid #324166;
+        i {
+            border: 1px solid #324166;
+        }
     }
 
     .index_cloud_icon {
         font-size: 40px;
+    }
+
+    .user_login {
+        height: 60px;
+        width: 90px;
+        cursor:pointer;
+        i {
+            margin-left: 6px;
+            font-size: 13px;
+            color: whitesmoke;
+        }
     }
 </style>

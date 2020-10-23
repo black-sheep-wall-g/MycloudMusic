@@ -1,11 +1,12 @@
 <template>
     <div class="content">
         <Layout>
-            <Header>
+            <Header style="border-bottom: 1px solid red">
                 <cloud-top></cloud-top>
             </Header>
-            <Content :style="{minHeight: '280px', background: '#fff'}">
+            <Content :style="{minHeight: '280px', background: '#fff',display:'flex'}">
                 <cloud-sidebar></cloud-sidebar>
+                <cloud-home-content></cloud-home-content>
             </Content>
             <template>
                 <cloud-footer></cloud-footer>
@@ -18,10 +19,12 @@
     import cloudTop from "../../components/common/cloudTop";
     import CloudFooter from "../../components/common/cloudFooter";
     import CloudSidebar from "../../components/common/cloudSidebar";
+    import CloudHomeContent from "./children/cloudHomeContent";
 
     export default {
         name: "Home",
         components: {
+            CloudHomeContent,
             CloudSidebar,
             cloudTop,
             CloudFooter

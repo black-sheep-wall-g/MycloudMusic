@@ -2,22 +2,14 @@
     <div class="sidebar_list">
         <div class="sidebar_list_content">
             <List size="small">
-                <ListItem>发现音乐</ListItem>
-                <ListItem>视频</ListItem>
-                <ListItem>朋友</ListItem>
-                <ListItem>直播</ListItem>
-                <ListItem>私人FM</ListItem>
+                <ListItem v-for="(item,index) in findMusic" :key="index" class="sidebar_list_hover">{{item}}</ListItem>
             </List>
-            <List header="我的音乐" size="small">
+            <List size="small">
+                <ListItem class="audio_classify">我的音乐</ListItem>
                 <ListItem>本地音乐</ListItem>
                 <ListItem>下载管理</ListItem>
                 <ListItem>我的音乐云盘</ListItem>
                 <ListItem>我的收藏</ListItem>
-            </List>
-            <List header="Header" footer="Footer" size="large">
-                <ListItem>This is a piece of text.</ListItem>
-                <ListItem>This is a piece of text.</ListItem>
-                <ListItem>This is a piece of text.</ListItem>
             </List>
         </div>
     </div>
@@ -25,7 +17,12 @@
 
 <script>
     export default {
-        name: "cloudSidebar"
+        name: "cloudSidebar",
+        data() {
+            return {
+                findMusic:['发现音乐','视频','朋友','直播','私人FM']
+            }
+        }
     }
 </script>
 
@@ -36,26 +33,37 @@
 
     .sidebar_list {
         width: 200px;
-        height: 540px;
+        height: 541px;
         overflow-y: auto;
+        border-right: 1px solid #cccccc;
         .sidebar_list_content{
             margin: 13px;
             .ivu-list-small .ivu-list-item{
                 padding-left: 8px;
             }
+            .audio_classify{
+                color: #7c7c7c;
+            }
+            .sidebar_list_hover{
+                border-radius: 3px;
+                &:hover{
+                    background-color: #333333;
+                    color: whitesmoke;
+                }
+            }
+        }
+        &:hover{
+            &::-webkit-scrollbar {
+                width: 4px;
+            }
         }
         &::-webkit-scrollbar {
-            width: 4px;
+            width: 0;
         }
         &::-webkit-scrollbar-thumb {
             border-radius: 10px;
             -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
             background: rgba(0, 0, 0, 0.2);
-        }
-        &::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            border-radius: 0;
-            background: rgba(0, 0, 0, 0.1);
         }
         li {
             border: none;

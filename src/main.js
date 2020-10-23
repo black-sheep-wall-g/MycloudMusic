@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+//全局引入网络请求
+import "./network/request";
 //导入viewUI以及css样式
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
