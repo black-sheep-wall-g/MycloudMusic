@@ -4,7 +4,12 @@ export function getIndexInfo() {
         url:'/homepage/block/page'
     }).catch(err => err);
 }
-
+//首页轮播图
+export function getIndexBanner() {
+    return axios({
+        url:'/banner'
+    }).catch(err => err);
+}
 //用户登录
 export function getLogin(phone,password) {
     return axios({
