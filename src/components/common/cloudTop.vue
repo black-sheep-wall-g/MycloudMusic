@@ -95,6 +95,11 @@
                                 on: {
                                     input: (val) => {
                                         this.pwd = val;
+                                    },
+                                    'on-keyup':function (enter) {
+                                        if (enter.keyCode === 13){
+                                            _this.indexLogin()
+                                        }
                                     }
                                 }
                             })

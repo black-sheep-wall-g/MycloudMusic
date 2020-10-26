@@ -125,7 +125,7 @@
     .home_content {
         width: 820px;
         padding: 0 30px;
-        overflow-y: auto;
+        overflow-y: overlay;
         &:hover{
             &::-webkit-scrollbar {
                 width: 4px;
