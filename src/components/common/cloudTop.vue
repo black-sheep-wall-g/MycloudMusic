@@ -116,6 +116,7 @@
                     console.log(res);
                     this.userState = true
                     this.userInfo = res
+                    this.$store.commit('setUserInfo',res)
                     this.getUserInfo()
                 });
             },

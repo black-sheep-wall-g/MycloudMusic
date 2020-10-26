@@ -41,7 +41,7 @@
         position: relative;
         border-radius: 4px;
         overflow: hidden;
-        max-width: 1025px;
+        max-width: 1020px;
         height: 100%;
         margin: 0 auto;
     }

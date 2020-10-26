@@ -41,3 +41,10 @@ export function userLogout() {
         url: "/logout"
     }).catch(err => err);
 }
+
+//首页推荐歌单
+export function getMusicList() {
+    return axios({
+        url: "/personalized"
+    }).catch(err => err);
+}
