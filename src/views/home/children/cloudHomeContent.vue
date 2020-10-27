@@ -24,7 +24,7 @@
             </swiper>
         </div>
         <div class="home_content_recommend">
-            <cloudHomeList></cloudHomeList>
+            <cloudHomeList :homeCloudList="homeCloudList"></cloudHomeList>
         </div>
     </div>
 </template>
@@ -49,12 +49,14 @@
                 homeTitleList: ['个性推荐', '歌单', '主播电台', '排行榜', '歌手', '最新音乐'],
                 //轮播图
                 banners:[],
+                //首页歌单列表数据
+                homeCloudList:[],
                 swiperButton:false,
                 swiperOption: {
                     loop: true, //循环
                     autoplay: { //自动播放
                         disableOnInteraction: false,
-                        delay: 1000
+                        delay: 2000
                     },
                     speed: 1000, //滑动速度
                     // grabCursor: true,//小手鼠标样式
@@ -101,7 +103,7 @@
             indexInit(){
                 //获取页面基础信息
                 getIndexInfo().then(res => {
-                    // console.log(res);
+                    console.log(res);
                 });
                 //获取首页轮播图
                 getIndexBanner().then(res =>{
@@ -111,6 +113,7 @@
                 //获取首页列表数据
                 getMusicList().then(res =>{
                     console.log(res)
+                    this.homeCloudList = res.result
                 })
             }
         },
@@ -125,10 +128,11 @@
     .home_content {
         width: 820px;
         padding: 0 30px;
+        /*overflow-y: scroll;*/
         overflow-y: overlay;
         &:hover{
             &::-webkit-scrollbar {
-                width: 4px;
+                width: 3px;
             }
         }
         &::-webkit-scrollbar {
@@ -167,7 +171,7 @@
                     }
                 }
                 .swiper-pagination{
-                    bottom: 0;
+                    bottom: -4px;
                 }
                 .swiper-button-prev,.swiper-button-next{
                     color: white;

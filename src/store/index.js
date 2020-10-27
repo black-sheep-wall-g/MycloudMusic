@@ -8,7 +8,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state:{
-
+    userInfo:null, //用户信息
+    token:null
   },
   getters,
   mutations,

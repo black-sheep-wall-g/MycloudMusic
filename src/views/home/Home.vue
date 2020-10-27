@@ -48,6 +48,7 @@
     .ivu-layout-header{
         padding: 0 25px;
         height: 60px;
+        background-color: #515a6e;
     }
 
     .layout-footer-center {

@@ -48,3 +48,10 @@ export function getMusicList() {
         url: "/personalized"
     }).catch(err => err);
 }
+
+//刷新登录
+export function refresh() {
+    return axios({
+        url: "/login/refresh"
+    }).catch(err => err)
+}
