@@ -46,9 +46,6 @@
         methods:{
             listPlayEnter(index){
                 this.listPlayState = index
-            },
-            listPlayLeave(){
-                this.listPlayState = -1
             }
         }
     }

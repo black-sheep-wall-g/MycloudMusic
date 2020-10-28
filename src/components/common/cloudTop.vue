@@ -29,24 +29,179 @@
                         :mask="false"
                         width="355"
                         :footer-hide="true"
-                        :styles="{'height':'450px','top':'50px','right':'70px','overflow-y':'overlay','background-color':'white','border-radius':'4px'}"
                 >
-                    <div>
-                        <div></div>
-                        <div>
-                            <List :split="false">
-                                <slot name="header">热搜榜</slot>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                                <ListItem>自定义加载中</ListItem>
-                            </List>
+                    <div class="search_modal">
+                        <div class="search_history">
+                            <div class="search_history_top">
+                                <div class="search_history_left">
+                                    <p>搜索历史</p>
+                                    <svg class="icon" aria-hidden="true" font-size="17px">
+                                        <use xlink:href="#icon-lajitong"></use>
+                                    </svg>
+                                </div>
+                                <div class="search_history_right">
+                                    查看全部
+                                </div>
+                            </div>
+                            <ul class="search_history_btm">
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                                <li>过膝袜之歌</li>
+                            </ul>
+                        </div>
+                        <div class="hot_search">
+                            <div class="hot_search_head">热搜榜</div>
+                            <div class="hot_search_content">
+                                    <ul class="hot_search_list">
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="hot_search_list_order">1</div>
+                                            <div class="hot_search_list_content">
+                                                <div class="list_top">
+                                                    <span>你曾说过会永远爱我</span>
+                                                    <i>NEW</i>
+                                                    <span>3341212</span>
+                                                </div>
+                                                <div class="list_btm">
+                                                    盛夏的果实
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                         </div>
                     </div>
                 </Modal>
@@ -198,9 +353,34 @@
         }
     }
 </script>
-
 <style scoped lang="less">
+    /deep/ .ivu-modal{
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        height: 450px;
+        top: 50px;
+        right: 70px;
+        overflow-y: overlay;
+        .ivu-modal-content{
+            background-color: #363636;
+        }
+        &::-webkit-scrollbar {
+            width: 5px;
+            background-color: #363636;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        &::-webkit-scrollbar-thumb {
+            border-radius: 5px;
+            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
+        }
+    }
 
+
+    .ivu-modal-content-no-mask{
+
+    }
     .nav_left {
         display: flex;
         align-items: center;
@@ -256,6 +436,65 @@
             margin-left: 6px;
             font-size: 13px;
             color: whitesmoke;
+        }
+    }
+
+    .search_modal{
+        .search_history{
+            .search_history_top{
+                display: flex;
+                justify-content: space-between;
+                margin-right: 5px;
+                font-size: 14px;
+                color: #7b7b7b;
+                .search_history_left{
+                    display: flex;
+                    svg{
+                        margin: 2px 0 0 5px;
+                    }
+                }
+                .search_history_right{
+                    
+                }
+            }
+            .search_history_btm{
+                li{
+                    display: inline-block;
+                    padding: 5px 10px;
+                    background-color: aquamarine;
+                    border-radius: 15px;
+                    margin: 5px;
+                }
+            }
+        }
+        .hot_search{
+            .hot_search_head{
+                margin: 5px 0;
+                font-size: 14px;
+                color: #7b7b7b;
+            }
+            .hot_search_content{
+                .hot_search_list{
+                    li{
+                        list-style: none;
+                        display: flex;
+                        margin: 15px 0;
+                        .hot_search_list_order{
+                            padding: 10px 20px 0 0;
+                            font-size: 17px;
+                        }
+                        .hot_search_list_content{
+                            .list_top{
+                                margin-bottom: 5px;
+                            }
+                            .list_btm{
+                                font-size: 14px;
+                                color: #7b7b7b;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 </style>
