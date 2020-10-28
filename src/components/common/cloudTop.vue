@@ -4,7 +4,7 @@
             <svg class="icon index_cloud_icon" aria-hidden="true">
                 <use xlink:href="#icon-wangyiyun"></use>
             </svg>
-            <i>网易云音乐</i>
+            <p>网易云音乐</p>
         </Col>
         <Col span="10">
             <div class="nav_center">
@@ -20,14 +20,43 @@
                         </svg>
                     </span>
                 </div>
-                <Input style="width: 250px" search placeholder="搜索音乐，视频，歌词，电台"/>
+                <Input style="width: 250px" search placeholder="搜索音乐，视频，歌词，电台" :v-model="modal1"
+                       @on-focus="modal1 = true" @on-blur="modal1 = false"/>
+                <Modal
+                        v-model="modal1"
+                        :closable="false"
+                        :scrollable="true"
+                        :mask="false"
+                        width="355"
+                        :footer-hide="true"
+                        :styles="{'height':'450px','top':'50px','right':'70px','overflow-y':'overlay','background-color':'white','border-radius':'4px'}"
+                >
+                    <div>
+                        <div></div>
+                        <div>
+                            <List :split="false">
+                                <slot name="header">热搜榜</slot>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                                <ListItem>自定义加载中</ListItem>
+                            </List>
+                        </div>
+                    </div>
+                </Modal>
             </div>
         </col>
         <Col span="8">
             <div class="nav_right">
                 <div class="user_login" @click="toLogin" v-if="!userInfo">
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
-                    <i>未登录</i>
+                    <p>未登录</p>
                     <Icon type="ios-arrow-down"></Icon>
                 </div>
                 <div v-else>
@@ -62,11 +91,13 @@
                 phone: '',
                 pwd: '',
                 //用户信息
-                userInfo: []
+                userInfo: [],
+                //搜索模态框
+                modal1: true
             }
         },
-        computed:{
-            initInfo(){
+        computed: {
+            initInfo() {
                 return this.$store.getters.userInfo
             }
         },
@@ -120,9 +151,9 @@
                 })
             },
             //退出登录
-            logout(){
+            logout() {
                 userLogout().then(res => {
-                    if (res.code === 200){
+                    if (res.code === 200) {
                         this.$store.commit('logout')
                         this.$router.go(0)
                         this.userInfo = []
@@ -138,7 +169,7 @@
             //获取用户信息
             getLogin() {
                 getLogin(this.phone, this.pwd).then(res => {
-                    if (res.code === 200){
+                    if (res.code === 200) {
                         this.userInfo = res
                         this.$store.commit('setUserInfo', res)
                         this.getUserInfo()
@@ -155,8 +186,8 @@
                 });
             },
             //刷新登录
-            refresh(){
-                refresh().then(res =>{
+            refresh() {
+                refresh().then(res => {
                     console.log(res)
                 })
             }
@@ -169,11 +200,12 @@
 </script>
 
 <style scoped lang="less">
+
     .nav_left {
         display: flex;
         align-items: center;
 
-        i {
+        p {
             margin-left: 5px;
             color: aquamarine;
             font-size: 20px;
@@ -189,8 +221,10 @@
         display: flex;
         margin-right: 20px;
         height: 60px;
-        span{
+
+        span {
             margin-left: 10px;
+
             svg {
                 border: 1px solid #324166;
                 border-radius: 11px;
@@ -210,6 +244,13 @@
         height: 60px;
         width: 90px;
         cursor: pointer;
+        display: -webkit-inline-box;
+
+        p {
+            margin-left: 6px;
+            font-size: 13px;
+            color: whitesmoke;
+        }
 
         i {
             margin-left: 6px;

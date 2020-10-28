@@ -4,7 +4,7 @@
             <Header style="border-bottom: 1px solid red">
                 <cloud-top></cloud-top>
             </Header>
-            <Content :style="{minHeight: '280px', background: '#fff',display:'flex'}">
+            <Content :style="{minHeight: '280px', background: '#2b2b2b',display:'flex'}">
                 <cloud-sidebar></cloud-sidebar>
                 <cloud-home-content></cloud-home-content>
             </Content>

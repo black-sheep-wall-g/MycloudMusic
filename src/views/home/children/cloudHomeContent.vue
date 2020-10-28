@@ -132,7 +132,7 @@
         overflow-y: overlay;
         &:hover{
             &::-webkit-scrollbar {
-                width: 3px;
+                width: 5px;
             }
         }
         &::-webkit-scrollbar {
@@ -140,8 +140,8 @@
         }
         &::-webkit-scrollbar-thumb {
             border-radius: 10px;
-            -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-            background: rgba(0, 0, 0, 0.2);
+            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
         }
         .home_content_swiper {
             width: 100%;
