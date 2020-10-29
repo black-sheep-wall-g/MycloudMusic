@@ -8,7 +8,7 @@
         </div>
         <div class="home_list_body">
             <Card :padding="0" :bordered="false" :dis-hover='true' v-for="(item,index) in homeCloudList" :key="index">
-                <div class="card_body" @mouseenter="listPlayEnter(index)" @mouseleave="listPlayLeave">
+                <div class="card_body" @mouseenter="listPlayEnter(index)">
                     <img :src="item.picUrl" alt="">
                     <span>
                         <svg class="icon" aria-hidden="true">

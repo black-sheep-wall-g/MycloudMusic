@@ -20,15 +20,20 @@
                         </svg>
                     </span>
                 </div>
-                <Input style="width: 250px" search placeholder="搜索音乐，视频，歌词，电台" :v-model="modal1"
-                       @on-focus="modal1 = true" @on-blur="modal1 = false"/>
+                <Input style="width: 250px"
+                       placeholder="搜索音乐，视频，歌词，电台"
+                       suffix="ios-search"
+                       v-model="searchData"
+                       @on-enter="search"
+                       @on-focus="modal1 = true"/>
                 <Modal
                         v-model="modal1"
                         :closable="false"
                         :scrollable="true"
-                        :mask="false"
+                        :mask-closable="true"
                         width="355"
                         :footer-hide="true"
+                        :transfer="false"
                 >
                     <div class="search_modal">
                         <div class="search_history">
@@ -56,152 +61,22 @@
                         <div class="hot_search">
                             <div class="hot_search_head">热搜榜</div>
                             <div class="hot_search_content">
-                                    <ul class="hot_search_list">
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
+                                <ul class="hot_search_list">
+                                    <li v-for="(item,index) in hotList" :key="index">
+                                        <div class="hot_search_list_order" :class="index+1 <= 3 ? 'active_index' :''">{{index+1}}</div>
+                                        <div class="hot_search_list_content">
+                                            <div class="list_top">
+                                                <span class="list_title">{{item.searchWord}}</span>
+                                                <img :src="item.iconUrl" alt="" v-if="item.iconUrl">
+                                                <span class="list_score">{{item.score}}</span>
                                             </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
+                                            <div class="list_btm">
+                                                {{item.content}}
                                             </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="hot_search_list_order">1</div>
-                                            <div class="hot_search_list_content">
-                                                <div class="list_top">
-                                                    <span>你曾说过会永远爱我</span>
-                                                    <i>NEW</i>
-                                                    <span>3341212</span>
-                                                </div>
-                                                <div class="list_btm">
-                                                    盛夏的果实
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </Modal>
@@ -237,7 +112,8 @@
 
 <script>
 
-    import {getLogin, getUserInfo, refresh, userLogout} from "../../network/home";
+
+    import {getHotList, getLogin, refresh, userLogout} from "../../network/cloudTop";
 
     export default {
         name: "cloudTop",
@@ -248,10 +124,15 @@
                 //用户信息
                 userInfo: [],
                 //搜索模态框
-                modal1: true
+                modal1: false,
+                //热搜列表数据
+                hotList: [],
+                //搜索框数据
+                searchData:''
             }
         },
         computed: {
+            //用户登录信息
             initInfo() {
                 return this.$store.getters.userInfo
             }
@@ -334,42 +215,63 @@
                     console.log(err);
                 })
             },
-            //通过用户id获取用户信息
-            getUserInfo() {
-                getUserInfo(this.userInfo.profile.userId).then(res => {
-                    console.log(res);
-                });
-            },
             //刷新登录
             refresh() {
                 refresh().then(res => {
                     console.log(res)
                 })
+            },
+            //获取热搜列表详情
+            getHotList() {
+                getHotList().then(res => {
+                    if (res.code === 200) {
+                        this.hotList = res.data
+                        console.log(this.hotList)
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            //搜索框搜索功能
+            search(){
+                console.log(this.searchData)
+                this.$store.commit('setSearchData', this.searchData)
             }
         },
         created() {
             this.userInfo = this.initInfo
-            console.log(this.userInfo)
+            this.getHotList()
         }
     }
 </script>
 <style scoped lang="less">
-    /deep/ .ivu-modal{
+    .active_index{
+        color: #d83e3e;
+    }
+    //遮罩层
+    /deep/ .ivu-modal-mask{
+        background-color: rgba(55,55,55,0);
+    }
+    //弹出框
+    /deep/ .ivu-modal {
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
         height: 450px;
         top: 50px;
         right: 70px;
         overflow-y: overlay;
-        .ivu-modal-content{
+
+        .ivu-modal-content {
             background-color: #363636;
         }
+
         &::-webkit-scrollbar {
             width: 5px;
             background-color: #363636;
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
         }
+
         &::-webkit-scrollbar-thumb {
             border-radius: 5px;
             -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
@@ -378,9 +280,10 @@
     }
 
 
-    .ivu-modal-content-no-mask{
+    .ivu-modal-content-no-mask {
 
     }
+
     .nav_left {
         display: flex;
         align-items: center;
@@ -439,26 +342,30 @@
         }
     }
 
-    .search_modal{
-        .search_history{
-            .search_history_top{
+    .search_modal {
+        .search_history {
+            .search_history_top {
                 display: flex;
                 justify-content: space-between;
                 margin-right: 5px;
                 font-size: 14px;
                 color: #7b7b7b;
-                .search_history_left{
+
+                .search_history_left {
                     display: flex;
-                    svg{
+
+                    svg {
                         margin: 2px 0 0 5px;
                     }
                 }
-                .search_history_right{
-                    
+
+                .search_history_right {
+
                 }
             }
-            .search_history_btm{
-                li{
+
+            .search_history_btm {
+                li {
                     display: inline-block;
                     padding: 5px 10px;
                     background-color: aquamarine;
@@ -467,27 +374,43 @@
                 }
             }
         }
-        .hot_search{
-            .hot_search_head{
+
+        .hot_search {
+            .hot_search_head {
                 margin: 5px 0;
                 font-size: 14px;
                 color: #7b7b7b;
             }
-            .hot_search_content{
-                .hot_search_list{
-                    li{
+
+            .hot_search_content {
+                .hot_search_list {
+                    li {
                         list-style: none;
                         display: flex;
                         margin: 15px 0;
-                        .hot_search_list_order{
-                            padding: 10px 20px 0 0;
+
+                        .hot_search_list_order {
+                            padding: 10px 0;
                             font-size: 17px;
+                            width: 30px;
                         }
-                        .hot_search_list_content{
-                            .list_top{
-                                margin-bottom: 5px;
+
+                        .hot_search_list_content {
+                            .list_top {
+                                margin-bottom: 2px;
+                                .list_title{
+                                    color: whitesmoke;
+                                    margin-right: 8px;
+                                }
+                                .list_score{
+                                    margin-left: 5px;
+                                }
+                                img {
+                                    height: 13px;
+                                }
                             }
-                            .list_btm{
+
+                            .list_btm {
                                 font-size: 14px;
                                 color: #7b7b7b;
                             }

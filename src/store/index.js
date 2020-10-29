@@ -9,7 +9,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state:{
     userInfo:null, //用户信息
-    token:null
+    token:null,//用户token
+    searchDataList:[] //搜索历史
   },
   getters,
   mutations,
