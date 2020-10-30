@@ -27,7 +27,8 @@ export default {
     },
     //获取本地搜索数据
     searchData: (state) => {
-        const localeSearchDataList = localStorage.getItem('setSearchData')
-        state.searchDataList = state.searchDataList === [] ? localeSearchDataList : []
+        if (localStorage.getItem('searchData')){
+            return state.searchDataList = localStorage.getItem('searchData').split(",")
+        }
     }
 }

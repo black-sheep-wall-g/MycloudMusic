@@ -49,13 +49,7 @@
                                 </div>
                             </div>
                             <ul class="search_history_btm">
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
-                                <li>过膝袜之歌</li>
+                                <li v-for="(item,index) in searchHistory" :key="index">{{item}}</li>
                             </ul>
                         </div>
                         <div class="hot_search">
@@ -128,14 +122,23 @@
                 //热搜列表数据
                 hotList: [],
                 //搜索框数据
-                searchData:''
+                searchData:'',
+                //搜索历史记录
+                searchHistoryList:[]
             }
         },
         computed: {
             //用户登录信息
             initInfo() {
                 return this.$store.getters.userInfo
+            },
+            //搜索框历史信息
+            searchHistory() {
+                return this.$store.getters.searchData
             }
+        },
+        watch:{
+
         },
         methods: {
             // 用户登录操作
@@ -195,7 +198,6 @@
                         this.userInfo = []
                         this.refresh()
                     }
-                    console.log(res);
                 });
             },
             //用户登录
@@ -210,7 +212,6 @@
                         this.$store.commit('setUserInfo', res)
                         this.getUserInfo()
                     }
-                    console.log(res);
                 }).catch(err => {
                     console.log(err);
                 })
@@ -226,7 +227,6 @@
                 getHotList().then(res => {
                     if (res.code === 200) {
                         this.hotList = res.data
-                        console.log(this.hotList)
                     }
                 }).catch(err => {
                     console.log(err);
@@ -234,12 +234,16 @@
             },
             //搜索框搜索功能
             search(){
-                console.log(this.searchData)
-                this.$store.commit('setSearchData', this.searchData)
+                this.searchData = this.searchData.trim()
+                if (this.searchData !== ''){
+                    this.$store.commit('setSearchData', this.searchData)
+                    this.searchHistoryList = this.searchHistory
+                }
             }
         },
         created() {
             this.userInfo = this.initInfo
+            this.searchHistoryList = this.searchHistory
             this.getHotList()
         }
     }
