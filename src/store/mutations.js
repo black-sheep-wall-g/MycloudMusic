@@ -33,6 +33,7 @@ export default{
         state.searchDataList = state.searchDataList.filter((item,index,arr) => {
             return arr.indexOf(item) === index
         })
+        console.log(state.searchDataList)
         localStorage.setItem('searchData',state.searchDataList)
     }
 }

@@ -36,7 +36,7 @@
                         :transfer="false"
                 >
                     <div class="search_modal">
-                        <div class="search_history">
+                        <div class="search_history" v-if="searchHistoryList !== undefined">
                             <div class="search_history_top">
                                 <div class="search_history_left">
                                     <p>搜索历史</p>
@@ -131,14 +131,14 @@
             //用户登录信息
             initInfo() {
                 return this.$store.getters.userInfo
-            },
+            }
+
+        },
+        watch:{
             //搜索框历史信息
             searchHistory() {
                 return this.$store.getters.searchData
             }
-        },
-        watch:{
-
         },
         methods: {
             // 用户登录操作

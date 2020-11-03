@@ -28,6 +28,7 @@ export default {
     //获取本地搜索数据
     searchData: (state) => {
         if (localStorage.getItem('searchData')){
+            console.log(localStorage.getItem('searchData').split(","))
             return state.searchDataList = localStorage.getItem('searchData').split(",")
         }
     }
