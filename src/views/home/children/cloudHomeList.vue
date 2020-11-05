@@ -41,7 +41,7 @@
             }
         },
         mounted() {
-            console.log(this.homeCloudList)
+            // console.log(this.homeCloudList)
         },
         methods:{
             listPlayEnter(index){

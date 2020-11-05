@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                             <ul class="search_history_btm">
-                                <li v-for="(item,index) in searchHistory" :key="index">{{item}}</li>
+                                <li v-for="(item,index) in searchHistoryList" :key="index">{{item}}</li>
                             </ul>
                         </div>
                         <div class="hot_search">
@@ -135,12 +135,17 @@
 
         },
         watch:{
-            //搜索框历史信息
-            searchHistory() {
-                return this.$store.getters.searchData
-            }
+            // //搜索框历史信息
+            // searchHistory() {
+            //     return this.$store.mutations.searchData1
+            // }
         },
         methods: {
+            //搜索框历史信息
+            searchHistory() {
+                console.log(this.$store.getters.searchData)
+                return this.$store.getters.searchData
+            },
             // 用户登录操作
             toLogin() {
                 const _this = this;
@@ -237,13 +242,13 @@
                 this.searchData = this.searchData.trim()
                 if (this.searchData !== ''){
                     this.$store.commit('setSearchData', this.searchData)
-                    this.searchHistoryList = this.searchHistory
+                    this.searchHistoryList = this.searchHistory()
                 }
             }
         },
         created() {
             this.userInfo = this.initInfo
-            this.searchHistoryList = this.searchHistory
+            this.searchHistoryList = this.searchHistory()
             this.getHotList()
         }
     }

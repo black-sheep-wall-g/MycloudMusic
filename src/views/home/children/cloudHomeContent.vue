@@ -103,16 +103,16 @@
             indexInit(){
                 //获取页面基础信息
                 getIndexInfo().then(res => {
-                    console.log(res);
+                    // console.log(res);
                 });
                 //获取首页轮播图
                 getIndexBanner().then(res =>{
                     this.banners = res.banners
-                    console.log(res)
+                    // console.log(res)
                 });
                 //获取首页列表数据
                 getMusicList().then(res =>{
-                    console.log(res)
+                    // console.log(res)
                     this.homeCloudList = res.result
                 })
             }
