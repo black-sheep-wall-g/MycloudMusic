@@ -25,6 +25,7 @@
                        suffix="ios-search"
                        v-model="searchData"
                        @on-enter="search"
+                       @on-change="getSearchSuggest(searchData)"
                        @on-focus="modal1 = true"/>
                 <Modal
                         v-model="modal1"
@@ -36,20 +37,25 @@
                         :transfer="false"
                 >
                     <div class="search_modal">
-                        <div class="search_history" v-if="searchHistoryList !== undefined">
+                        <div class="search_history" v-if="searchHistoryList.length !== 0">
                             <div class="search_history_top">
                                 <div class="search_history_left">
                                     <p>搜索历史</p>
-                                    <svg class="icon" aria-hidden="true" font-size="17px">
+                                    <svg class="icon" aria-hidden="true" font-size="15px" @click="clearSearchList">
                                         <use xlink:href="#icon-lajitong"></use>
                                     </svg>
                                 </div>
-                                <div class="search_history_right">
+                                <div class="search_history_right" @click="lookAllSearchList">
                                     查看全部
                                 </div>
                             </div>
-                            <ul class="search_history_btm">
-                                <li v-for="(item,index) in searchHistoryList" :key="index">{{item}}</li>
+                            <ul class="search_history_btm" ref="search_history_btm">
+                                <li v-for="(item,index) in searchHistoryList" :key="index">
+                                    {{item}}
+                                    <svg class="icon" aria-hidden="true" font-size="16px" @click="delSearchItem(index)">
+                                        <use xlink:href="#icon-del"></use>
+                                    </svg>
+                                </li>
                             </ul>
                         </div>
                         <div class="hot_search">
@@ -107,7 +113,8 @@
 <script>
 
 
-    import {getHotList, getLogin, refresh, userLogout} from "../../network/cloudTop";
+    import {getHotList, getLogin, refresh, suggest, userLogout} from "../../network/cloudTop";
+
 
     export default {
         name: "cloudTop",
@@ -132,19 +139,14 @@
             initInfo() {
                 return this.$store.getters.userInfo
             }
-
-        },
-        watch:{
-            // //搜索框历史信息
-            // searchHistory() {
-            //     return this.$store.mutations.searchData1
-            // }
         },
         methods: {
             //搜索框历史信息
             searchHistory() {
-                console.log(this.$store.getters.searchData)
-                return this.$store.getters.searchData
+                //获取本地搜索数据
+                if (localStorage.getItem('searchData')){
+                    return localStorage.getItem('searchData').split(",")
+                }
             },
             // 用户登录操作
             toLogin() {
@@ -239,17 +241,57 @@
             },
             //搜索框搜索功能
             search(){
+                //去空格
                 this.searchData = this.searchData.trim()
                 if (this.searchData !== ''){
                     this.$store.commit('setSearchData', this.searchData)
                     this.searchHistoryList = this.searchHistory()
                 }
+                // 关闭模态框
+                this.$Modal.remove()
+            },
+            //赋值本地历史数据
+            assignLocalStorage(){
+                if (this.searchHistory()){
+                    this.searchHistoryList = this.searchHistory();
+                    this.$store.state.searchDataList = this.searchHistory();
+                }else {
+                    this.$store.state.searchDataList = [];
+                }
+            },
+            //点击删除搜索历史记录
+            delSearchItem(index){
+                this.searchHistoryList.splice(index,1);
+                localStorage.setItem('searchData',this.searchHistoryList);
+                this.assignLocalStorage();
+            },
+            //清空搜索历史记录
+            clearSearchList(){
+                this.searchHistoryList = [];
+                localStorage.removeItem('searchData');
+                this.assignLocalStorage();
+            },
+            //点击查看全部搜索历史记录
+            lookAllSearchList(){
+                this.$refs.search_history_btm.style.height = 'unset';
+            },
+            //搜索建议
+            getSearchSuggest(keywords,type){
+                if (keywords){
+                    suggest(keywords,type).then(res => {
+                        if (res.code === 200) {
+                            console.log(res);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }
             }
         },
         created() {
-            this.userInfo = this.initInfo
-            this.searchHistoryList = this.searchHistory()
-            this.getHotList()
+            this.userInfo = this.initInfo;
+            this.assignLocalStorage();
+            this.getHotList();
         }
     }
 </script>
@@ -374,12 +416,32 @@
             }
 
             .search_history_btm {
+                height: 72px;
+                overflow: hidden;
                 li {
                     display: inline-block;
-                    padding: 5px 10px;
-                    background-color: aquamarine;
-                    border-radius: 15px;
+                    position: relative;
+                    font-size: 12px;
+                    text-align: center;
+                    padding: 3px 14px;
+                    background-color: #363636;
+                    color: whitesmoke;
+                    border: 1px solid #4b4b4b;
+                    border-radius: 12px;
                     margin: 5px;
+                    min-width: 40px;
+                    &:hover{
+                        svg{
+                            opacity: 1;
+                        }
+                    }
+                    svg{
+                        position: absolute;
+                        top: 4px;
+                        right: 1px;
+                        opacity: 0;
+                        transition: all 0.5s;
+                    }
                 }
             }
         }

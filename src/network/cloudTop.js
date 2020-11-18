@@ -31,3 +31,13 @@ export function refresh() {
         url: "/login/refresh"
     }).catch(err => err)
 }
+//搜索建议
+export function suggest(keywords,type) {
+    return axios({
+        url: "/search/suggest",
+        params:{
+            keywords,//必选参数
+            type  //可选参数,如果传 'mobile' 则返回移动端数据
+        }
+    }).catch(err => err)
+}
