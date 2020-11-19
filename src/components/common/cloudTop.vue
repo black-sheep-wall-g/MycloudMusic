@@ -35,50 +35,65 @@
                         width="355"
                         :footer-hide="true"
                         :transfer="false"
+                        v-if="!searchData"
                 >
-                    <div class="search_modal">
-                        <div class="search_history" v-if="searchHistoryList.length !== 0">
-                            <div class="search_history_top">
-                                <div class="search_history_left">
-                                    <p>搜索历史</p>
-                                    <svg class="icon" aria-hidden="true" font-size="15px" @click="clearSearchList">
-                                        <use xlink:href="#icon-lajitong"></use>
-                                    </svg>
-                                </div>
-                                <div class="search_history_right" @click="lookAllSearchList">
-                                    查看全部
-                                </div>
-                            </div>
-                            <ul class="search_history_btm" ref="search_history_btm">
-                                <li v-for="(item,index) in searchHistoryList" :key="index">
-                                    {{item}}
-                                    <svg class="icon" aria-hidden="true" font-size="16px" @click="delSearchItem(index)">
-                                        <use xlink:href="#icon-del"></use>
-                                    </svg>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="hot_search">
-                            <div class="hot_search_head">热搜榜</div>
-                            <div class="hot_search_content">
-                                <ul class="hot_search_list">
-                                    <li v-for="(item,index) in hotList" :key="index">
-                                        <div class="hot_search_list_order" :class="index+1 <= 3 ? 'active_index' :''">{{index+1}}</div>
-                                        <div class="hot_search_list_content">
-                                            <div class="list_top">
-                                                <span class="list_title">{{item.searchWord}}</span>
-                                                <img :src="item.iconUrl" alt="" v-if="item.iconUrl">
-                                                <span class="list_score">{{item.score}}</span>
-                                            </div>
-                                            <div class="list_btm">
-                                                {{item.content}}
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                   <div style="padding: 16px">
+                       <div class="search_modal">
+                           <div class="search_history" v-if="searchHistoryList.length !== 0">
+                               <div class="search_history_top">
+                                   <div class="search_history_left">
+                                       <p>搜索历史</p>
+                                       <svg class="icon" aria-hidden="true" font-size="15px" @click="clearSearchList">
+                                           <use xlink:href="#icon-lajitong"></use>
+                                       </svg>
+                                   </div>
+                                   <div class="search_history_right" @click="lookAllSearchList">
+                                       查看全部
+                                   </div>
+                               </div>
+                               <ul class="search_history_btm" ref="search_history_btm">
+                                   <li v-for="(item,index) in searchHistoryList" :key="index">
+                                       {{item}}
+                                       <svg class="icon" aria-hidden="true" font-size="16px" @click="delSearchItem(index)">
+                                           <use xlink:href="#icon-del"></use>
+                                       </svg>
+                                   </li>
+                               </ul>
+                           </div>
+                           <div class="hot_search">
+                               <div class="hot_search_head">热搜榜</div>
+                               <div class="hot_search_content">
+                                   <ul class="hot_search_list">
+                                       <li v-for="(item,index) in hotList" :key="index">
+                                           <div class="hot_search_list_order" :class="index+1 <= 3 ? 'active_index' :''">{{index+1}}</div>
+                                           <div class="hot_search_list_content">
+                                               <div class="list_top">
+                                                   <span class="list_title">{{item.searchWord}}</span>
+                                                   <img :src="item.iconUrl" alt="" v-if="item.iconUrl">
+                                                   <span class="list_score">{{item.score}}</span>
+                                               </div>
+                                               <div class="list_btm">
+                                                   {{item.content}}
+                                               </div>
+                                           </div>
+                                       </li>
+                                   </ul>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                </Modal>
+                <Modal
+                        v-if="searchData"
+                        v-model="modal2"
+                        width="355"
+                        :closable="false"
+                        :footer-hide="true"
+                        :styles="{'height':'400px'}"
+                >
+
+                    <p></p>
+                    <cloud-card v-for="(value,key,index) in searchSuggest" :title="value.name"  :content="value.songs"></cloud-card>
                 </Modal>
             </div>
         </col>
@@ -114,24 +129,30 @@
 
 
     import {getHotList, getLogin, refresh, suggest, userLogout} from "../../network/cloudTop";
+    import CloudCard from "./cloudCard";
 
 
     export default {
         name: "cloudTop",
+        components: {CloudCard},
         data() {
             return {
                 phone: '',
                 pwd: '',
                 //用户信息
                 userInfo: [],
-                //搜索模态框
+                //搜索历史模态框
                 modal1: false,
+                //搜索模态框
+                modal2:false,
                 //热搜列表数据
                 hotList: [],
                 //搜索框数据
                 searchData:'',
                 //搜索历史记录
-                searchHistoryList:[]
+                searchHistoryList:[],
+                //搜索建议
+                searchSuggest: {}
             }
         },
         computed: {
@@ -278,9 +299,12 @@
             //搜索建议
             getSearchSuggest(keywords,type){
                 if (keywords){
+                    this.modal2 = true;
+                    const _this = this;
                     suggest(keywords,type).then(res => {
                         if (res.code === 200) {
                             console.log(res);
+                            _this.searchSuggest = res.result;
                         }
                     }).catch(err => {
                         console.log(err);
@@ -314,6 +338,9 @@
 
         .ivu-modal-content {
             background-color: #363636;
+            .ivu-modal-body{
+                padding: 0;
+            }
         }
 
         &::-webkit-scrollbar {
