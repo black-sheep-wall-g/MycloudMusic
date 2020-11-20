@@ -91,9 +91,9 @@
                         :footer-hide="true"
                         :styles="{'height':'400px'}"
                 >
-
-                    <p></p>
-                    <cloud-card v-for="(value,key,index) in searchSuggest" :title="value.name"  :content="value.songs"></cloud-card>
+                    <a href=""></a>
+                    <p style="color: whitesmoke;padding:5px 10px;" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果>`"></p>
+                    <cloud-card v-for="(item,index) in suggestList" :key="index" :title="item[0].title" :content="item" :search-data="searchData"></cloud-card>
                 </Modal>
             </div>
         </col>
@@ -152,7 +152,7 @@
                 //搜索历史记录
                 searchHistoryList:[],
                 //搜索建议
-                searchSuggest: {}
+                suggestList: []
             }
         },
         computed: {
@@ -303,8 +303,25 @@
                     const _this = this;
                     suggest(keywords,type).then(res => {
                         if (res.code === 200) {
-                            console.log(res);
-                            _this.searchSuggest = res.result;
+                            console.log(res)
+                            // _this.searchSuggest = res.result;
+                            let suggestList = [];
+                            for (const item in res.result) {
+                                if (item !== 'order'){
+                                    let array = [];
+                                    for (const item1 of (res.result)[item]) {
+                                        let obj = {
+                                            title : item,
+                                            id : item1.id,
+                                            content:item1.name,
+                                            artist:item !== 'albums' ? '' : item1.artist.name
+                                        }
+                                        array.push(obj);
+                                    }
+                                    suggestList.push(array);
+                                }
+                            }
+                            _this.suggestList = suggestList;
                         }
                     }).catch(err => {
                         console.log(err);
@@ -338,6 +355,8 @@
 
         .ivu-modal-content {
             background-color: #363636;
+            border-radius: 5px;
+            overflow: hidden;
             .ivu-modal-body{
                 padding: 0;
             }

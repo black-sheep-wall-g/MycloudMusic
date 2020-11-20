@@ -1,15 +1,13 @@
 <template>
-    <div style="height: 400px;">
-        <div class="search_history_card">
-            <div class="search_history_title">
-                <svg class="icon" aria-hidden="true" style="font-size: 12px;">
-                    <use xlink:href="#icon-yinle"></use>
-                </svg>
-                <p>{{title}}</p>
-            </div>
-            <div class="search_history_body">
-                <p v-for="(item,index) in content" :key="index">{{item.name}}</p>
-            </div>
+    <div class="search_history_card">
+        <div class="search_history_title">
+            <svg class="icon" aria-hidden="true" style="font-size: 12px;">
+                <use :xlink:href="'#' + iconHref"></use>
+            </svg>
+            <p>{{titleData}}</p>
+        </div>
+        <div class="search_history_body">
+            <p v-for="(item,index) in content" :key="index" v-html="item.content.replace(new RegExp(searchData, 'i'), `<span style=\'color:red\'>${(item.content.match(new RegExp(searchData, 'gi')))}</span>`)">{{}}</p>
         </div>
     </div>
 </template>
@@ -17,9 +15,46 @@
 <script>
     export default {
         name: "cloudCard",
+        data(){
+            return{
+                titleData : '',
+                iconHref : ''
+            }
+        },
         props:{
             title:String,
-            content:Array
+            content:Array,
+            searchData:String
+        },
+        methods:{
+            updateTitle(){
+                switch(this.title) {
+                    case 'albums':
+                        this.titleData = '专辑';
+                        this.iconHref = 'icon-changpian';
+                        break
+                    case 'artists':
+                        this.titleData = '歌手';
+                        this.iconHref = 'icon-renwu';
+                        break
+                    case 'songs':
+                        this.titleData = '单曲';
+                        this.iconHref = 'icon-yinle';
+                        break
+                    case 'playlists':
+                        this.titleData = '歌单';
+                        this.iconHref = 'icon-gedan';
+                        break
+                }
+                // searchData
+            }
+        },
+        created() {
+            console.log(this.title);
+            this.updateTitle();
+        },
+        updated() {
+            this.updateTitle();
         }
     }
 </script>
@@ -29,12 +64,12 @@
         color: whitesmoke;
 
         .search_history_title {
-            background-color: salmon;
+            background-color: #515a6e;
             display: flex;
             padding: 2px 0;
 
             svg {
-                margin: auto 5px auto 10px;
+                margin: 4px 5px 0 10px;
             }
 
             p {
