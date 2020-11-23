@@ -7,7 +7,8 @@
             <p>{{titleData}}</p>
         </div>
         <div class="search_history_body">
-            <p v-for="(item,index) in content" :key="index" v-html="item.content.replace(new RegExp(searchData, 'i'), `<span style=\'color:red\'>${(item.content.match(new RegExp(searchData, 'gi')))}</span>`)">{{}}</p>
+            <!--正则搜索显示高亮不区分大小写-->
+            <p v-for="(item,index) in content" :key="index" v-html="item.content.replace(new RegExp('('+searchData.replace(/([\+\.\*\|\?\-\(\[\^\$])/g,'\\$1' ).replace(/\s+/g,'|')+')' ,'igm'),'<span style=\'color: #cc4a4a;\' class=\'highlight\'>$1</span>')"></p>
         </div>
     </div>
 </template>
@@ -46,11 +47,9 @@
                         this.iconHref = 'icon-gedan';
                         break
                 }
-                // searchData
             }
         },
         created() {
-            console.log(this.title);
             this.updateTitle();
         },
         updated() {
@@ -62,6 +61,7 @@
 <style scoped lang="less">
     .search_history_card {
         color: whitesmoke;
+        cursor:pointer;
 
         .search_history_title {
             background-color: #515a6e;
@@ -81,6 +81,9 @@
 
             p {
                 padding: 4px 0;
+                overflow:hidden;
+                white-space:nowrap;
+                text-overflow: ellipsis;
             }
         }
     }

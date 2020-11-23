@@ -64,8 +64,8 @@
                                <div class="hot_search_head">热搜榜</div>
                                <div class="hot_search_content">
                                    <ul class="hot_search_list">
-                                       <li v-for="(item,index) in hotList" :key="index">
-                                           <div class="hot_search_list_order" :class="index+1 <= 3 ? 'active_index' :''">{{index+1}}</div>
+                                       <li v-for="(item,index) in hotList" :key="index" @click="hotListSongs(item)">
+                                           <div class="hot_search_list_order" :class="index + 1 <= 3 ? 'active_index' :''">{{index+1}}</div>
                                            <div class="hot_search_list_content">
                                                <div class="list_top">
                                                    <span class="list_title">{{item.searchWord}}</span>
@@ -327,6 +327,10 @@
                         console.log(err);
                     })
                 }
+            },
+            //点击热搜歌曲
+            hotListSongs(item){
+                console.log(item)
             }
         },
         created() {
@@ -505,6 +509,7 @@
                         list-style: none;
                         display: flex;
                         margin: 15px 0;
+                        cursor:pointer;
 
                         .hot_search_list_order {
                             padding: 10px 0;
