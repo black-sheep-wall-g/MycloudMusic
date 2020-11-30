@@ -8,7 +8,7 @@
         </div>
         <div class="search_history_body">
             <!--正则搜索显示高亮不区分大小写-->
-            <p v-for="(item,index) in content" :key="index" v-html="item.content.replace(new RegExp('('+searchData.replace(/([\+\.\*\|\?\-\(\[\^\$])/g,'\\$1' ).replace(/\s+/g,'|')+')' ,'igm'),'<span style=\'color: #cc4a4a;\' class=\'highlight\'>$1</span>')"></p>
+            <p v-for="(item,index) in content" :key="index" v-html="(item.artist === '' ? item.content : (item.content + ' - ' + item.artist)).replace(new RegExp('('+searchData.replace(/([\+\.\*\|\?\-\(\[\^\$])/g,'\\$1' ).replace(/\s+/g,'|')+')' ,'igm'),'<span style=\'color: #cc4a4a;\' class=\'highlight\'>$1</span>')"></p>
         </div>
     </div>
 </template>
@@ -30,17 +30,17 @@
         methods:{
             updateTitle(){
                 switch(this.title) {
-                    case 'albums':
-                        this.titleData = '专辑';
-                        this.iconHref = 'icon-changpian';
+                    case 'songs':
+                        this.titleData = '单曲';
+                        this.iconHref = 'icon-yinle';
                         break
                     case 'artists':
                         this.titleData = '歌手';
                         this.iconHref = 'icon-renwu';
                         break
-                    case 'songs':
-                        this.titleData = '单曲';
-                        this.iconHref = 'icon-yinle';
+                    case 'albums':
+                        this.titleData = '专辑';
+                        this.iconHref = 'icon-changpian';
                         break
                     case 'playlists':
                         this.titleData = '歌单';

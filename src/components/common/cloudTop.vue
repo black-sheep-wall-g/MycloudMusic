@@ -22,11 +22,13 @@
                 </div>
                 <Input style="width: 250px"
                        placeholder="搜索音乐，视频，歌词，电台"
-                       suffix="ios-search"
+                       icon="ios-search"
                        v-model="searchData"
                        @on-enter="search"
                        @on-change="getSearchSuggest(searchData)"
-                       @on-focus="modal1 = true"/>
+                       @on-focus="modal1 = modal2 = true"
+                       @on-click="search"
+                />
                 <Modal
                         v-model="modal1"
                         :closable="false"
@@ -91,8 +93,7 @@
                         :footer-hide="true"
                         :styles="{'height':'400px'}"
                 >
-                    <a href=""></a>
-                    <p style="color: whitesmoke;padding:5px 10px;" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果>`"></p>
+                    <p class="search_about" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果 >`"></p>
                     <cloud-card v-for="(item,index) in suggestList" :key="index" :title="item[0].title" :content="item" :search-data="searchData"></cloud-card>
                 </Modal>
             </div>
@@ -128,7 +129,7 @@
 <script>
 
 
-    import {getHotList, getLogin, refresh, suggest, userLogout} from "../../network/cloudTop";
+    import {getHotList, getLogin, getSearch, refresh, suggest, userLogout} from "../../network/cloudTop";
     import CloudCard from "./cloudCard";
 
 
@@ -263,13 +264,20 @@
             //搜索框搜索功能
             search(){
                 //去空格
-                this.searchData = this.searchData.trim()
+                this.searchData = this.searchData.trim();
                 if (this.searchData !== ''){
-                    this.$store.commit('setSearchData', this.searchData)
-                    this.searchHistoryList = this.searchHistory()
+                    this.$store.commit('setSearchData', this.searchData);
+                    this.searchHistoryList = this.searchHistory();
                 }
                 // 关闭模态框
-                this.$Modal.remove()
+                this.$Modal.remove();
+                getSearch(this.searchData).then(res => {
+                    if (res.code === 200) {
+                        console.log(res)
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
             },
             //赋值本地历史数据
             assignLocalStorage(){
@@ -303,23 +311,23 @@
                     const _this = this;
                     suggest(keywords,type).then(res => {
                         if (res.code === 200) {
-                            console.log(res)
                             // _this.searchSuggest = res.result;
+                            delete (res.result['order']);
                             let suggestList = [];
+                            console.log(res.result);
                             for (const item in res.result) {
-                                if (item !== 'order'){
-                                    let array = [];
-                                    for (const item1 of (res.result)[item]) {
-                                        let obj = {
-                                            title : item,
-                                            id : item1.id,
-                                            content:item1.name,
-                                            artist:item !== 'albums' ? '' : item1.artist.name
-                                        }
-                                        array.push(obj);
+                                let array = [];
+                                for (const item1 of (res.result)[item]) {
+                                    console.log(item1)
+                                    let obj = {
+                                        title : item,
+                                        id : item1.id,
+                                        content:item1.name,
+                                        artist:item !== 'albums' ? '' : item1.artist.name
                                     }
-                                    suggestList.push(array);
+                                    array.push(obj);
                                 }
+                                suggestList.push(array);
                             }
                             _this.suggestList = suggestList;
                         }
@@ -399,6 +407,15 @@
     .nav_center {
         display: flex;
         align-items: center;
+    }
+
+    .search_about{
+        color: #7b7b7b;
+        padding:5px 10px;
+        cursor:pointer;
+        &:hover{
+            color: #b8b8b8;
+        }
     }
 
     .nav_go {
