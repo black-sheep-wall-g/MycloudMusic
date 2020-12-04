@@ -10,6 +10,18 @@
                 <ListItem>下载管理</ListItem>
                 <ListItem>我的音乐云盘</ListItem>
                 <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
+                <ListItem>我的收藏</ListItem>
             </List>
         </div>
     </div>

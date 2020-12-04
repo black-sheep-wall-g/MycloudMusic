@@ -10,12 +10,12 @@
             <div class="nav_center">
                 <div class="nav_go">
                     <span>
-                         <svg class="icon index_cloud_icon" aria-hidden="true">
+                         <svg class="icon index_cloud_icon" aria-hidden="true" @click="back()">
                             <use xlink:href="#icon-mjiantou-copy"></use>
                          </svg>
                     </span>
                     <span>
-                        <svg class="icon index_cloud_icon" aria-hidden="true">
+                        <svg class="icon index_cloud_icon" aria-hidden="true" @click="go_forward()">
                             <use xlink:href="#icon-arrow-l"></use>
                         </svg>
                     </span>
@@ -153,7 +153,11 @@
                 //搜索历史记录
                 searchHistoryList:[],
                 //搜索建议
-                suggestList: []
+                suggestList: [],
+                //网页更新次数
+                address: 0,
+                //是否点击后退按钮
+                bcakFlag: false
             }
         },
         computed: {
@@ -271,6 +275,9 @@
                 }
                 // 关闭模态框
                 this.$Modal.remove();
+                //跳转到搜索结果页
+                this.$router.push({path:'/SearchResult',query: {searchResult:this.searchData}})
+                //获取搜索完成后列表并跳转页面
                 getSearch(this.searchData).then(res => {
                     if (res.code === 200) {
                         console.log(res)
@@ -311,14 +318,11 @@
                     const _this = this;
                     suggest(keywords,type).then(res => {
                         if (res.code === 200) {
-                            // _this.searchSuggest = res.result;
                             delete (res.result['order']);
                             let suggestList = [];
-                            console.log(res.result);
                             for (const item in res.result) {
                                 let array = [];
                                 for (const item1 of (res.result)[item]) {
-                                    console.log(item1)
                                     let obj = {
                                         title : item,
                                         id : item1.id,
@@ -339,6 +343,29 @@
             //点击热搜歌曲
             hotListSongs(item){
                 console.log(item)
+            },
+            //返回上一个页面
+            back(){
+                this.bcakFlag = true;
+                this.address--;
+                console.log(this.address)
+                this.address < 0 ? this.$router.go(0) : this.$router.go(-1);
+                console.log(this.$router)
+            },
+            //前进页面
+            go_forward(){
+                this.$router.go(1);
+            }
+        },
+        watch:{
+            // 监听路由跳转。
+            $route(newRoute, oldRoute) {
+                console.log('watch', newRoute, oldRoute)
+                if (this.bcakFlag){
+                    this.bcakFlag = false
+                }else {
+                    this.address++;
+                }
             }
         },
         created() {

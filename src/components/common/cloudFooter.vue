@@ -111,7 +111,7 @@
         .audio_progress{
             display: flex;
             justify-content: center;
-            align-items: end;
+            align-items: flex-end;
             .audio_article_start {
                 padding: 7px 10px 0 0;
             }
