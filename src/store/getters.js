@@ -24,5 +24,9 @@ export default {
             }
         }
         return state.token
+    },
+    //获取搜索结果信息
+    getSearchResult: state => {
+        return state.searchResult;
     }
 }

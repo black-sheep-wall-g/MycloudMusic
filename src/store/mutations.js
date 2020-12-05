@@ -29,12 +29,14 @@ export default{
     },
     //储存搜索历史数据
     setSearchData(state,searchData){
-        console.log(searchData)
         state.searchDataList.push(searchData)
         state.searchDataList = state.searchDataList.filter((item,index,arr) => {
             return arr.indexOf(item) === index
         })
-        console.log(state.searchDataList)
         localStorage.setItem('searchData',state.searchDataList)
+    },
+    //存储搜索结果信息
+    setSearchResult(state,searchResult){
+        state.searchResult = searchResult;
     }
 }

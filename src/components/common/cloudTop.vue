@@ -28,6 +28,7 @@
                        @on-change="getSearchSuggest(searchData)"
                        @on-focus="modal1 = modal2 = true"
                        @on-click="search"
+                       ref="aaa"
                 />
                 <Modal
                         v-model="modal1"
@@ -272,19 +273,20 @@
                 if (this.searchData !== ''){
                     this.$store.commit('setSearchData', this.searchData);
                     this.searchHistoryList = this.searchHistory();
+                    // 关闭模态框
+                    this.modal2 = false;
+                    //跳转到搜索结果页
+                    this.$router.push({path:'/SearchResult',query: {searchResult:this.searchData}})
+                    //获取搜索完成后列表并跳转页面
+                    getSearch(this.searchData).then(res => {
+                        if (res.code === 200) {
+                            // console.log(res)
+                            this.$store.commit('setSearchResult', res);
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
                 }
-                // 关闭模态框
-                this.$Modal.remove();
-                //跳转到搜索结果页
-                this.$router.push({path:'/SearchResult',query: {searchResult:this.searchData}})
-                //获取搜索完成后列表并跳转页面
-                getSearch(this.searchData).then(res => {
-                    if (res.code === 200) {
-                        console.log(res)
-                    }
-                }).catch(err => {
-                    console.log(err);
-                })
             },
             //赋值本地历史数据
             assignLocalStorage(){
@@ -348,9 +350,7 @@
             back(){
                 this.bcakFlag = true;
                 this.address--;
-                console.log(this.address)
-                this.address < 0 ? this.$router.go(0) : this.$router.go(-1);
-                console.log(this.$router)
+                this.address < 0 ? (this.address = 0) : this.$router.go(-1);
             },
             //前进页面
             go_forward(){
@@ -360,7 +360,7 @@
         watch:{
             // 监听路由跳转。
             $route(newRoute, oldRoute) {
-                console.log('watch', newRoute, oldRoute)
+                // console.log('watch', newRoute, oldRoute)
                 if (this.bcakFlag){
                     this.bcakFlag = false
                 }else {
