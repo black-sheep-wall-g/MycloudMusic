@@ -55,7 +55,7 @@
                                    </div>
                                </div>
                                <ul class="search_history_btm" ref="search_history_btm">
-                                   <li v-for="(item,index) in searchHistoryList" :key="index">
+                                   <li v-for="(item,index) in searchHistoryList" :key="index" @click="searHistory(item)">
                                        {{item}}
                                        <svg class="icon" aria-hidden="true" font-size="16px" @click="delSearchItem(index)">
                                            <use xlink:href="#icon-del"></use>
@@ -96,6 +96,15 @@
                 >
                     <p class="search_about" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果 >`"></p>
                     <cloud-card v-for="(item,index) in suggestList" :key="index" :title="item[0].title" :content="item" :search-data="searchData"></cloud-card>
+                </Modal>
+                <Modal v-model="modalDelete" width="350">
+                    <div style="text-align:center;height: 100px;line-height: 100px;font-size: 18px;color: orangered">
+                        <Icon type="ios-information-circle"></Icon>
+                        <span>是否删除全部搜索记录</span>
+                    </div>
+                    <div slot="footer">
+                        <Button type="error" size="large" long :loading="modal_loading" @click="del">Delete</Button>
+                    </div>
                 </Modal>
             </div>
         </col>
@@ -158,7 +167,11 @@
                 //网页更新次数
                 address: 0,
                 //是否点击后退按钮
-                bcakFlag: false
+                bcakFlag: false,
+                //删除全部历史记录模态框
+                modalDelete:false,
+                //记载状态模态框
+                modal_loading: false
             }
         },
         computed: {
@@ -280,7 +293,7 @@
                     //获取搜索完成后列表并跳转页面
                     getSearch(this.searchData).then(res => {
                         if (res.code === 200) {
-                            // console.log(res)
+                            console.log(res.result.songs)
                             this.$store.commit('setSearchResult', res);
                         }
                     }).catch(err => {
@@ -297,17 +310,33 @@
                     this.$store.state.searchDataList = [];
                 }
             },
+            //点击搜素历史进行搜索
+            searHistory(item){
+                this.searchData = item;
+                this.search()
+            },
             //点击删除搜索历史记录
             delSearchItem(index){
                 this.searchHistoryList.splice(index,1);
                 localStorage.setItem('searchData',this.searchHistoryList);
                 this.assignLocalStorage();
             },
-            //清空搜索历史记录
+            //是否清空搜索历史记录
             clearSearchList(){
-                this.searchHistoryList = [];
-                localStorage.removeItem('searchData');
-                this.assignLocalStorage();
+                this.modalDelete = true;
+
+            },
+            //清空搜索历史记录
+            del () {
+                this.modal_loading = true;
+                setTimeout(() => {
+                    this.searchHistoryList = [];
+                    localStorage.removeItem('searchData');
+                    this.assignLocalStorage();
+                    this.modal_loading = false;
+                    this.modalDelete = false;
+                    this.$Message.success('删除成功');
+                }, 200);
             },
             //点击查看全部搜索历史记录
             lookAllSearchList(){
