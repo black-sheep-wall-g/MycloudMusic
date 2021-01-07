@@ -26,7 +26,7 @@
                        v-model="searchData"
                        @on-enter="search"
                        @on-change="getSearchSuggest(searchData)"
-                       @on-focus="modal1 = modal2 = true"
+                       @on-focus="[modal1 = modal2 = true,getSearchSuggest(searchData)]"
                        @on-click="search"
                        ref="aaa"
                 />
@@ -293,7 +293,6 @@
                     //获取搜索完成后列表并跳转页面
                     getSearch(this.searchData).then(res => {
                         if (res.code === 200) {
-                            console.log(res.result.songs)
                             this.$store.commit('setSearchResult', res);
                         }
                     }).catch(err => {

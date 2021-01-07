@@ -1,27 +1,26 @@
 <template>
     <div class="cloudSearchResult">
-        <p>找到{{searchResult !== '' ? searchResult.result.songCount : '无'}}首单曲</p>
+        <p>找到{{searchResult !== {} ? searchResult.songCount : '无'}}首单曲</p>
         <Tabs size="small">
-            <TabPane label="单曲">单曲</TabPane>
-            <TabPane label="歌手">歌手</TabPane>
-            <TabPane label="专辑">专辑</TabPane>
-            <TabPane label="视频">视频</TabPane>
-            <TabPane label="歌单">歌单</TabPane>
-            <TabPane label="歌词">歌词</TabPane>
-            <TabPane label="主播电台">主播电台</TabPane>
-            <TabPane label="用户">用户</TabPane>
+            <TabPane :label="item" v-for="(item,index) in tabMenus" :key="index">
+                <search-result-songs-list v-if="index === 0" :searchResult="searchResult"/>
+            </TabPane>
         </Tabs>
     </div>
 </template>
 
 <script>
     import {mapGetters} from "vuex";
+    import SearchResultSongsList from "./children/searchResultSongsList";
 
     export default {
         name: "cloudSearchResultContent",
+        components: {SearchResultSongsList},
         data(){
             return{
-                searchResult: ''
+                //搜索返回数据
+                searchResult: {},
+                tabMenus:['单曲','歌手','专辑','视频','歌单','歌词','主播电台','用户']
             }
         },
         methods:{
@@ -33,8 +32,7 @@
         watch:{
             //监听搜索查询数据并且赋值
             getSearchResult(newResult) { //li就是改变后的wifiList值
-                this.searchResult = newResult;
-                console.log("改变", this.searchResult);
+                this.searchResult = newResult.result;
             }
         }
     }
@@ -43,5 +41,8 @@
 <style scoped type="less">
     /deep/ .ivu-tabs-nav-scroll{
         width: 800px;
+    }
+    .cloudSearchResult{
+        width: 820px;
     }
 </style>
