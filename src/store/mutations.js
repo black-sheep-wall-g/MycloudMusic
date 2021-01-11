@@ -29,7 +29,7 @@ export default{
     },
     //储存搜索历史数据
     setSearchData(state,searchData){
-        state.searchDataList.push(searchData)
+        state.searchDataList.unshift(searchData)
         state.searchDataList = state.searchDataList.filter((item,index,arr) => {
             return arr.indexOf(item) === index
         })

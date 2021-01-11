@@ -11,7 +11,7 @@ export default new Vuex.Store({
     userInfo:null, //用户信息
     token:null,//用户token
     searchDataList:[], //搜索历史
-    searchResult:{}//搜索结果数据
+    searchResult:{},//搜索结果数据
   },
   getters,
   mutations,

@@ -1,5 +1,5 @@
 <template>
-    <Table stripe :columns="columns" :data="dataList" width="820">
+    <Table stripe :columns="columns" :data="dataList" width="820" height="487">
         <template slot-scope="{ row, index }" slot="name">
             <span class="ivu-table-cell-tooltip-content">
                 <span>{{'0'+(index+1)}}</span>
@@ -9,7 +9,14 @@
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-46"></use>
                 </svg>
-                <span>{{ row.name }}</span>
+                <Tooltip :content="row.name" max-width="350">
+                    <span class="nameStyle">{{ row.name }}</span>
+                </Tooltip>
+            </span>
+        </template>
+        <template slot-scope="{ row, index }" slot="heat">
+            <span class="songsHeat">
+                <span class="songsHeatInline" :style="{width:row.heat + '%'}"></span>
             </span>
         </template>
     </Table>
@@ -26,8 +33,7 @@
                         title: '音乐标题',
                         key: 'name',
                         slot: "name",
-                        width: 350,
-                        tooltip: true
+                        width: 344
                     },
                     {
                         title: '歌手',
@@ -49,6 +55,7 @@
                     {
                         title: '热度',
                         key: 'heat',
+                        slot: "heat",
                         width: 120
                     }
                 ],
@@ -70,7 +77,6 @@
         methods: {
             init() {
                 this.songsList = this.searchResult;
-                console.log(this.songsList);
             },
             getSongs() {
                 this.dataList = this.songsList.songs.map(item => {
@@ -88,6 +94,35 @@
     }
 </script>
 
-<style scoped type="less">
-
+<style scoped lang="less">
+    /deep/ .ivu-table-body {
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: darkcyan;
+        }
+    }
+    .nameStyle{
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 250px;
+    }
+    .songsHeat{
+        display: inline-block;
+        width: 80px;
+        height: 5px;
+        border-radius: 3px;
+        background-color: aliceblue;
+        .songsHeatInline{
+            float: left;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            background-color: lavender;
+        }
+    }
 </style>

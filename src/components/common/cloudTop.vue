@@ -57,7 +57,7 @@
                                <ul class="search_history_btm" ref="search_history_btm">
                                    <li v-for="(item,index) in searchHistoryList" :key="index" @click="searHistory(item)">
                                        {{item}}
-                                       <svg class="icon" aria-hidden="true" font-size="16px" @click="delSearchItem(index)">
+                                       <svg class="icon" aria-hidden="true" font-size="16px" @click.stop="delSearchItem(index)">
                                            <use xlink:href="#icon-del"></use>
                                        </svg>
                                    </li>
@@ -289,7 +289,7 @@
                     // 关闭模态框
                     this.modal2 = false;
                     //跳转到搜索结果页
-                    this.$router.push({path:'/SearchResult',query: {searchResult:this.searchData}})
+                    this.$router.push({path:'/SearchResult'})
                     //获取搜索完成后列表并跳转页面
                     getSearch(this.searchData).then(res => {
                         if (res.code === 200) {

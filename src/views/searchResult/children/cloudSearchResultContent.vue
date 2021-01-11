@@ -38,7 +38,10 @@
     }
 </script>
 
-<style scoped type="less">
+<style scoped lang="less">
+    /deep/ .ivu-tabs-bar{
+        margin-bottom:unset;
+    }
     /deep/ .ivu-tabs-nav-scroll{
         width: 800px;
     }
