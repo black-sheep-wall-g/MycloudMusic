@@ -13,10 +13,10 @@ import "./assets/css/normalize.css";
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/css/swiper.css'
 
+Vue.config.productionTip = false
+
 Vue.use(VueAwesomeSwiper);
 Vue.use(ViewUI);
-
-Vue.config.productionTip = false
 
 new Vue({
   router,

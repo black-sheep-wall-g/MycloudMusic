@@ -289,7 +289,7 @@
                     // 关闭模态框
                     this.modal2 = false;
                     //跳转到搜索结果页
-                    this.$router.push({path:'/SearchResult'})
+                    this.$router.push({path:'/SearchResult',params:this.searchData})
                     //获取搜索完成后列表并跳转页面
                     getSearch(this.searchData).then(res => {
                         if (res.code === 200) {

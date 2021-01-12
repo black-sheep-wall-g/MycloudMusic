@@ -38,5 +38,9 @@ export default{
     //存储搜索结果信息
     setSearchResult(state,searchResult){
         state.searchResult = searchResult;
+    },
+    //保存歌曲id
+    setSongsId(state,id){
+        state.songsId = id;
     }
 }

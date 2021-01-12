@@ -1,5 +1,5 @@
 <template>
-    <Table stripe :columns="columns" :data="dataList" width="820" height="487">
+    <Table stripe :columns="columns" :data="dataList" width="820" height="487" @on-row-dblclick="playMusic">
         <template slot-scope="{ row, index }" slot="name">
             <span class="ivu-table-cell-tooltip-content">
                 <span>{{'0'+(index+1)}}</span>
@@ -89,6 +89,9 @@
                         id: item.id
                     };
                 })
+            },
+            playMusic(e,i){
+                this.$store.commit('setSongsId', e.id);
             }
         }
     }

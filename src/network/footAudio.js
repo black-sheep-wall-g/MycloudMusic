@@ -7,3 +7,12 @@ export function getMusicUrl(id) {
         }
     }).catch(err => err);
 }
+//获取音乐详情
+export function getMusicDetail(ids) {
+    return axios({
+        url: "/song/detail",
+        params:{
+            ids
+        }
+    }).catch(err => err);
+}

@@ -1,15 +1,15 @@
 <template>
     <Footer class="layout_footer_audio">
         <Row>
-            <audio ref="musicAudio" src="http://m7.music.126.net/20210111152956/699549d3bf6acff97c2eb8afb5742e01/ymusic/0fd6/4f65/43ed/a8772889f38dfcb91c04da915b301617.mp3"></audio>
+            <audio ref="musicAudio" :src="songsObj.url"></audio>
             <Col span="6" class="footer_left">
                 <div class="audio_left">
                     <div class="audio_thumbnail">
-                        <img src="~assets/img/sl3.jpg" alt="">
+                        <img :src="songsUrl" alt="">
                     </div>
                     <div class="audio_song_info">
-                        <div class="audio_song_name">sonder</div>
-                        <div class="audio_song_author">司南</div>
+                        <div class="audio_song_name">{{songsName}}</div>
+                        <div class="audio_song_author">{{songsSinger}}</div>
                     </div>
                     <div class="audio_like">
                         <svg class="icon footer_left_icon" aria-hidden="true">
@@ -28,8 +28,11 @@
                             <svg class="icon index_footer_icon" aria-hidden="true">
                                 <use xlink:href="#icon-shangyishou1"></use>
                             </svg>
-                            <svg class="icon index_footer_icon" aria-hidden="true" @click="playMusic">
+                            <svg v-if="songsState" class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
                                 <use xlink:href="#icon-zanting1"></use>
+                            </svg>
+                            <svg v-else class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
+                                <use xlink:href="#icon-bofang"></use>
                             </svg>
                             <svg class="icon index_footer_icon" aria-hidden="true">
                                 <use xlink:href="#icon-xiayishou1"></use>
@@ -42,17 +45,20 @@
                     <div class="audio_progress">
                         <label class="audio_article_start">0.0</label>
                         <Slider class="audio_article"></Slider>
-                        <label class="audio_article_end">3.41</label>
+                        <label class="audio_article_end">{{songsTime}}</label>
                     </div>
                 </div>
             </Col>
             <Col span="6">
                 <div class="audio_foot_right">
                     <div class="audio_volume">
-                        <svg class="icon" aria-hidden="true">
+                        <svg v-if="volumeState" class="icon" aria-hidden="true" @click="setVolumeState">
                             <use xlink:href="#icon-yinliang3"></use>
                         </svg>
-                        <Slider @input="volume_change" v-model="volume_point"></Slider>
+                        <svg v-else class="icon" aria-hidden="true" @click="setVolumeState">
+                            <use xlink:href="#icon-jingyin"></use>
+                        </svg>
+                        <Slider @input="volume_change" @on-change="volume_end" v-model="volume_point"></Slider>
                     </div>
                 </div>
             </Col>
@@ -61,22 +67,122 @@
 </template>
 
 <script>
+    import {getMusicDetail, getMusicUrl} from "../../network/footAudio";
+
     export default {
         name: "cloudFooter",
         data(){
             return{
-                volume_point:0
+                //音量
+                volume_point:0,
+                //歌曲url详情对象
+                songsObj:{},
+                //歌曲状态
+                songsState:true,
+                //歌曲详情
+                songsDetail:{},
+                //歌曲实时播放时间
+                songsRealTime:'',
+                //歌曲总时长
+                songsTime:'',
+                //歌曲名称
+                songsName:'',
+                //歌曲演唱者
+                songsSinger:'',
+                //歌曲图片
+                songsUrl:'',
+                //音量状态
+                volumeState:true,
+            }
+        },
+        computed:{
+            songsId(){
+                return this.$store.state.songsId;
+            }
+        },
+        watch:{
+            songsId:{
+                deep:true,
+                handler(value) {
+                    //获取音乐url
+                    this.getMusicUrl(value);
+                    //获取音乐detail
+                    this.getMusicDetail(value);
+                }
             }
         },
         methods:{
+            //双击播放
             playMusic(){
                 this.$refs.musicAudio.play();
-                console.log(this.$refs.musicAudio);
+                this.songsState = true;
             },
+            //播放控制
+            controlMusic(){
+                if (this.songsState){
+                    //暂停歌曲
+                    this.$refs.musicAudio.pause();
+                    this.songsState = false;
+                }else {
+                    this.$refs.musicAudio.play();
+                    this.songsState = true;
+                }
+            },
+            //音量设置
             volume_change(){
                 this.$refs.musicAudio.volume = this.volume_point/100;
-                localStorage.setItem('volume',this.volume_point);
+                this.volumeState = this.volume_point !== 0;
+            },
+            volume_end(){
+                if (this.volume_point !== 0){
+                    localStorage.setItem('volume',this.volume_point);
+                }
+            },
+            //获取音乐url
+            getMusicUrl(id){
+                getMusicUrl(id).then(res => {
+                    if (res.code === 200) {
+                        this.songsObj = res.data[0];
+                        setTimeout(()=>{
+                            this.playMusic();
+                        },100)
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            //获取音乐详情
+            getMusicDetail(ids){
+                getMusicDetail(ids).then(res => {
+                    if (res.code === 200) {
+                        debugger;
+                        console.log(res);
+                        this.songsDetail = res.songs[0]
+                        this.drawingMusicDetail(this.songsDetail);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            //渲染歌曲头像及名称歌手
+            drawingMusicDetail(item){
+                let time = item.dt
+                this.songsTime = Math.floor((time % 3600000) / 60000) + ':' + Math.floor((time % 60000) / 1000);
+                this.songsName = item.name;
+                this.songsSinger = item.ar[0].name;
+                this.songsUrl = item.al.picUrl;
+            },
+            //音量状态
+            setVolumeState(){
+                this.volumeState = !this.volumeState;
+                if (this.volumeState){
+                    this.volume_point = Number(localStorage.getItem('volume'));
+                    this.$refs.musicAudio.volume = this.volume_point/100;
+                }else {
+                    this.volume_point = this.$refs.musicAudio.volume = 0;
+                }
             }
+
         },
         created() {
             this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
@@ -142,12 +248,14 @@
             align-items: flex-end;
             .audio_article_start {
                 padding: 7px 10px 0 0;
+                margin-bottom: 7px;
             }
             .audio_article{
                 width: 395px;
             }
             .audio_article_end{
                 padding: 7px 0 0 10px;
+                margin-bottom: 7px;
             }
         }
     }
