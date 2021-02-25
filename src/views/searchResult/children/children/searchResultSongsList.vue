@@ -1,6 +1,6 @@
 <template>
-    <Table stripe :columns="columns" :data="dataList" width="820" height="487" @on-row-dblclick="playMusic">
-        <template slot-scope="{ row, index }" slot="name">
+  <Table stripe :columns="columns" :data="dataList" width="820" height="487" @on-row-dblclick="playMusic">
+    <template slot-scope="{ row, index }" slot="name">
             <span class="ivu-table-cell-tooltip-content">
                 <span>{{'0'+(index+1)}}</span>
                 <svg class="icon" aria-hidden="true">
@@ -13,13 +13,13 @@
                     <span class="nameStyle">{{ row.name }}</span>
                 </Tooltip>
             </span>
-        </template>
-        <template slot-scope="{ row, index }" slot="heat">
+    </template>
+    <template slot-scope="{ row, index }" slot="heat">
             <span class="songsHeat">
                 <span class="songsHeatInline" :style="{width:row.heat + '%'}"></span>
             </span>
-        </template>
-    </Table>
+    </template>
+  </Table>
 </template>
 
 <script>
@@ -90,7 +90,7 @@
                     };
                 })
             },
-            playMusic(e,i){
+            playMusic(e, i) {
                 this.$store.commit('setSongsId', e.id);
             }
         }
@@ -98,34 +98,38 @@
 </script>
 
 <style scoped lang="less">
-    /deep/ .ivu-table-body {
-        &::-webkit-scrollbar {
-            width: 4px;
-        }
-        &::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            background: darkcyan;
-        }
+  /deep/ .ivu-table-body {
+    &::-webkit-scrollbar {
+      width: 4px;
     }
-    .nameStyle{
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 250px;
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: darkcyan;
     }
-    .songsHeat{
-        display: inline-block;
-        width: 80px;
-        height: 5px;
-        border-radius: 3px;
-        background-color: aliceblue;
-        .songsHeatInline{
-            float: left;
-            display: inline-block;
-            width: 100%;
-            height: 100%;
-            border-radius: 6px;
-            background-color: lavender;
-        }
+  }
+
+  .nameStyle {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+  }
+
+  .songsHeat {
+    display: inline-block;
+    width: 80px;
+    height: 5px;
+    border-radius: 3px;
+    background-color: aliceblue;
+
+    .songsHeatInline {
+      float: left;
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      background-color: lavender;
     }
+  }
 </style>
