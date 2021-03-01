@@ -39,6 +39,7 @@
                         :footer-hide="true"
                         :transfer="false"
                         v-if="!searchData"
+                        class-name="hotList"
                 >
                    <div style="padding: 16px">
                        <div class="search_modal">
@@ -93,11 +94,12 @@
                         :closable="false"
                         :footer-hide="true"
                         :styles="{'height':'400px'}"
+                        class-name="hotList"
                 >
                     <p class="search_about" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果 >`"></p>
                     <cloud-card v-for="(item,index) in suggestList" :key="index" :title="item[0].title" :content="item" :search-data="searchData"></cloud-card>
                 </Modal>
-                <Modal v-model="modalDelete" width="350">
+                <Modal class-name="hotList" v-model="modalDelete" width="350">
                     <div style="text-align:center;height: 100px;line-height: 100px;font-size: 18px;color: orangered">
                         <Icon type="ios-information-circle"></Icon>
                         <span>是否删除全部搜索记录</span>
@@ -114,6 +116,16 @@
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
                     <p>未登录</p>
                     <Icon type="ios-arrow-down"></Icon>
+                    <Modal v-model="toLoginModel" width="350" class-name="login_modal" @on-visible-change="closeLoginModel">
+                        <div style="text-align: center;margin-top: 76px">
+                            <div style="font-size: 28px;">扫码登录</div>
+                            <div>
+                                <img width="180" height="180" :src="qrimg" alt="">
+                                <div>使用<a>网易云音乐APP</a>扫码登录</div>
+                            </div>
+                            <div>选择其他登录模式</div>
+                        </div>
+                    </Modal>
                 </div>
                 <div v-else>
                     <Avatar :src="userInfo.profile.avatarUrl"/>
@@ -139,7 +151,17 @@
 <script>
 
 
-    import {getHotList, getLogin, getSearch, refresh, suggest, userLogout} from "../../network/cloudTop";
+    import {
+        getHotList,
+        getLogin,
+        getQrKeyLogin,
+        getQrLogin,
+        getQrState,
+        getSearch, getUserStatus,
+        refresh,
+        suggest,
+        userLogout
+    } from "../../network/cloudTop";
     import CloudCard from "./cloudCard";
 
 
@@ -171,7 +193,13 @@
                 //删除全部历史记录模态框
                 modalDelete:false,
                 //记载状态模态框
-                modal_loading: false
+                modal_loading: false,
+                //登录模态框
+                toLoginModel: false,
+                //二维码key
+                qrKey:'',
+                //二维码图片base64编码
+                qrimg:''
             }
         },
         computed: {
@@ -190,51 +218,71 @@
             },
             // 用户登录操作
             toLogin() {
+                this.toLoginModel = true;
                 const _this = this;
-                this.$Modal.confirm({
-                    render: (h) => {
-                        return h('div', [
-                            h('Input', {
-                                props: {
-                                    autofocus: true,
-                                    placeholder: '请输入电话号码'
-                                },
-                                style: {
-                                    margin: '0 0 15px 0'
-                                },
-                                on: {
-                                    input: (val) => {
-                                        this.phone = val;
-                                    }
-                                }
-                            }),
-                            h('Input', {
-                                props: {
-                                    value: _this.pwd,
-                                    autofocus: true,
-                                    placeholder: '请输入密码',
-                                    type: "password",
-                                    password: true
-                                },
-                                on: {
-                                    input: (val) => {
-                                        this.pwd = val;
-                                    },
-                                    'on-keyup': function (enter) {
-                                        if (enter.keyCode === 13) {
-                                            _this.indexLogin()
-                                            _this.$Modal.remove()
-                                        }
-                                    }
-                                }
-                            })
-                        ])
-                    },
-                    okText: '登录',
-                    onOk() {
-                        _this.indexLogin()
+                let timer = null;
+                this.getqrKey();
+                timer = setInterval(async() => {
+                    let qrState = await _this.getQrState(_this.qrKey);
+                    if (qrState.code === 800){
+                        clearInterval(timer);
                     }
-                })
+                    if (qrState.code === 803){
+                        await _this.getUserStatus();
+                        clearInterval(timer);
+                    }
+                },1000);
+
+
+                // this.$Modal.confirm({
+                //     render: (h) => {
+                //         return h('div', [
+                //             h('Input', {
+                //                 props: {
+                //                     autofocus: true,
+                //                     placeholder: '请输入电话号码'
+                //                 },
+                //                 style: {
+                //                     margin: '0 0 15px 0'
+                //                 },
+                //                 on: {
+                //                     input: (val) => {
+                //                         this.phone = val;
+                //                     }
+                //                 }
+                //             }),
+                //             h('Input', {
+                //                 props: {
+                //                     value: _this.pwd,
+                //                     autofocus: true,
+                //                     placeholder: '请输入密码',
+                //                     type: "password",
+                //                     password: true
+                //                 },
+                //                 on: {
+                //                     input: (val) => {
+                //                         this.pwd = val;
+                //                     },
+                //                     'on-keyup': function (enter) {
+                //                         if (enter.keyCode === 13) {
+                //                             _this.indexLogin()
+                //                             _this.$Modal.remove()
+                //                         }
+                //                     }
+                //                 }
+                //             })
+                //         ])
+                //     },
+                //     okText: '登录',
+                //     onOk() {
+                //         _this.indexLogin()
+                //     }
+                // })
+            },
+            //当登录模态框发生变化时触发
+            closeLoginModel(){
+                clearInterval(this.qrLogin);
+                console.log(5521)
             },
             //退出登录
             logout() {
@@ -261,6 +309,31 @@
                     }
                 }).catch(err => {
                     console.log(err);
+                })
+            },
+            //二维码key
+            getqrKey(){
+              getQrKeyLogin().then(res => {
+                  if (res.code === 200){
+                      this.qrKey = res.data.unikey;
+                      this.getQrLogin(this.qrKey,true);
+                  }
+              })
+            },
+            //二维码生成接口
+            getQrLogin(key,qrimg){
+                getQrLogin(key,qrimg).then(res => {
+                    this.qrimg = res.data.qrimg;
+                })
+            },
+            //二维码状态检验
+            getQrState(key){
+               return getQrState(key).then(res => res)
+            },
+            //用户等登录状态
+            getUserStatus(){
+                getUserStatus().then(res => {
+                    console.log(res)
                 })
             },
             //刷新登录
@@ -412,37 +485,46 @@
         background-color: rgba(55,55,55,0);
     }
     //弹出框
-    /deep/ .ivu-modal {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-        height: 450px;
-        top: 50px;
-        right: 70px;
-        overflow-y: overlay;
+    /deep/ .hotList{
+        .ivu-modal {
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            height: 450px;
+            top: 50px;
+            right: 70px;
+            overflow-y: overlay;
 
-        .ivu-modal-content {
-            background-color: #363636;
-            border-radius: 5px;
-            overflow: hidden;
-            .ivu-modal-body{
-                padding: 0;
+            .ivu-modal-content {
+                background-color: #363636;
+                border-radius: 5px;
+                overflow: hidden;
+                .ivu-modal-body{
+                    padding: 0;
+                }
+            }
+
+            &::-webkit-scrollbar {
+                width: 5px;
+                background-color: #363636;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 5px;
+                -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.2);
             }
         }
-
-        &::-webkit-scrollbar {
-            width: 5px;
-            background-color: #363636;
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            border-radius: 5px;
-            -webkit-box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.2);
+    }
+    //login弹出框
+    /deep/ .login_modal{
+        .ivu-modal{
+            .ivu-modal-content{
+                background-color: #fff;
+            }
         }
     }
-
 
     .ivu-modal-content-no-mask {
 

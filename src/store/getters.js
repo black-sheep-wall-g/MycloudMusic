@@ -31,7 +31,6 @@ export default {
     },
     //获取歌曲id
     getSongsId: state => {
-        debugger;
         return state.songsId;
     },
 }

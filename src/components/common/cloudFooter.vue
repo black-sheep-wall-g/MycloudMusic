@@ -1,15 +1,15 @@
 <template>
   <Footer class="layout_footer_audio">
     <Row>
-      <audio ref="musicAudio" :src="songsObj.url"></audio>
+      <audio ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
           <div class="audio_thumbnail">
             <img :src="songsUrl" alt="">
           </div>
           <div class="audio_song_info">
-            <div class="audio_song_name">{{songsName}}</div>
-            <div class="audio_song_author">{{songsSinger}}</div>
+            <div class="audio_song_name" :title="songsName">{{songsName}}</div>
+            <div class="audio_song_author" :title="songsSinger">{{songsSinger}}</div>
           </div>
           <div class="audio_like">
             <svg class="icon footer_left_icon" aria-hidden="true">
@@ -25,7 +25,7 @@
               <svg class="icon index_footer_icon" aria-hidden="true">
                 <use xlink:href="#icon-liebiaoxunhuan"></use>
               </svg>
-              <svg class="icon index_footer_icon" aria-hidden="true">
+              <svg class="icon index_footer_icon" aria-hidden="true" @click="lastSong">
                 <use xlink:href="#icon-shangyishou1"></use>
               </svg>
               <svg v-if="songsState" class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
@@ -94,7 +94,7 @@
                 //音量状态
                 volumeState: true,
                 //音乐进度条
-                audio_point:0
+                audio_point: 0
             }
         },
         computed: {
@@ -106,6 +106,7 @@
             }
         },
         watch: {
+            //歌曲变化监听
             songsId: {
                 deep: true,
                 handler(value) {
@@ -120,7 +121,10 @@
             //双击播放
             playMusic() {
                 this.$refs.musicAudio.play();
+                //歌曲状态
                 this.songsState = true;
+                //歌曲进度初始化
+                this.audio_point = this.$refs.musicAudio.currentTime;
             },
             //播放控制
             controlMusic() {
@@ -187,8 +191,16 @@
                 }
             },
             //音乐进度条变化
-            audio_change(){
-                console.log(this.$refs.musicAudio.currentTime)
+            audio_change(e){
+                this.audio_point = this.$refs.musicAudio.currentTime = e/1000;
+            },
+            //监听音频播放进度
+            audio_time_update(e){
+                this.audio_point = e.target.currentTime * 1000;
+            },
+            //上一首
+            lastSong(){
+                console.log(5521)
             }
         },
         created() {
@@ -230,9 +242,17 @@
         color: antiquewhite;
 
         .audio_song_name {
+          max-width: 150px;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
         }
 
         .audio_song_author {
+          max-width: 130px;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
         }
       }
 

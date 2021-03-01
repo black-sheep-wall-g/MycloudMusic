@@ -53,3 +53,28 @@ export function getSearch(keywords,limit,offset,type) {
         }
     }).catch(err => err)
 }
+//二维码key生成接口
+export function getQrKeyLogin() {
+    return axios({
+        url: "/login/qr/key"
+    }).catch(err => err)
+}
+//二维码生成接口
+export function getQrLogin(key,qrimg) {
+    return axios({
+        url: "/login/qr/create",
+        params:{
+            key,//必选参数，为二维码key
+            qrimg//可选参数，返回二维码图片base64编码
+        }
+    }).catch(err => err)
+}
+// 二维码检测扫码状态接口
+export function getQrState(key) {
+    return axios({
+        url: "/login/qr/check",
+        params:{
+            key//必选，二维码key
+        }
+    }).catch(err => err)
+}
