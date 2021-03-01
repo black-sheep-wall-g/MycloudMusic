@@ -157,7 +157,7 @@
         getQrKeyLogin,
         getQrLogin,
         getQrState,
-        getSearch, getUserStatus,
+        getSearch, getUserAccount, getUserStatus,
         refresh,
         suggest,
         userLogout
@@ -225,15 +225,14 @@
                 timer = setInterval(async() => {
                     let qrState = await _this.getQrState(_this.qrKey);
                     if (qrState.code === 800){
+                        console.log(qrState);
                         clearInterval(timer);
                     }
                     if (qrState.code === 803){
-                        await _this.getUserStatus();
+                        _this.getUserStatus();
                         clearInterval(timer);
                     }
-                },1000);
-
-
+                },3000);
                 // this.$Modal.confirm({
                 //     render: (h) => {
                 //         return h('div', [

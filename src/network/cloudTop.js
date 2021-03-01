@@ -16,7 +16,11 @@ export function getLogin(phone,password) {
 //获取用户登陆状态
 export function getUserStatus() {
     return axios({
-        url: "/login/status"
+        url: "/login/status",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true //跨域
     }).catch(err => err);
 }
 //用户退出登陆
@@ -56,7 +60,11 @@ export function getSearch(keywords,limit,offset,type) {
 //二维码key生成接口
 export function getQrKeyLogin() {
     return axios({
-        url: "/login/qr/key"
+        url: "/login/qr/key",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true //跨域
     }).catch(err => err)
 }
 //二维码生成接口
@@ -65,8 +73,10 @@ export function getQrLogin(key,qrimg) {
         url: "/login/qr/create",
         params:{
             key,//必选参数，为二维码key
-            qrimg//可选参数，返回二维码图片base64编码
-        }
+            qrimg,//可选参数，返回二维码图片base64编码
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true //跨域
     }).catch(err => err)
 }
 // 二维码检测扫码状态接口
@@ -74,7 +84,9 @@ export function getQrState(key) {
     return axios({
         url: "/login/qr/check",
         params:{
-            key//必选，二维码key
-        }
+            key,//必选，二维码key
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true //跨域
     }).catch(err => err)
 }
