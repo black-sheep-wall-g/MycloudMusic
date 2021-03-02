@@ -116,14 +116,39 @@
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
                     <p>未登录</p>
                     <Icon type="ios-arrow-down"></Icon>
-                    <Modal v-model="toLoginModel" width="350" class-name="login_modal" @on-visible-change="closeLoginModel">
-                        <div style="text-align: center;margin-top: 76px">
+                    <Modal footer-hide="flase" style="position:relative;" v-model="toLoginModel" width="350" class-name="login_modal" @on-visible-change="closeLoginModel">
+                        <div v-if="qrFlag" style="text-align: center;margin-top: 76px">
                             <div style="font-size: 28px;">扫码登录</div>
                             <div>
                                 <img width="180" height="180" :src="qrimg" alt="">
                                 <div>使用<a>网易云音乐APP</a>扫码登录</div>
                             </div>
-                            <div>选择其他登录模式</div>
+                            <div @click="qrFlag = false" style="color:#666666;cursor: pointer;">选择其他登录模式></div>
+                        </div>
+                        <div v-else>
+                            <div style="position:relative;top: -11px;left: -11px;">
+                                <img width="50" src="~assets/img/qrImg.png" alt="">
+                                <div class="qrChange" @click="qrFlag = true"></div>
+                                <div class="qrChangeMal">
+                                    <div class="leftTop"></div>
+                                    <div class="qrChangeTitle">扫码登录更安全</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center">
+                                <img width="260" src="~assets/img/phoneLogin.png" alt="">
+                                <Input placeholder="请输入手机号" style="width: 260px;margin-bottom: 5px;">
+                                    <svg slot="prefix" class="icon login_icon" aria-hidden="true">
+                                        <use xlink:href="#icon-shouji"></use>
+                                    </svg>
+                                </Input>
+                                <Input type="password" placeholder="请输入密码" style="width: 260px">
+                                    <svg slot="prefix" class="icon login_icon" aria-hidden="true">
+                                        <use xlink:href="#icon-suo"></use>
+                                    </svg>
+                                </Input>
+                                <div class="login">登录</div>
+                                <div class="login register"><u>注册</u></div>
+                            </div>
                         </div>
                     </Modal>
                 </div>
@@ -199,7 +224,9 @@
                 //二维码key
                 qrKey:'',
                 //二维码图片base64编码
-                qrimg:''
+                qrimg:'',
+                //二维码展示
+                qrFlag:true
             }
         },
         computed: {
@@ -695,4 +722,59 @@
             }
         }
     }
+
+    .qrChange{
+        cursor:pointer;
+        background-image: linear-gradient(-45deg, #fff 38px, #00000014 0);
+        height: 55px;
+        width: 55px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+    }
+    .qrChangeMal{
+        position: relative;
+        top: -20px;
+        left: 0;
+        display: inline-block;
+        .leftTop{
+            background-image: linear-gradient(-145deg, #989898 5px, #ffc0cb00 0);
+            height: 10px;
+            width: 10px;
+            position: absolute;
+            top: 0;
+            left: -7px;
+        }
+        .qrChangeTitle{
+            display: inline-block;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #989898;
+            color: #ffffff;
+        }
+    }
+    .login_icon{
+        font-size: 20px;
+        color: #aaa;
+        margin: 6px auto;
+    }
+    .login{
+        cursor:pointer;
+        background-color: #ea4848;
+        color: whitesmoke;
+        display: inline-block;
+        margin-top: 15px;
+        border-radius: 5px;
+        width: 260px;
+        height: 40px;
+        font-size: 16px;
+        line-height: 40px;
+    }
+    .register{
+        background-color: #ffffff;
+        color: black;
+        margin-top: 5px;
+    }
+
 </style>
