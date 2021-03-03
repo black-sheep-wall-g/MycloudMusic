@@ -20,15 +20,17 @@
                         </svg>
                     </span>
                 </div>
-                <Input style="width: 250px"
-                       placeholder="搜索音乐，视频，歌词，电台"
-                       icon="ios-search"
-                       v-model="searchData"
-                       @on-enter="search"
-                       @on-change="getSearchSuggest(searchData)"
-                       @on-focus="[modal1 = modal2 = true,getSearchSuggest(searchData)]"
-                       @on-click="search"
-                       ref="aaa"
+                <Input
+                        name="search"
+                        style="width: 250px"
+                        placeholder="搜索音乐，视频，歌词，电台"
+                        icon="ios-search"
+                        v-model="searchData"
+                        @on-enter="search"
+                        @on-change="getSearchSuggest(searchData)"
+                        @on-focus="[modal1 = modal2 = true,getSearchSuggest(searchData)]"
+                        @on-click="search"
+                        ref="aaa"
                 />
                 <Modal
                         v-model="modal1"
@@ -112,18 +114,27 @@
         </col>
         <Col span="8">
             <div class="nav_right">
-                <div class="user_login" @click="toLogin" v-if="!userInfo">
+                <div class="user_login" @click="toLogin" v-if="userInfo.length === 0">
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
                     <p>未登录</p>
                     <Icon type="ios-arrow-down"></Icon>
-                    <Modal footer-hide="flase" style="position:relative;" v-model="toLoginModel" width="350" class-name="login_modal" @on-visible-change="closeLoginModel">
+                    <Modal :footer-hide="true" style="position:relative;" v-model="toLoginModel" width="350" class-name="login_modal">
                         <div v-if="qrFlag" style="text-align: center;margin-top: 76px">
                             <div style="font-size: 28px;">扫码登录</div>
-                            <div>
-                                <img width="180" height="180" :src="qrimg" alt="">
-                                <div>使用<a>网易云音乐APP</a>扫码登录</div>
+                            <div v-if="qrScanFlag">
+                                <img width="260" src="~assets/img/phoneLogin.png" alt="">
+                                <div style="margin: 10px 0 30px 0;color: #999999;">扫描成功</div>
+                                <div style="margin-bottom: 100px;">请在手机上确认登录</div>
                             </div>
-                            <div @click="qrFlag = false" style="color:#666666;cursor: pointer;">选择其他登录模式></div>
+                            <div v-else>
+                                <img width="180" height="180" :src="qrimg" alt="">
+                                <div class="qrFail" v-if="qrFailFlag">
+                                    <div class="qrFailText">二维码已失效</div>
+                                    <div class="qrFailBtn" @click="toLogin">点击刷新</div>
+                                </div>
+                                <div>使用<a>网易云音乐APP</a>扫码登录</div>
+                                <div @click="qrFlag = false" style="color:#666666;cursor: pointer;">选择其他登录模式></div>
+                            </div>
                         </div>
                         <div v-else>
                             <div style="position:relative;top: -11px;left: -11px;">
@@ -136,17 +147,17 @@
                             </div>
                             <div style="text-align: center">
                                 <img width="260" src="~assets/img/phoneLogin.png" alt="">
-                                <Input placeholder="请输入手机号" style="width: 260px;margin-bottom: 5px;">
+                                <Input v-model="phone" name="phone" type="tel" placeholder="请输入手机号" style="width: 260px;margin-bottom: 5px;">
                                     <svg slot="prefix" class="icon login_icon" aria-hidden="true">
                                         <use xlink:href="#icon-shouji"></use>
                                     </svg>
                                 </Input>
-                                <Input type="password" placeholder="请输入密码" style="width: 260px">
+                                <Input v-model="pwd" name="pwd" autocomplete="off" @on-focus="$event.target.type = 'password'" placeholder="请输入密码" style="width: 260px">
                                     <svg slot="prefix" class="icon login_icon" aria-hidden="true">
                                         <use xlink:href="#icon-suo"></use>
                                     </svg>
                                 </Input>
-                                <div class="login">登录</div>
+                                <div class="login" @click="phoneLogin">登录</div>
                                 <div class="login register"><u>注册</u></div>
                             </div>
                         </div>
@@ -155,16 +166,16 @@
                 <div v-else>
                     <Avatar :src="userInfo.profile.avatarUrl"/>
                     <Dropdown trigger="click" style="margin-left: 15px">
-                        <a href="javascript:void(0)" @click="logout">
+                        <a href="javascript:void(0)">
                             {{userInfo.profile.nickname}}
                             <Icon type="ios-arrow-down"></Icon>
                         </a>
                         <DropdownMenu slot="list">
-                            <DropdownItem>驴打滚</DropdownItem>
-                            <DropdownItem>炸酱面</DropdownItem>
-                            <DropdownItem>豆汁儿</DropdownItem>
-                            <DropdownItem>冰糖葫芦</DropdownItem>
-                            <DropdownItem>北京烤鸭</DropdownItem>
+                            <DropdownItem><span @click="logout">北方的及</span></DropdownItem>
+                            <DropdownItem><span @click="">北方的及</span></DropdownItem>
+                            <DropdownItem><span @click="">北方的及</span></DropdownItem>
+                            <DropdownItem><span @click="">北方的及</span></DropdownItem>
+                            <DropdownItem><span @click="">北方的及</span></DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
                 </div>
@@ -182,7 +193,8 @@
         getQrKeyLogin,
         getQrLogin,
         getQrState,
-        getSearch, getUserAccount, getUserStatus,
+        getSearch,
+        getUserStatus,
         refresh,
         suggest,
         userLogout
@@ -226,13 +238,28 @@
                 //二维码图片base64编码
                 qrimg:'',
                 //二维码展示
-                qrFlag:true
+                qrFlag:true,
+                //二维码扫描是否成功
+                qrScanFlag:false,
+                //二维码是否过期
+                qrFailFlag:false
             }
         },
         computed: {
             //用户登录信息
             initInfo() {
                 return this.$store.getters.userInfo
+            }
+        },
+        watch:{
+            // 监听路由跳转。
+            $route(newRoute, oldRoute) {
+                // console.log('watch', newRoute, oldRoute)
+                if (this.bcakFlag){
+                    this.bcakFlag = false
+                }else {
+                    this.address++;
+                }
             }
         },
         methods: {
@@ -243,95 +270,65 @@
                     return localStorage.getItem('searchData').split(",")
                 }
             },
-            // 用户登录操作
+            // 用户登录操作,二维码登录
             toLogin() {
                 this.toLoginModel = true;
+                this.qrFlag = true;
+                this.qrFailFlag = false;
+                this.qrScanFlag = false;
+                this.phone = '';
+                this.pwd = '';
+
                 const _this = this;
                 let timer = null;
                 this.getqrKey();
                 timer = setInterval(async() => {
+                    console.log(this.toLoginModel);
+                    if(!this.toLoginModel){
+                        clearInterval(timer);
+                    }
                     let qrState = await _this.getQrState(_this.qrKey);
                     if (qrState.code === 800){
-                        console.log(qrState);
+                        _this.qrFailFlag = true;
                         clearInterval(timer);
+                    }
+                    if (qrState.code === 802){
+                        _this.qrScanFlag = true;
                     }
                     if (qrState.code === 803){
-                        _this.getUserStatus();
                         clearInterval(timer);
+                        let {data} = await _this.getUserStatus();
+                        if (data.code === 200){
+                            _this.userInfo = data;
+                            _this.$store.commit('setUserInfo', data);
+                            _this.$Modal.remove()
+                        }
                     }
                 },3000);
-                // this.$Modal.confirm({
-                //     render: (h) => {
-                //         return h('div', [
-                //             h('Input', {
-                //                 props: {
-                //                     autofocus: true,
-                //                     placeholder: '请输入电话号码'
-                //                 },
-                //                 style: {
-                //                     margin: '0 0 15px 0'
-                //                 },
-                //                 on: {
-                //                     input: (val) => {
-                //                         this.phone = val;
-                //                     }
-                //                 }
-                //             }),
-                //             h('Input', {
-                //                 props: {
-                //                     value: _this.pwd,
-                //                     autofocus: true,
-                //                     placeholder: '请输入密码',
-                //                     type: "password",
-                //                     password: true
-                //                 },
-                //                 on: {
-                //                     input: (val) => {
-                //                         this.pwd = val;
-                //                     },
-                //                     'on-keyup': function (enter) {
-                //                         if (enter.keyCode === 13) {
-                //                             _this.indexLogin()
-                //                             _this.$Modal.remove()
-                //                         }
-                //                     }
-                //                 }
-                //             })
-                //         ])
-                //     },
-                //     okText: '登录',
-                //     onOk() {
-                //         _this.indexLogin()
-                //     }
-                // })
             },
-            //当登录模态框发生变化时触发
-            closeLoginModel(){
-                clearInterval(this.qrLogin);
-                console.log(5521)
+            //手机登录
+            phoneLogin(){
+                this.toLoginModel = false;
+                this.getLogin();
             },
             //退出登录
             logout() {
+                this.toLoginModel = false;
                 userLogout().then(res => {
                     if (res.code === 200) {
                         this.$store.commit('logout')
-                        this.$router.go(0)
-                        this.userInfo = []
-                        this.refresh()
+                        this.$Modal.remove();
+                        this.userInfo = [];
                     }
                 });
-            },
-            //用户登录
-            indexLogin() {
-                this.getLogin()
             },
             //获取用户信息
             getLogin() {
                 getLogin(this.phone, this.pwd).then(res => {
                     if (res.code === 200) {
-                        this.userInfo = res
-                        this.$store.commit('setUserInfo', res)
-                        this.getUserInfo()
+                        this.userInfo = res;
+                        this.$store.commit('setUserInfo', res);
+                        console.log(JSON.stringify(res))
                     }
                 }).catch(err => {
                     console.log(err);
@@ -358,9 +355,7 @@
             },
             //用户等登录状态
             getUserStatus(){
-                getUserStatus().then(res => {
-                    console.log(res)
-                })
+               return getUserStatus().then(res => res)
             },
             //刷新登录
             refresh() {
@@ -484,17 +479,6 @@
                 this.$router.go(1);
             }
         },
-        watch:{
-            // 监听路由跳转。
-            $route(newRoute, oldRoute) {
-                // console.log('watch', newRoute, oldRoute)
-                if (this.bcakFlag){
-                    this.bcakFlag = false
-                }else {
-                    this.address++;
-                }
-            }
-        },
         created() {
             this.userInfo = this.initInfo;
             this.assignLocalStorage();
@@ -552,9 +536,11 @@
         }
     }
 
-    .ivu-modal-content-no-mask {
-
+    //下拉框
+    /deep/ .ivu-select-dropdown{
+        z-index: 1111;
     }
+
 
     .nav_left {
         display: flex;
@@ -720,6 +706,30 @@
                     }
                 }
             }
+        }
+    }
+
+    .qrFail{
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background-color: #323232de;
+        top: 150px;
+        left: 100px;
+        .qrFailText{
+            color: whitesmoke;
+            margin-top: 50px;
+        }
+        .qrFailBtn{
+            display: inline-block;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 80px;
+            height: 30px;
+            line-height: 30px;
+            background-color: #0c73c2;
+            color: whitesmoke;
+            cursor: pointer;
         }
     }
 

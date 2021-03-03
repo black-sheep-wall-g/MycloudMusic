@@ -7,6 +7,25 @@
             </svg>
         </div>
         <div class="home_list_body">
+            <card :padding="0" :bordered="false" :dis-hover='true' >
+                <div class="card_body">
+<!--                    <img :src="" alt="">-->
+                    <div class="">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-Wed"></use>
+                        </svg>
+                    </div>
+                    <span>
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-yousanjiao"></use>
+                        </svg>
+                    </span>
+<!--                    <div class="cloudListPlay" :class="listPlayState === index ? 'active' : '' ">-->
+<!--                        <Icon type="md-play" />-->
+<!--                    </div>-->
+                </div>
+                <p></p>
+            </card>
             <Card :padding="0" :bordered="false" :dis-hover='true' v-for="(item,index) in homeCloudList" :key="index">
                 <div class="card_body" @mouseenter="listPlayEnter(index)">
                     <img :src="item.picUrl" alt="">
@@ -27,6 +46,9 @@
 </template>
 
 <script>
+    import {getUserStatus, refresh} from "../../../network/cloudTop";
+    import {getRecomMusicList, getRecomSongs} from "../../../network/home";
+
     export default {
         name: "cloudHomeList",
         props: {
@@ -40,12 +62,39 @@
                 listPlayState:-1
             }
         },
-        mounted() {
-            // console.log(this.homeCloudList)
+        created() {
+            this.refresh();
+            this.getUserStatus();
+            this.getRecomMusicList();
+            this.getRecomSongs()
         },
         methods:{
             listPlayEnter(index){
                 this.listPlayState = index
+            },
+            //刷新登录
+            refresh(){
+                refresh().then(res => {
+                    console.log(res)
+                })
+            },
+            //获取账号登录状态
+            getUserStatus(){
+                getUserStatus().then(res => {
+                    console.log(res)
+                })
+            },
+            //每日推荐歌单
+            getRecomMusicList(){
+                getRecomMusicList().then(res => {
+                    console.log(res)
+                })
+            },
+            //每日推荐歌曲
+            getRecomSongs(){
+                getRecomSongs().then(res => {
+                    console.log(res);
+                })
             }
         }
     }

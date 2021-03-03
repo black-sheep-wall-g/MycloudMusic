@@ -27,3 +27,25 @@ export function getMusicList() {
         url: "/personalized"
     }).catch(err => err);
 }
+
+//首页每日推荐歌单
+export function getRecomMusicList() {
+    return axios({
+        url: "/recommend/resource",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
+    }).catch(err => err);
+}
+
+//首页每日推荐歌单
+export function getRecomSongs() {
+    return axios({
+        url: "/recommend/songs",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
+    }).catch(err => err);
+}

@@ -20,7 +20,7 @@ export default{
     },
     //清除本地用户储存数据
     logout(state) {
-        state.userInfo = null
+        state.userInfo = []
         state.token = null
         localStorage.removeItem('token')
         localStorage.removeItem('user')

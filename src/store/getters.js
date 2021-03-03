@@ -1,7 +1,7 @@
 export default {
     //获取本地用户数据
     userInfo: (state) => {
-        if (state.userInfo === null) {
+        if (state.userInfo.length === 0) {
             let sessionUser = sessionStorage.getItem('user')
             let localeUser = localStorage.getItem('user')
             if (sessionUser !== null) {

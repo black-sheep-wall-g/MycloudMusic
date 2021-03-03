@@ -26,13 +26,18 @@ export function getUserStatus() {
 //用户退出登陆
 export function userLogout() {
     return axios({
-        url: "/logout"
+        url: "/logout",
+        withCredentials: true
     }).catch(err => err);
 }
 //刷新登录
 export function refresh() {
     return axios({
-        url: "/login/refresh"
+        url: "/login/refresh",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
     }).catch(err => err)
 }
 //搜索建议
