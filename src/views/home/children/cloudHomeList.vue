@@ -9,7 +9,7 @@
     <div class="home_list_body">
       <card :padding="0" :bordered="false" :dis-hover='true'>
         <div class="card_body">
-          <div class="dayRecom" @mouseenter=" dayRecomTitle = true" @mouseleave="dayRecomTitle = false">
+          <div class="dayRecom" @mouseenter=" dayRecomTitle = true" @mouseleave="dayRecomTitle = false" @click="dayRecomSongs">
             <div class="dayRecomTitle" :class="dayRecomTitle ? 'active' : '' ">根据您的音乐口味生成<br>每日更新</div>
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-Wed"></use>
@@ -19,7 +19,7 @@
             </div>
           </div>
         </div>
-        <p></p>
+        <p style="margin-top: 5px;">每日推荐歌曲</p>
       </card>
       <Card :padding="0" :bordered="false" :dis-hover='true' v-for="(item,index) in homeCloudList" :key="index">
         <div class="card_body" @mouseenter="listPlayEnter(index)" @mouseleave="listPlayState = -1">
@@ -42,7 +42,7 @@
 
 <script>
   import {getUserStatus, refresh} from "../../../network/cloudTop";
-  import {getRecomMusicList, getRecomSongs} from "../../../network/home";
+  import {getRecomMusicList} from "../../../network/home";
 
   export default {
     name: "cloudHomeList",
@@ -62,14 +62,14 @@
       this.refresh();
       this.getUserStatus();
       this.getRecomMusicList();
-      this.getRecomSongs()
     },
     methods: {
       listPlayEnter(index) {
         this.listPlayState = index
       },
-      dayRecomMove(){
-
+      dayRecomSongs(){
+        //跳转到每日推荐页
+        this.$router.push({path:'/dayRecom'});
       },
       //刷新登录
       refresh() {
@@ -87,12 +87,6 @@
       getRecomMusicList() {
         getRecomMusicList().then(res => {
           console.log(res)
-        })
-      },
-      //每日推荐歌曲
-      getRecomSongs() {
-        getRecomSongs().then(res => {
-          console.log(res);
         })
       }
     }
@@ -171,6 +165,13 @@
             font-size: 70px
           }
         }
+      }
+      p{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
     }
   }
