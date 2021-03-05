@@ -46,7 +46,7 @@
     .sidebar_list {
         width: 200px;
         height: 541px;
-        overflow-y: auto;
+        overflow-y: overlay;
         border-right: 1px solid #cccccc;
         .sidebar_list_content{
             margin: 13px;

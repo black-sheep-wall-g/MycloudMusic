@@ -1,7 +1,7 @@
 <template>
     <div class="home_content">
         <div class="home_content_title">
-            <Menu mode="horizontal" :active-name="0">
+            <Menu mode="horizontal" :active-name="0" theme="dark">
                 <MenuItem v-for="(item,index) in homeTitleList" :key="index" :name="index">
                     {{item}}
                 </MenuItem>
@@ -125,10 +125,16 @@
 </script>
 
 <style scoped lang="less">
+  .ivu-menu-dark{
+    background:#2b2b2b;
+  }
+  .ivu-menu-item-active{
+    border-bottom: 1px solid red;
+    height: 60px;
+  }
     .home_content {
         width: 820px;
         padding: 0 30px;
-        /*overflow-y: scroll;*/
         overflow-y: overlay;
         &:hover{
             &::-webkit-scrollbar {

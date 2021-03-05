@@ -37,18 +37,16 @@
     <div class="recomContent">
       <Table :columns="columns" :data="dataList" width="819" :row-class-name="rowClassName">
         <template slot-scope="{ row, index }" slot="name">
-            <span class="ivu-table-cell-tooltip-content">
-                <span>{{'0'+(index+1)}}</span>
+          <span class="ivu-table-cell-tooltip-content">
+            <span>{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-xihuan"></use>
                 </svg>
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-46"></use>
                 </svg>
-                <Tooltip :content="row.name" max-width="350">
-                    <span class="nameStyle">{{ row.name }}</span>
-                </Tooltip>
-            </span>
+              <span class="nameStyle" :title="row.name">{{ row.name }}</span>
+          </span>
         </template>
       </Table>
     </div>
@@ -60,7 +58,7 @@
 
   export default {
     name: "dayRecomSongs",
-    data(){
+    data() {
       return {
         //表头
         columns: [
@@ -89,19 +87,20 @@
           }
         ],
         //每日推荐歌曲合集
-        dayRecomList:{},
+        dayRecomList: {},
         //推荐Table
-        dataList:[]
+        dataList: []
       }
     },
     created() {
       this.getRecomSongs();
     },
-    methods:{
+    methods: {
       //每日推荐歌曲
       getRecomSongs() {
         getRecomSongs().then(res => {
-          if (res.code === 200){
+          console.log(JSON.stringify(res))
+          if (res.code === 200) {
             this.dayRecomList = res;
             this.dataList = res.data.dailySongs.map(item => {
               return {
@@ -116,12 +115,10 @@
         })
       },
       //表格斑马样式
-      rowClassName(row, index){
-        console.log(row,index)
-        if(index%2===0){
+      rowClassName(row, index) {
+        if (index % 2 === 0) {
           return 'ivu-table-stripe-even';
-        }
-        else return 'ivu-table-stripe-odd';
+        } else return 'ivu-table-stripe-odd';
       }
     }
   }
@@ -129,91 +126,90 @@
 
 <style scoped lang="less">
 
-  /deep/ .ivu-table-stripe-odd{
+  /deep/ .ivu-table-stripe-odd {
     background-color: #2e2e2e;
   }
 
-  /deep/ .ivu-table-stripe-even{
+  /deep/ .ivu-table-stripe-even {
     background-color: #2b2b2b;
   }
-  /deep/ .ivu-table td{
-    background-color: unset;
-
+  /deep/ .ivu-table-row-hover{
+    background-color: #373737;
   }
-  /*/deep/ .ivu-table-body {*/
-  /*  tr:nth-child(even) {*/
-  /*    background-color: #a31010 !important;*/
-  /*  }*/
-  /*}*/
-  /*/deep/ .ivu-table{*/
-  /*  background-color: unset;*/
-  /*  tr:nth-child(even) {*/
-  /*    background-color: #a31010 !important;*/
-  /*  }*/
-  /*  td{*/
-  /*    background-color: #182328;*/
-  /*    color: #fff;*/
-  /*    border: none;*/
-  /*  }*/
-  /*  !*头部th*!*/
-  /*  .ivu-table-header th{*/
-  /*    color:#FFD3B4;*/
-  /*    font-weight: bold;*/
-  /*    background-color: #212c31;*/
-  /*    border: none;*/
-  /*  }*/
-  /*}*/
-  .recom{
-    overflow-y: scroll;
+  /deep/ .ivu-table th {
+    background-color: #2b2b2b;
+    border: unset;
+  }
+
+  /deep/ .ivu-table td {
+    background-color: unset;
+    border: unset;
+  }
+
+
+  .recom {
+    overflow-y: overlay;
+
     &::-webkit-scrollbar {
       width: 1px;
     }
+
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
       background: darkcyan;
     }
-    .recomHeader{
+
+    .recomHeader {
       margin: 20px 0 5px 30px;
-      .recomTitle{
+
+      .recomTitle {
         display: flex;
-        .recomImg{
-          svg{
+
+        .recomImg {
+          svg {
             font-size: 70px;
             color: #ec4141;
           }
         }
-        .recomText{
+
+        .recomText {
           margin-left: 30px;
           padding-top: 10px;
-          .recomTextTop{
+
+          .recomTextTop {
             font-size: 20px;
             font-weight: 600;
             color: whitesmoke;
           }
-          .recomTextBtm{
+
+          .recomTextBtm {
             font-size: 13px;
             color: #878787;
           }
         }
       }
-      .recomBtn{
+
+      .recomBtn {
         margin-top: 20px;
         display: flex;
-        .allPlay{
+
+        .allPlay {
           position: relative;
           width: 140px;
           height: 35px;
           border-radius: 10px;
           background-color: #ec4141;
           cursor: pointer;
-          svg{
+
+          svg {
             font-size: 13px;
             color: snow;
             position: absolute;
             top: 10px;
             left: 20px;
           }
-          .palyText{
+
+          .palyText {
             display: inline-block;
             margin-left: 25px;
             text-align: center;
@@ -224,16 +220,19 @@
             line-height: 35px;
             border-right: 1px solid snow;
           }
-          .collectRecom{
+
+          .collectRecom {
             display: inline-block;
-            .collectImg{
+
+            .collectImg {
               font-size: 20px;
               top: 6px;
               left: 113px;
             }
           }
         }
-        .allCollect{
+
+        .allCollect {
           position: relative;
           width: 115px;
           height: 35px;
@@ -242,14 +241,16 @@
           background-color: #2b2b2b;
           margin-left: 15px;
           cursor: pointer;
-          svg{
+
+          svg {
             position: absolute;
             top: 5px;
             left: 15px;
             font-size: 22px;
             color: #b2b2b2;
           }
-          .collectText{
+
+          .collectText {
             display: inline-block;
             font-size: 15px;
             color: snow;
@@ -260,8 +261,13 @@
         }
       }
     }
-    .recomContent{
+
+    .recomContent {
       height: 391px;
+
+      .nameStyle {
+        color: snow;
+      }
     }
   }
 </style>
