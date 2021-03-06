@@ -12,7 +12,7 @@
           <div class="dayRecom" @mouseenter=" dayRecomTitle = true" @mouseleave="dayRecomTitle = false" @click="dayRecomSongs">
             <div class="dayRecomTitle" :class="dayRecomTitle ? 'active' : '' ">根据您的音乐口味生成<br>每日更新</div>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-Wed"></use>
+              <use :xlink:href="'#icon-' + Date().slice(0,3)"></use>
             </svg>
             <div class="cloudListPlay" :class="dayRecomTitle ? 'active' : '' ">
               <Icon type="md-play"/>

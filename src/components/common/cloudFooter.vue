@@ -65,10 +65,27 @@
         <svg class="icon listIcon" aria-hidden="true" @click="playList = true">
           <use xlink:href="#icon-gedan"></use>
         </svg>
-        <Modal v-model="playList" :closable="false" :footer-hide="true">
-          <p>Content of dialog</p>
-          <p>Content of dialog</p>
-          <p>Content of dialog</p>
+        <Modal width="425" v-model="playList" :closable="false" :footer-hide="true">
+          <div class="playTab">
+            <div class="playListBtn" :class="palyFlag ? 'listActive' : '' " @click="playListClick">播放列表</div>
+            <div class="historyBtn"  :class="!palyFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
+          </div>
+          <div class="tableTitle">
+            <div class="countSongs">总10首</div>
+            <div class="collectAll">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-shoucangjia"></use>
+              </svg>
+              收藏全部
+            </div>
+            <div class="clearAll">
+              <svg class="icon" aria-hidden="true">
+                <use xlink:href="#icon-lajitong"></use>
+              </svg>
+              清空
+            </div>
+          </div>
+          <Table stripe :columns="palyListColumns" :data="data1"></Table>
         </Modal>
       </Col>
     </Row>
@@ -105,7 +122,25 @@
         //音乐进度条
         audio_point: 0,
         //播放列表
-        playList: false
+        playList: false,
+        //播放列表flag
+        palyFlag:true,
+        //播放列表表头
+        columns: [
+          {
+            key: 'name',
+            slot: "name",
+            width: 398
+          },
+          {
+            key: 'singer',
+            width: 140
+          },
+          {
+            key: 'time',
+            width: 200
+          }
+        ],
       }
     },
     computed: {
@@ -184,9 +219,8 @@
       },
       //渲染歌曲头像及名称歌手
       drawingMusicDetail(item) {
-        let time = item.dt;
-        this.songsRealTime = time;
-        this.songsTime = Math.floor((time % 3600000) / 60000) + ':' + Math.floor((time % 60000) / 1000);
+        this.songsRealTime = item.dt;
+        this.songsTime = Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0' + Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000));
         this.songsName = item.name;
         this.songsSinger = item.ar[0].name;
         this.songsUrl = item.al.picUrl;
@@ -212,6 +246,14 @@
       //上一首
       lastSong() {
         console.log(5521)
+      },
+      //播放列表
+      playListClick(){
+        this.palyFlag = true;
+      },
+      //历史记录
+      historyListClick(){
+        this.palyFlag = false;
       }
     },
     created() {
@@ -230,13 +272,64 @@
   /deep/ .ivu-modal {
     position: relative;
     top: 60px;
-    left: 250px;
+    left: 297px;
     .ivu-modal-content {
       border-top-right-radius: unset;
       border-bottom-right-radius: unset;
       background-color: #363636;
+      .ivu-modal-body{
+        height: 541px;
+        .playTab{
+          display: inline-block;
+          margin-left: 100px;
+          border-radius: 15px;
+          border: 1px solid #666666;
+          font-size: 12px;
+          cursor: pointer;
+          .playListBtn{
+            display: inline-block;
+            padding: 5px 30px;
+            color: snow;
+            border-radius: 15px;
+          }
+          .historyBtn{
+            display: inline-block;
+            padding: 5px 30px;
+            color: snow;
+            border-radius: 15px;
+          }
+        }
+        .tableTitle{
+          display: flex;
+          margin-top: 20px;
+          .countSongs{
+            flex: 6;
+            font-size: 12px;
+          }
+          .collectAll{
+            flex: 3;
+            font-size: 14px;
+            color: snow;
+            svg{
+              font-size: 20px;
+            }
+          }
+          .clearAll{
+            flex: 2;
+            font-size: 14px;
+            color: snow;
+            svg{
+              font-size: 20px;
+            }
+          }
+        }
+      }
     }
   }
+  .listActive{
+    background-color: #666666;
+  }
+
 
   .ivu-layout-footer {
     padding: 12px;

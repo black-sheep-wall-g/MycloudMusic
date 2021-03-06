@@ -107,7 +107,7 @@
                 name: item.name,
                 singer: item.ar[0].name,
                 album: item.al.name,
-                times: Math.floor((item.dt % 3600000) / 60000) + ':' + Math.floor((item.dt % 60000) / 1000),
+                times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0'+Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
                 id: item.id
               };
             })
