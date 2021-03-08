@@ -85,7 +85,7 @@
               清空
             </div>
           </div>
-          <Table stripe :columns="palyListColumns" :data="data1"></Table>
+<!--          <Table stripe :show-header="false" :columns="palyListColumns" :data="palyListData"></Table>-->
         </Modal>
       </Col>
     </Row>
@@ -126,7 +126,7 @@
         //播放列表flag
         palyFlag:true,
         //播放列表表头
-        columns: [
+        palyListColumns: [
           {
             key: 'name',
             slot: "name",

@@ -9,93 +9,101 @@
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-46"></use>
                 </svg>
-                <Tooltip :content="row.name" max-width="350">
-                    <span class="nameStyle">{{ row.name }}</span>
-                </Tooltip>
+              <span class="nameStyle" :title="row.name">{{ row.name }}</span>
             </span>
     </template>
+    <template slot-scope="{ row, index }" slot="singer">
+      <div class="singerStyle" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
+    </template>
+    <template slot-scope="{ row, index }" slot="album">
+      <div class="singerStyle" :title="row.album.name">{{row.album.name}}</div>
+    </template>
     <template slot-scope="{ row, index }" slot="heat">
-            <span class="songsHeat">
-                <span class="songsHeatInline" :style="{width:row.heat + '%'}"></span>
-            </span>
+      <span class="songsHeat">
+        <span class="songsHeatInline" :style="{width:row.heat + '%'}"></span>
+      </span>
     </template>
   </Table>
 </template>
 
 <script>
-    export default {
-        name: "searchResultSongsList",
-        data() {
-            return {
-                songsList: [],
-                columns: [
-                    {
-                        title: '音乐标题',
-                        key: 'name',
-                        slot: "name",
-                        width: 344
-                    },
-                    {
-                        title: '歌手',
-                        key: 'singer',
-                        width: 120,
-                        tooltip: true
-                    },
-                    {
-                        title: '专辑',
-                        key: 'album',
-                        width: 150,
-                        tooltip: true
-                    },
-                    {
-                        title: '时长',
-                        key: 'times',
-                        width: 80
-                    },
-                    {
-                        title: '热度',
-                        key: 'heat',
-                        slot: "heat",
-                        width: 120
-                    }
-                ],
-                dataList: []
-            }
-        },
-        props: {
-            searchResult: {
-                type: Object,
-                default: {}
-            }
-        },
-        watch: {
-            searchResult() {
-                this.init();
-                this.getSongs();
-            }
-        },
-        methods: {
-            init() {
-                this.songsList = this.searchResult;
-              console.log(this.songsList);
-            },
-            getSongs() {
-                this.dataList = this.songsList.songs.map(item => {
-                    return {
-                        name: item.name,
-                        singer: item.ar[0].name,
-                        album: item.al.name,
-                        times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0' + Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
-                        heat: item.pop,
-                        id: item.id
-                    };
-                })
-            },
-            playMusic(e, i) {
-                this.$store.commit('setSongsId', e.id);
-            }
-        }
+  export default {
+    name: "searchResultSongsList",
+    data() {
+      return {
+        songsList: [],
+        columns: [
+          {
+            title: '音乐标题',
+            key: 'name',
+            slot: "name",
+            width: 344
+          },
+          {
+            title: '歌手',
+            key: 'singer',
+            width: 120,
+            slot: 'singer'
+          },
+          {
+            title: '专辑',
+            key: 'album',
+            width: 150,
+            slot:'album'
+          },
+          {
+            title: '时长',
+            key: 'times',
+            width: 80
+          },
+          {
+            title: '热度',
+            key: 'heat',
+            slot: "heat",
+            width: 120
+          }
+        ],
+        dataList: []
+      }
+    },
+    props: {
+      searchResult: {
+        type: Object,
+        default: {}
+      }
+    },
+    watch: {
+      searchResult() {
+        this.init();
+        this.getSongs();
+      }
+    },
+    methods: {
+      init() {
+        this.songsList = this.searchResult;
+      },
+      getSongs() {
+        debugger;
+        this.dataList = this.songsList.songs.map(item => {
+          return {
+            name: item.name,
+            singer: item.ar,
+            album: item.al,
+            times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0' + Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
+            heat: item.pop,
+            id: item.id
+          };
+        })
+      },
+      playMusic(e, i) {
+        this.$store.commit('setSongsId', e.id);
+      },
+      //点击歌手或者专辑跳转到对应的页面
+      toResult(index){
+        console.log(index)
+      }
     }
+  }
 </script>
 
 <style scoped lang="less">
@@ -110,27 +118,35 @@
     }
   }
 
-  .nameStyle {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 250px;
-  }
-
-  .songsHeat {
-    display: inline-block;
-    width: 80px;
-    height: 5px;
-    border-radius: 3px;
-    background-color: aliceblue;
-
-    .songsHeatInline {
-      float: left;
+  /deep/ .ivu-table-cell{
+    padding-right: unset;
+    .nameStyle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+      max-width: 250px;
+    }
+    .singerStyle{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+    }
+    .songsHeat {
       display: inline-block;
-      width: 100%;
-      height: 100%;
-      border-radius: 6px;
-      background-color: lavender;
+      width: 80px;
+      height: 5px;
+      border-radius: 3px;
+      background-color: aliceblue;
+
+      .songsHeatInline {
+        float: left;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        background-color: lavender;
+      }
     }
   }
+
 </style>

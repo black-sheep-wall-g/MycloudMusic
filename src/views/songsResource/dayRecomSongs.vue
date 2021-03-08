@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="recomContent">
-      <Table :columns="columns" :data="dataList" width="819" :row-class-name="rowClassName">
+      <Table :columns="columns" :data="dataList" width="819" :row-class-name="rowClassName" @on-row-dblclick="playSongs">
         <template slot-scope="{ row, index }" slot="name">
           <span class="ivu-table-cell-tooltip-content">
             <span>{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
@@ -47,6 +47,12 @@
                 </svg>
               <span class="nameStyle" :title="row.name">{{ row.name }}</span>
           </span>
+        </template>
+        <template slot-scope="{ row, index }" slot="singer">
+          <div class="singerStyle" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
+        </template>
+        <template slot-scope="{ row, index }" slot="album">
+          <div class="singerStyle" :title="row.album.name">{{row.album.name}}</div>
         </template>
       </Table>
     </div>
@@ -72,13 +78,13 @@
             title: '歌手',
             key: 'singer',
             width: 140,
-            tooltip: true
+            slot: 'singer'
           },
           {
             title: '专辑',
             key: 'album',
             width: 200,
-            tooltip: true
+            slot: 'album'
           },
           {
             title: '时长',
@@ -105,8 +111,8 @@
             this.dataList = res.data.dailySongs.map(item => {
               return {
                 name: item.name,
-                singer: item.ar[0].name,
-                album: item.al.name,
+                singer: item.ar,
+                album: item.al,
                 times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0'+Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
                 id: item.id
               };
@@ -119,6 +125,14 @@
         if (index % 2 === 0) {
           return 'ivu-table-stripe-even';
         } else return 'ivu-table-stripe-odd';
+      },
+      //双击播放
+      playSongs(e, i){
+        console.log(e,i)
+      },
+      //跳转到对应的歌手或者专辑页
+      toResult(index){
+        console.log(index)
       }
     }
   }
@@ -264,7 +278,14 @@
 
     .recomContent {
       height: 391px;
-
+      /deep/ .ivu-table-cell{
+        padding-right: 0;
+        .singerStyle{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space:nowrap;
+        }
+      }
       .nameStyle {
         color: snow;
       }
