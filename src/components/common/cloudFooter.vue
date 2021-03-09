@@ -62,13 +62,13 @@
             <Slider @input="volume_change" @on-change="volume_end" v-model="volume_point"></Slider>
           </div>
         </div>
-        <svg class="icon listIcon" aria-hidden="true" @click="playList = true">
+        <svg class="icon listIcon" aria-hidden="true" @click="playListFlag = true">
           <use xlink:href="#icon-gedan"></use>
         </svg>
-        <Modal width="425" v-model="playList" :closable="false" :footer-hide="true">
+        <Modal width="425" v-model="playListFlag" :closable="false" :footer-hide="true">
           <div class="playTab">
-            <div class="playListBtn" :class="palyFlag ? 'listActive' : '' " @click="playListClick">播放列表</div>
-            <div class="historyBtn"  :class="!palyFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
+            <div class="playListBtn" :class="playFlag ? 'listActive' : '' " @click="playListClick">播放列表</div>
+            <div class="historyBtn"  :class="!playFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
           </div>
           <div class="tableTitle">
             <div class="countSongs">总10首</div>
@@ -85,7 +85,17 @@
               清空
             </div>
           </div>
-<!--          <Table stripe :show-header="false" :columns="palyListColumns" :data="palyListData"></Table>-->
+          <Table stripe :show-header="false" :columns="playListColumns" :data="this.playList" height="430">
+            <template slot-scope="{ row, index }" slot="name">
+              <span>{{row.name}}</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="singer">
+              <div class="singerStyle" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
+            </template>
+            <template slot-scope="{ row, index }" slot="time">
+              <div class="singerStyle">{{row.times}}</div>
+            </template>
+          </Table>
         </Modal>
       </Col>
     </Row>
@@ -121,26 +131,28 @@
         volumeState: true,
         //音乐进度条
         audio_point: 0,
-        //播放列表
-        playList: false,
-        //播放列表flag
-        palyFlag:true,
+        //播放列表Flag
+        playListFlag: false,
+        //播放列表历史记录flag
+        playFlag:true,
         //播放列表表头
-        palyListColumns: [
+        playListColumns: [
           {
             key: 'name',
-            slot: "name",
-            width: 398
+            slot: 'name',
+            width: 200
           },
           {
             key: 'singer',
-            width: 140
+            slot: 'singer',
+            width: 100
           },
           {
             key: 'time',
-            width: 200
+            slot: 'time',
+            width: 100
           }
-        ],
+        ]
       }
     },
     computed: {
@@ -149,6 +161,10 @@
       },
       resultAudioPoint() {
         return (Math.floor((this.audio_point % 3600000) / 60000) < 10 ? '0' + Math.floor((this.audio_point % 3600000) / 60000) : Math.floor((this.audio_point % 3600000) / 60000)) + ':' + (Math.floor((this.audio_point % 60000) / 1000) < 10 ? '0' + Math.floor((this.audio_point % 60000) / 1000) : Math.floor((this.audio_point % 60000) / 1000));
+      },
+      //播放列表
+      playList(){
+        return this.$store.state.playList;
       }
     },
     watch: {
@@ -249,11 +265,11 @@
       },
       //播放列表
       playListClick(){
-        this.palyFlag = true;
+        this.playFlag = true;
       },
       //历史记录
       historyListClick(){
-        this.palyFlag = false;
+        this.playFlag = false;
       }
     },
     created() {
@@ -279,7 +295,9 @@
       background-color: #363636;
       .ivu-modal-body{
         height: 541px;
+        padding: 0;
         .playTab{
+          margin-top: 16px;
           display: inline-block;
           margin-left: 100px;
           border-radius: 15px;
@@ -301,7 +319,7 @@
         }
         .tableTitle{
           display: flex;
-          margin-top: 20px;
+          margin: 21px 16px;
           .countSongs{
             flex: 6;
             font-size: 12px;

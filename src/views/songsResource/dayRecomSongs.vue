@@ -105,9 +105,7 @@
       //每日推荐歌曲
       getRecomSongs() {
         getRecomSongs().then(res => {
-          console.log(JSON.stringify(res))
           if (res.code === 200) {
-            this.dayRecomList = res;
             this.dataList = res.data.dailySongs.map(item => {
               return {
                 name: item.name,
@@ -128,7 +126,10 @@
       },
       //双击播放
       playSongs(e, i){
-        console.log(e,i)
+        //播放点击的歌曲
+        this.$store.commit('setSongsId', e.id);
+        //将歌曲加入播放列表
+        this.$store.commit('setPlayList',this.dataList);
       },
       //跳转到对应的歌手或者专辑页
       toResult(index){

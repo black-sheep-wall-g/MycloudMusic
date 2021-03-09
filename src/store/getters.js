@@ -33,4 +33,11 @@ export default {
     getSongsId: state => {
         return state.songsId;
     },
+    //获取播放列表
+    getPlayList: state => {
+        if (state.playList.length === 0) {
+            state.playList = JSON.parse(localStorage.getItem('playList'));
+        }
+        return state.playList;
+    }
 }

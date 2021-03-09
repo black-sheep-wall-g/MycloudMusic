@@ -12,7 +12,8 @@ export default new Vuex.Store({
     token:null,//用户token
     searchDataList:[], //搜索历史
     searchResult:{},//搜索结果数据
-    songsId:''//歌曲id
+    songsId:'',//歌曲id
+    playList:[]//播放列表
   },
   getters,
   mutations,

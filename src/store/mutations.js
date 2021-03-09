@@ -42,5 +42,12 @@ export default{
     //保存歌曲id
     setSongsId(state,id){
         state.songsId = id;
+    },
+    //保存播放列表
+    setPlayList(state,playList){
+        state.playList = playList;
+        //存储到本地
+        debugger;
+        localStorage.setItem('playList',JSON.stringify(playList));
     }
 }

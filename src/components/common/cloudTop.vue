@@ -386,8 +386,6 @@
                     this.$router.push({path:'/SearchResult',params:this.searchData})
                     //获取搜索完成后列表并跳转页面
                     getSearch(this.searchData).then(res => {
-                        console.log(res)
-                        debugger
                         if (res.code === 200) {
                             this.$store.commit('setSearchResult', res);
                         }
