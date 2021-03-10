@@ -83,7 +83,6 @@
         this.songsList = this.searchResult;
       },
       getSongs() {
-        debugger;
         this.dataList = this.songsList.songs.map(item => {
           return {
             name: item.name,

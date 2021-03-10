@@ -85,15 +85,15 @@
               清空
             </div>
           </div>
-          <Table stripe :show-header="false" :columns="playListColumns" :data="this.playList" height="430">
+          <Table class="playTable" :show-header="false" :columns="playListColumns" :data="this.playList" height="430" :row-class-name="rowClassName">
             <template slot-scope="{ row, index }" slot="name">
-              <span>{{row.name}}</span>
+              <div class="nameStyle">{{row.name}}</div>
             </template>
             <template slot-scope="{ row, index }" slot="singer">
               <div class="singerStyle" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
             </template>
             <template slot-scope="{ row, index }" slot="time">
-              <div class="singerStyle">{{row.times}}</div>
+              <div class="timeStyle">{{row.times}}</div>
             </template>
           </Table>
         </Modal>
@@ -150,7 +150,7 @@
           {
             key: 'time',
             slot: 'time',
-            width: 100
+            width: 120
           }
         ]
       }
@@ -164,7 +164,7 @@
       },
       //播放列表
       playList(){
-        return this.$store.state.playList;
+        return this.$store.getters.getPlayList;
       }
     },
     watch: {
@@ -226,6 +226,7 @@
       getMusicDetail(ids) {
         getMusicDetail(ids).then(res => {
           if (res.code === 200) {
+            console.log(res)
             this.songsDetail = res.songs[0]
             this.drawingMusicDetail(this.songsDetail);
           }
@@ -270,7 +271,13 @@
       //历史记录
       historyListClick(){
         this.playFlag = false;
-      }
+      },
+      //表格斑马样式
+      rowClassName(row, index) {
+        if (index % 2 === 0) {
+          return 'ivu-table-stripe-even';
+        } else return 'ivu-table-stripe-odd';
+      },
     },
     created() {
       this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
@@ -294,10 +301,10 @@
       border-bottom-right-radius: unset;
       background-color: #363636;
       .ivu-modal-body{
-        height: 541px;
+        height: 540px;
         padding: 0;
         .playTab{
-          margin-top: 16px;
+          margin-top: 20px;
           display: inline-block;
           margin-left: 100px;
           border-radius: 15px;
@@ -307,19 +314,20 @@
           .playListBtn{
             display: inline-block;
             padding: 5px 30px;
-            color: snow;
+            color: #d3d3d3;
             border-radius: 15px;
           }
           .historyBtn{
             display: inline-block;
             padding: 5px 30px;
-            color: snow;
+            color: #d3d3d3;
             border-radius: 15px;
           }
         }
         .tableTitle{
           display: flex;
-          margin: 21px 16px;
+          padding: 21px 16px 10px;
+          border-bottom: 1px solid #3f3f3f;
           .countSongs{
             flex: 6;
             font-size: 12px;
@@ -327,7 +335,7 @@
           .collectAll{
             flex: 3;
             font-size: 14px;
-            color: snow;
+            color: #d3d3d3;
             svg{
               font-size: 20px;
             }
@@ -335,11 +343,47 @@
           .clearAll{
             flex: 2;
             font-size: 14px;
-            color: snow;
+            color: #d3d3d3;
             svg{
               font-size: 20px;
             }
           }
+        }
+        .playTable{
+          .nameStyle{
+            color: #d3d3d3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .singerStyle{
+            color: #8d8d8d;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space:nowrap;
+          }
+          .timeStyle{
+            text-align: center;
+            color: #5b5b5b;
+          }
+          .ivu-table{
+            background-color: unset;
+            &:before{
+              height: 0;
+            }
+            .ivu-table-body{
+              height: 450px !important;
+              &::-webkit-scrollbar {
+                width: 4px;
+              }
+
+              &::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                background: darkcyan;
+              }
+            }
+          }
+
         }
       }
     }
@@ -375,7 +419,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        color: antiquewhite;
+        color: #d3d3d3;
 
         .audio_song_name {
           max-width: 150px;
@@ -465,5 +509,21 @@
     right: 20px;
     font-size: 20px;
     cursor: pointer;
+  }
+
+  /deep/ .ivu-table-stripe-odd {
+    background-color: #363636;
+  }
+
+  /deep/ .ivu-table-stripe-even {
+    background-color: #393939;
+  }
+  /deep/ .ivu-table-row-hover{
+    background-color: #3d3d3d;
+  }
+
+  /deep/ .ivu-table td {
+    background-color: unset;
+    border: unset;
   }
 </style>

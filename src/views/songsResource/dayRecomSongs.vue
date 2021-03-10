@@ -38,14 +38,14 @@
       <Table :columns="columns" :data="dataList" width="819" :row-class-name="rowClassName" @on-row-dblclick="playSongs">
         <template slot-scope="{ row, index }" slot="name">
           <span class="ivu-table-cell-tooltip-content">
-            <span>{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
-                <svg class="icon" aria-hidden="true">
-                    <use xlink:href="#icon-xihuan"></use>
-                </svg>
-                <svg class="icon" aria-hidden="true">
+            <span class="nameOrder">{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
+            <svg class="icon loveSongs" aria-hidden="true">
+              <use xlink:href="#icon-xinaixin"></use>
+            </svg>
+            <svg class="icon downloadSongs" aria-hidden="true">
                     <use xlink:href="#icon-46"></use>
                 </svg>
-              <span class="nameStyle" :title="row.name">{{ row.name }}</span>
+            <span class="nameStyle" :title="row.name">{{ row.name }}</span>
           </span>
         </template>
         <template slot-scope="{ row, index }" slot="singer">
@@ -151,16 +151,26 @@
   /deep/ .ivu-table-row-hover{
     background-color: #373737;
   }
-  /deep/ .ivu-table th {
-    background-color: #2b2b2b;
-    border: unset;
+  /deep/ .ivu-table{
+    &:before{
+      height: 0;
+    }
+    th {
+      &:first-child{
+        text-align: center;
+      }
+      background-color: #2b2b2b;
+      border: unset;
+    }
+    td {
+      background-color: unset;
+      border: unset;
+    }
   }
 
-  /deep/ .ivu-table td {
-    background-color: unset;
-    border: unset;
+  .loveActive{
+    color: #e01c4c;
   }
-
 
   .recom {
     overflow-y: overlay;
@@ -286,6 +296,18 @@
           text-overflow: ellipsis;
           white-space:nowrap;
         }
+      }
+      .nameOrder{
+        margin: 0 8px;
+      }
+      .loveSongs{
+        font-size: 15px;
+        margin-left: 5px;
+        color: #e01c4c;
+      }
+      .downloadSongs{
+        font-size: 16px;
+        margin: 0 8px;
       }
       .nameStyle {
         color: snow;
