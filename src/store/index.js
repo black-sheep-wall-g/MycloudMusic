@@ -13,7 +13,8 @@ export default new Vuex.Store({
     searchDataList:[], //搜索历史
     searchResult:{},//搜索结果数据
     songsId:'',//歌曲id
-    playList:[]//播放列表
+    playList:[],//播放列表
+    playState:true//歌曲状态
   },
   getters,
   mutations,

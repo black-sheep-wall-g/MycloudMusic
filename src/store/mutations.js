@@ -47,7 +47,10 @@ export default{
     setPlayList(state,playList){
         state.playList = playList;
         //存储到本地
-        debugger;
         localStorage.setItem('playList',JSON.stringify(playList));
+    },
+    //保存播放状态
+    setPlayState(state,playState){
+        state.playState = playState;
     }
 }

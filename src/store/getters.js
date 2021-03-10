@@ -39,5 +39,9 @@ export default {
             state.playList = JSON.parse(localStorage.getItem('playList'));
         }
         return state.playList;
-    }
+    },
+    //获取歌曲state
+    getPlayState: state => {
+        return state.playState;
+    },
 }

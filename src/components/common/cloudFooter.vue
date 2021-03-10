@@ -1,7 +1,7 @@
 <template>
   <Footer class="layout_footer_audio">
     <Row>
-      <audio ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update"></audio>
+      <audio preload ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update" @ended="downSong"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
           <div class="audio_thumbnail">
@@ -25,7 +25,7 @@
               <svg class="icon index_footer_icon" aria-hidden="true">
                 <use xlink:href="#icon-liebiaoxunhuan"></use>
               </svg>
-              <svg class="icon index_footer_icon" aria-hidden="true" @click="lastSong">
+              <svg class="icon index_footer_icon up_song" aria-hidden="true" @click="upSong">
                 <use xlink:href="#icon-shangyishou1"></use>
               </svg>
               <svg v-if="songsState" class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
@@ -34,7 +34,7 @@
               <svg v-else class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
                 <use xlink:href="#icon-bofang"></use>
               </svg>
-              <svg class="icon index_footer_icon" aria-hidden="true">
+              <svg class="icon index_footer_icon up_song" aria-hidden="true" @click="downSong">
                 <use xlink:href="#icon-xiayishou1"></use>
               </svg>
               <svg class="icon" aria-hidden="true" style="margin-top: 3px">
@@ -85,8 +85,14 @@
               清空
             </div>
           </div>
-          <Table class="playTable" :show-header="false" :columns="playListColumns" :data="this.playList" height="430" :row-class-name="rowClassName">
+          <Table class="playTable" :show-header="false" :columns="playListColumns" :data="this.getPlayList" height="430" :row-class-name="rowClassName">
             <template slot-scope="{ row, index }" slot="name">
+              <svg v-if="row.id === getSongsId && getPlayState" class="icon play_state" aria-hidden="true">
+                <use xlink:href="#icon-zantingtingzhi"></use>
+              </svg>
+              <svg v-if="row.id === getSongsId && !getPlayState" class="icon play_state" aria-hidden="true">
+                <use xlink:href="#icon-bofang1"></use>
+              </svg>
               <div class="nameStyle">{{row.name}}</div>
             </template>
             <template slot-scope="{ row, index }" slot="singer">
@@ -104,6 +110,7 @@
 
 <script>
   import {getMusicDetail, getMusicUrl} from "../../network/footAudio";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "cloudFooter",
@@ -114,7 +121,7 @@
         //歌曲url详情对象
         songsObj: {},
         //歌曲状态
-        songsState: true,
+        songsState: false,
         //歌曲详情
         songsDetail: {},
         //歌曲实时播放时间
@@ -156,20 +163,14 @@
       }
     },
     computed: {
-      songsId() {
-        return this.$store.state.songsId;
-      },
+      ...mapGetters(['getSongsId','getPlayList','getPlayState']),
       resultAudioPoint() {
         return (Math.floor((this.audio_point % 3600000) / 60000) < 10 ? '0' + Math.floor((this.audio_point % 3600000) / 60000) : Math.floor((this.audio_point % 3600000) / 60000)) + ':' + (Math.floor((this.audio_point % 60000) / 1000) < 10 ? '0' + Math.floor((this.audio_point % 60000) / 1000) : Math.floor((this.audio_point % 60000) / 1000));
-      },
-      //播放列表
-      playList(){
-        return this.$store.getters.getPlayList;
       }
     },
     watch: {
       //歌曲变化监听
-      songsId: {
+      getSongsId: {
         deep: true,
         handler(value) {
           //获取音乐url
@@ -198,6 +199,7 @@
           this.$refs.musicAudio.play();
           this.songsState = true;
         }
+        this.$store.commit('setPlayState',this.songsState)
       },
       //音量设置
       volume_change() {
@@ -216,7 +218,7 @@
             this.songsObj = res.data[0];
             setTimeout(() => {
               this.playMusic();
-            }, 100)
+            }, 0)
           }
         }).catch(err => {
           console.log(err);
@@ -226,7 +228,6 @@
       getMusicDetail(ids) {
         getMusicDetail(ids).then(res => {
           if (res.code === 200) {
-            console.log(res)
             this.songsDetail = res.songs[0]
             this.drawingMusicDetail(this.songsDetail);
           }
@@ -254,15 +255,42 @@
       },
       //音乐进度条变化
       audio_change(e) {
-        this.audio_point = this.$refs.musicAudio.currentTime = e / 1000;
+        this.$refs.musicAudio.currentTime = e / 1000;
       },
       //监听音频播放进度
       audio_time_update(e) {
         this.audio_point = e.target.currentTime * 1000;
       },
       //上一首
-      lastSong() {
-        console.log(5521)
+      upSong() {
+        let currIndex = -1;
+        //获取当前播放歌曲在播放list中的index
+        this.getPlayList.map((item,index) => {
+          if (item.id === this.getSongsId){
+            currIndex = index;
+          }
+        });
+        if (currIndex <= 0){
+          this.$store.commit('setSongsId', this.getPlayList[this.getPlayList.length - 1].id);
+        }else {
+          this.$store.commit('setSongsId', this.getPlayList[currIndex - 1].id);
+        }
+      },
+      //下一首
+      downSong() {
+        let currIndex = -1;
+        //获取当前播放歌曲在播放list中的index
+        this.getPlayList.map((item,index) => {
+          if (item.id === this.getSongsId){
+            currIndex = index;
+          }
+        });
+        if (currIndex >= this.getPlayList.length - 1){
+          currIndex = 0;
+          this.$store.commit('setSongsId', this.getPlayList[currIndex].id);
+        }else {
+          this.$store.commit('setSongsId', this.getPlayList[currIndex + 1].id);
+        }
       },
       //播放列表
       playListClick(){
@@ -291,6 +319,10 @@
 <style scoped lang="less">
   /deep/ .ivu-modal-mask{
     background-color: unset;
+    height: 600px;
+  }
+  /deep/ .ivu-modal-wrap{
+    bottom: 364px;
   }
   /deep/ .ivu-modal {
     position: relative;
@@ -350,6 +382,13 @@
           }
         }
         .playTable{
+          .play_state{
+            position: absolute;
+            top: 18px;
+            left: 3px;
+            font-size: 10px;
+            color: #ec4141;
+           }
           .nameStyle{
             color: #d3d3d3;
             overflow: hidden;
@@ -462,6 +501,12 @@
         .index_footer_icon {
           font-size: 20px;
         }
+        .up_song{
+          cursor: pointer;
+          &:hover{
+            color: #c23a3b;
+          }
+        }
       }
     }
 
@@ -523,6 +568,7 @@
   }
 
   /deep/ .ivu-table td {
+    position: relative;
     background-color: unset;
     border: unset;
   }

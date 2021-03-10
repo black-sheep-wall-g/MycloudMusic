@@ -38,14 +38,17 @@
       <Table :columns="columns" :data="dataList" width="819" :row-class-name="rowClassName" @on-row-dblclick="playSongs">
         <template slot-scope="{ row, index }" slot="name">
           <span class="ivu-table-cell-tooltip-content">
-            <span class="nameOrder">{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
+            <span v-if="row.id !== getSongsId" class="nameOrder">{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
+            <svg v-else class="icon iconOrder" aria-hidden="true">
+              <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
+            </svg>
             <svg class="icon loveSongs" aria-hidden="true">
               <use xlink:href="#icon-xinaixin"></use>
             </svg>
             <svg class="icon downloadSongs" aria-hidden="true">
-                    <use xlink:href="#icon-46"></use>
-                </svg>
-            <span class="nameStyle" :title="row.name">{{ row.name }}</span>
+              <use xlink:href="#icon-46"></use>
+            </svg>
+            <span :class="row.id !== getSongsId ? 'nameStyle' : 'loveActive'" :title="row.name">{{ row.name }}</span>
           </span>
         </template>
         <template slot-scope="{ row, index }" slot="singer">
@@ -61,6 +64,7 @@
 
 <script>
   import {getRecomSongs} from "../../network/home";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "dayRecomSongs",
@@ -100,6 +104,9 @@
     },
     created() {
       this.getRecomSongs();
+    },
+    computed:{
+      ...mapGetters(['getSongsId','getPlayState'])
     },
     methods: {
       //每日推荐歌曲
@@ -299,6 +306,11 @@
       }
       .nameOrder{
         margin: 0 8px;
+      }
+      .iconOrder{
+        margin: 0 8px;
+        font-size: 15px;
+        color: #ec4141;
       }
       .loveSongs{
         font-size: 15px;
