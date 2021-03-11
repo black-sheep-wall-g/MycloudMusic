@@ -1,15 +1,15 @@
 <template>
   <Footer class="layout_footer_audio">
     <Row>
-      <audio preload ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update" @ended="downSong"></audio>
+      <audio preload ref="musicAudio" :src="getSongsId === '' ? '' : songsObj.url" @timeupdate="audio_time_update" @ended="endSong"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
           <div class="audio_thumbnail">
-            <img :src="songsUrl" alt="">
+            <img :src="getSongsId === '' ? '' : songsUrl" alt="">
           </div>
           <div class="audio_song_info">
-            <div class="audio_song_name" :title="songsName">{{songsName}}</div>
-            <div class="audio_song_author" :title="songsSinger">{{songsSinger}}</div>
+            <div class="audio_song_name" :title="getSongsId === '' ? '' : songsName">{{getSongsId === '' ? '' : songsName}}</div>
+            <div class="audio_song_author" :title="getSongsId === '' ? '' : songsSinger">{{getSongsId === '' ? '' : songsSinger}}</div>
           </div>
           <div class="audio_like">
             <svg class="icon footer_left_icon" aria-hidden="true">
@@ -22,13 +22,16 @@
         <div class="footer_center">
           <div class="audio_control">
             <div class="audio_control_info">
-              <svg class="icon index_footer_icon" aria-hidden="true">
-                <use xlink:href="#icon-liebiaoxunhuan"></use>
+              <svg class="icon index_footer_icon" aria-hidden="true" @click="playMethods">
+                <use v-if="playNum === 0" xlink:href="#icon-liebiaoxunhuan"></use>
+                <use v-else-if="playNum === 1" xlink:href="#icon-loop"></use>
+                <use v-else-if="playNum === 2" xlink:href="#icon-suijibofang"></use>
+                <use v-else-if="playNum === 3" xlink:href="#icon-shunxubofang"></use>
               </svg>
               <svg class="icon index_footer_icon up_song" aria-hidden="true" @click="upSong">
                 <use xlink:href="#icon-shangyishou1"></use>
               </svg>
-              <svg v-if="songsState" class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
+              <svg v-if="getPlayState" class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
                 <use xlink:href="#icon-zanting1"></use>
               </svg>
               <svg v-else class="icon index_footer_icon" aria-hidden="true" @click="controlMusic">
@@ -71,7 +74,7 @@
             <div class="historyBtn"  :class="!playFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
           </div>
           <div class="tableTitle">
-            <div class="countSongs">总10首</div>
+            <div class="countSongs">总{{getPlayList.length}}首</div>
             <div class="collectAll">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-shoucangjia"></use>
@@ -85,18 +88,18 @@
               清空
             </div>
           </div>
-          <Table class="playTable" :show-header="false" :columns="playListColumns" :data="this.getPlayList" height="430" :row-class-name="rowClassName">
+          <Table class="playTable" :show-header="false" :columns="playListColumns" :data="getPlayList" height="430" :row-class-name="rowClassName" @on-row-dblclick="playSongs">
             <template slot-scope="{ row, index }" slot="name">
-              <svg v-if="row.id === getSongsId && getPlayState" class="icon play_state" aria-hidden="true">
+              <svg v-if="row.id === getSongsId && !getPlayState" class="icon play_state" aria-hidden="true">
                 <use xlink:href="#icon-zantingtingzhi"></use>
               </svg>
-              <svg v-if="row.id === getSongsId && !getPlayState" class="icon play_state" aria-hidden="true">
+              <svg v-if="row.id === getSongsId && getPlayState" class="icon play_state" aria-hidden="true">
                 <use xlink:href="#icon-bofang1"></use>
               </svg>
-              <div class="nameStyle">{{row.name}}</div>
+              <div class="nameStyle" :class="row.id !== getSongsId ? '' : 'loveActive'">{{row.name}}</div>
             </template>
             <template slot-scope="{ row, index }" slot="singer">
-              <div class="singerStyle" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
+              <div class="singerStyle" :class="row.id !== getSongsId ? '' : 'loveActive'" :title="row.singer.map(item => item.name).join('/')"><span v-for="(item1,index1) in row.singer" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;" @click="toResult(index1)">{{item1.name}}</span></span></div>
             </template>
             <template slot-scope="{ row, index }" slot="time">
               <div class="timeStyle">{{row.times}}</div>
@@ -159,7 +162,9 @@
             slot: 'time',
             width: 120
           }
-        ]
+        ],
+        //播放方式Num,0为列表循环，1为单曲循环，2为随机播放，3为顺序播放
+        playNum:0
       }
     },
     computed: {
@@ -186,6 +191,7 @@
         this.$refs.musicAudio.play();
         //歌曲状态
         this.songsState = true;
+        this.$store.commit('setPlayState',this.songsState)
         //歌曲进度初始化
         this.audio_point = this.$refs.musicAudio.currentTime;
       },
@@ -264,32 +270,74 @@
       //上一首
       upSong() {
         let currIndex = -1;
+        //重置歌曲状态
+        this.$store.commit('setPlayState',true)
         //获取当前播放歌曲在播放list中的index
         this.getPlayList.map((item,index) => {
           if (item.id === this.getSongsId){
             currIndex = index;
           }
         });
-        if (currIndex <= 0){
-          this.$store.commit('setSongsId', this.getPlayList[this.getPlayList.length - 1].id);
+        if (this.playNum === 2){
+          let randomNum = Math.floor(Math.random() * this.getPlayList.length + 1);
+          this.$store.commit('setSongsId', this.getPlayList[randomNum].id);
         }else {
-          this.$store.commit('setSongsId', this.getPlayList[currIndex - 1].id);
+          if (currIndex <= 0){
+            this.$store.commit('setSongsId', this.getPlayList[this.getPlayList.length - 1].id);
+          }else {
+            this.$store.commit('setSongsId', this.getPlayList[currIndex - 1].id);
+          }
         }
       },
       //下一首
       downSong() {
         let currIndex = -1;
+        //重置歌曲状态
+        this.$store.commit('setPlayState',true)
         //获取当前播放歌曲在播放list中的index
         this.getPlayList.map((item,index) => {
           if (item.id === this.getSongsId){
             currIndex = index;
           }
         });
-        if (currIndex >= this.getPlayList.length - 1){
-          currIndex = 0;
-          this.$store.commit('setSongsId', this.getPlayList[currIndex].id);
+        if (this.playNum === 2){
+          let randomNum = Math.floor(Math.random() * this.getPlayList.length + 1);
+          this.$store.commit('setSongsId', this.getPlayList[randomNum].id);
         }else {
-          this.$store.commit('setSongsId', this.getPlayList[currIndex + 1].id);
+          if (currIndex >= this.getPlayList.length - 1){
+            if (this.playNum === 3){
+              this.$store.commit('setSongsId', '');
+              this.songsState = false;
+              this.$store.commit('setPlayState',this.songsState)
+            }else {
+              currIndex = 0;
+              this.$store.commit('setSongsId', this.getPlayList[currIndex].id);
+            }
+          }else {
+            this.$store.commit('setSongsId', this.getPlayList[currIndex + 1].id);
+          }
+        }
+      },
+      //播放end触发
+      endSong(){
+        switch (this.playNum) {
+          // 0为列表循环，1为单曲循环，2为随机播放，3为顺序播放
+          case 0 :
+            this.$refs.musicAudio.loop = false;
+            this.downSong();
+            break;
+          case 1 :
+            this.$refs.musicAudio.loop = true;
+            this.$refs.musicAudio.play();
+            break;
+          case 2 :
+            this.$refs.musicAudio.loop = false;
+            this.$store.commit('setSongsId', this.getPlayList[Math.floor(Math.random() * this.getPlayList.length + 1)].id);
+            break;
+          case 3 :
+            this.$refs.musicAudio.loop = false;
+            this.downSong();
+            break;
         }
       },
       //播放列表
@@ -306,9 +354,24 @@
           return 'ivu-table-stripe-even';
         } else return 'ivu-table-stripe-odd';
       },
+      //播放方式
+      playMethods(){
+        if (this.playNum >= 3){
+          this.playNum = 0;
+        }else {
+          this.playNum++;
+        }
+        localStorage.setItem('playNum',this.playNum);
+      },
+      //播放列表双击播放
+      playSongs(e){
+        //播放点击的歌曲
+        this.$store.commit('setSongsId', e.id);
+      }
     },
     created() {
       this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
+      this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
     },
     mounted() {
       this.$refs.musicAudio.volume = this.volume_point / 100;
@@ -322,7 +385,6 @@
     height: 600px;
   }
   /deep/ .ivu-modal-wrap{
-    bottom: 364px;
   }
   /deep/ .ivu-modal {
     position: relative;
@@ -384,7 +446,7 @@
         .playTable{
           .play_state{
             position: absolute;
-            top: 18px;
+            top: 17px;
             left: 3px;
             font-size: 10px;
             color: #ec4141;
@@ -431,6 +493,9 @@
     background-color: #666666;
   }
 
+  .loveActive{
+    color: #eb4040 !important;
+  }
 
   .ivu-layout-footer {
     padding: 12px;
@@ -500,9 +565,9 @@
 
         .index_footer_icon {
           font-size: 20px;
+          cursor: pointer;
         }
         .up_song{
-          cursor: pointer;
           &:hover{
             color: #c23a3b;
           }
