@@ -49,3 +49,18 @@ export function getRecomSongs() {
         withCredentials: true
     }).catch(err => err);
 }
+
+
+//用户歌单
+export function getUserSongList(uid,limit,offset) {
+    return axios({
+        url: "/user/playlist",
+        params:{
+            uid,// 用户 id ,必选
+            limit,//返回数量 , 默认为 30 ,可选
+            offset,//偏移数量，用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0 ,可选
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
+    }).catch(err => err);
+}

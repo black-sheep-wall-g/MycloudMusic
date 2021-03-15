@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '@/views/home/Home'
 import SearchResult from "@/views/searchResult/SearchResult";
 import dayRecomSongs from "../views/songsResource/dayRecomSongs";
+import playListResult from "../views/playListView/playListResult";
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/dayRecom',
     name: 'dayRecom',
     component: dayRecomSongs
+  },
+  {
+    path: '/playResult',
+    name: 'playResult',
+    component: playListResult
   }
 ]
 //防止重复点击路由造成的冗余导航

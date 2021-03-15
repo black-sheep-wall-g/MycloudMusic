@@ -14,11 +14,15 @@
         <Collapse simple>
           <Panel name="1">
             创建的歌单
-            <p slot="content">史蒂夫·乔布斯（Steve Jobs），1955年2月24日生于美国加利福尼亚州旧金山，美国发明家、企业家、美国苹果公司联合创办人。</p>
+            <div slot="content">
+              <div class="userList" v-for="(item,index) in playlist.filter(item1 => !item1.subscribed)" :key="index" @click="toPlayListView(item)">{{item.name}}</div>
+            </div>
           </Panel>
           <Panel name="2">
             收藏的歌单
-            <p slot="content">斯蒂夫·盖瑞·沃兹尼亚克（Stephen Gary Wozniak），美国电脑工程师，曾与史蒂夫·乔布斯合伙创立苹果电脑（今之苹果公司）。斯蒂夫·盖瑞·沃兹尼亚克曾就读于美国科罗拉多大学，后转学入美国著名高等学府加州大学伯克利分校（UC Berkeley）并获得电机工程及计算机（EECS）本科学位（1987年）。</p>
+            <div slot="content">
+              <div class="userList" v-for="(item,index) in playlist.filter(item1 => item1.subscribed)" :key="index">{{item.name}}</div>
+            </div>
           </Panel>
         </Collapse>
       </List>
@@ -27,12 +31,20 @@
 </template>
 
 <script>
+  import {getUserSongList} from "../../network/home";
+  import {mapGetters} from "vuex";
+
   export default {
     name: "cloudSidebar",
     data() {
       return {
-        findMusic: ['发现音乐', '视频', '朋友', '直播', '私人FM']
+        findMusic: ['发现音乐', '视频', '朋友', '直播', '私人FM'],
+        //用户歌单
+        playlist:[]
       }
+    },
+    computed:{
+      ...mapGetters(['userInfo']),
     },
     methods: {
       siderbarClick(i, index) {
@@ -40,8 +52,25 @@
           //跳转到首页
           this.$router.push({path: '/'})
         }
-        console.log(i, index)
+        console.log(i, index,this.userInfo)
+      },
+      getUserSongList(uid){
+        getUserSongList(uid).then(res => {
+          if (res.code === 200){
+            this.playlist = res.playlist;
+            console.log(res)
+            console.log(this.playlist)
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      },
+      toPlayListView(item){
+        console.log(item)
       }
+    },
+    created() {
+      this.getUserSongList(this.userInfo.account.id);
     }
   }
 </script>
@@ -49,6 +78,11 @@
 <style scoped lang="less">
   .ivu-scroll-loader {
     height: 0;
+  }
+
+  .listActive{
+    background-color: #333333;
+    color: #ffffff;
   }
 
   .sidebar_list {
@@ -67,11 +101,31 @@
       .audio_classify {
         color: #7c7c7c;
       }
+
       .ivu-collapse-simple{
         background-color: unset;
         border: none;
         /deep/ .ivu-collapse-item{
           border: none;
+          .ivu-collapse-content{
+            padding: 0;
+            background-color: unset;
+            .userList{
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              height: 40px;
+              line-height: 40px;
+              padding: 0 10px;
+              border-right: 5px;
+              color: #dddddd;
+              cursor: pointer;
+              &:hover{
+                background-color: #333333;
+                color: #fff;
+              }
+            }
+          }
         }
       }
       .sidebar_list_hover {
