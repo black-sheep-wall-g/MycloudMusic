@@ -69,7 +69,7 @@
       },
       dayRecomSongs(){
         //跳转到每日推荐页
-        this.$router.push({path:'/dayRecom'});
+        this.$router.push({name:'dayRecom'});
       },
       //刷新登录
       refresh() {

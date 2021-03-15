@@ -17,7 +17,7 @@
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-bofang1"></use>
           </svg>
-          <div class="palyText">播放全部</div>
+          <div class="playText">播放全部</div>
           <div class="collectRecom">
             <svg class="icon collectImg" aria-hidden="true">
               <use xlink:href="#icon-jia"></use>
@@ -229,6 +229,7 @@
           position: relative;
           width: 140px;
           height: 35px;
+          line-height: 35px;
           border-radius: 10px;
           background-color: #ec4141;
           cursor: pointer;
@@ -241,16 +242,14 @@
             left: 20px;
           }
 
-          .palyText {
-            display: inline-block;
+          .playText {
             margin-left: 25px;
             text-align: center;
             font-size: 13px;
             color: snow;
             width: 80px;
             height: 35px;
-            line-height: 35px;
-            border-right: 1px solid snow;
+            border-right: 1px solid #e65555;
           }
 
           .collectRecom {

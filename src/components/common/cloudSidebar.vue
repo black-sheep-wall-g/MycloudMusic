@@ -50,7 +50,7 @@
       siderbarClick(i, index) {
         if (index === 0) {
           //跳转到首页
-          this.$router.push({path: '/'})
+          this.$router.push({name: 'Home'})
         }
         console.log(i, index,this.userInfo)
       },
@@ -58,15 +58,13 @@
         getUserSongList(uid).then(res => {
           if (res.code === 200){
             this.playlist = res.playlist;
-            console.log(res)
-            console.log(this.playlist)
           }
         }).catch(err => {
           console.log(err);
         })
       },
       toPlayListView(item){
-        console.log(item)
+        this.$router.push({name: 'playResult',query: {id:item.id}})
       }
     },
     created() {
