@@ -24,9 +24,24 @@
               </svg>
             </div>
           </div>
-          <span>收藏</span>
-          <span>分享</span>
-          <span>下载全部</span>
+          <Button shape="circle" size="16px">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-shoucangjia"></use>
+            </svg>
+            收藏(0)
+          </Button>
+          <Button shape="circle" size="16px">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-fenxiang1"></use>
+            </svg>
+            分享(0)
+          </Button>
+          <Button shape="circle" size="16px">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-tubiaozhizuomoban"></use>
+            </svg>
+            下载全部
+          </Button>
         </div>
         <div>
           <div>歌曲:<span>246</span></div>
