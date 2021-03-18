@@ -35,7 +35,7 @@ export default {
     },
     //获取播放列表
     getPlayList: state => {
-        if (state.playList.length === 0) {
+        if (state.playList.length === 0 && localStorage.getItem('playList') !== null) {
             state.playList = JSON.parse(localStorage.getItem('playList'));
         }
         return state.playList;

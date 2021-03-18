@@ -254,7 +254,6 @@
         watch:{
             // 监听路由跳转。
             $route(newRoute, oldRoute) {
-                // console.log('watch', newRoute, oldRoute)
                 if (this.bcakFlag){
                     this.bcakFlag = false
                 }else {
@@ -283,7 +282,6 @@
                 let timer = null;
                 this.getqrKey();
                 timer = setInterval(async() => {
-                    console.log(this.toLoginModel);
                     if(!this.toLoginModel){
                         clearInterval(timer);
                     }

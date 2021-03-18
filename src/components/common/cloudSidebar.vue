@@ -60,20 +60,22 @@
         console.log(i, index,this.userInfo)
       },
       getUserSongList(uid){
-        getUserSongList(uid).then(res => {
-          if (res.code === 200){
-            this.playlist = res.playlist;
-          }
-        }).catch(err => {
-          console.log(err);
-        })
+        if (uid !== undefined){
+          getUserSongList(uid).then(res => {
+            if (res.code === 200){
+              this.playlist = res.playlist;
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+        }
       },
       toPlayListView(item){
         this.$router.push({name: 'playResult',query: {id:item.id}})
       }
     },
     created() {
-      this.getUserSongList(this.userInfo.account.id);
+      this.getUserSongList(this.userInfo.length === 0 ? undefined : this.userInfo.account.id);
     }
   }
 </script>
