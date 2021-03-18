@@ -74,7 +74,7 @@
             <div class="historyBtn"  :class="!playFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
           </div>
           <div class="tableTitle">
-            <div class="countSongs">总{{getPlayList.length}}首</div>
+            <div class="countSongs">总{{getPlayList.length || 0}}首</div>
             <div class="collectAll">
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-shoucangjia"></use>

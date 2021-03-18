@@ -46,6 +46,11 @@
     computed:{
       ...mapGetters(['userInfo']),
     },
+    watch:{
+      userInfo(newVal){
+        this.getUserSongList(newVal.account.id);
+      }
+    },
     methods: {
       siderbarClick(i, index) {
         if (index === 0) {
