@@ -1,15 +1,15 @@
 <template>
   <div class="play_list_content">
     <div class="play_list_header">
-      <img class="list_pic" src="https://p1.music.126.net/71Bsx5UhPmPF6Rexs5oGsg==/109951165452810392.jpg" alt="">
+      <img class="list_pic" :src="listInfo.coverImgUrl" alt="">
       <div class="play_list_right">
         <div class="play_list_title">
           <span class="play_list_title_left">歌单</span>
           <span class="play_list_title_right">{{listInfo.name}}</span>
         </div>
         <div class="play_list_user">
-          <img class="play_list_user_pic" :src="listInfo.creator.avatarUrl" alt="">
-          <span class="play_list_user_name">{{listInfo.creator.nickname}}</span>
+          <img class="play_list_user_pic" :src="listInfo.creator === undefined ? '' : listInfo.creator.avatarUrl " alt="">
+          <span class="play_list_user_name">{{listInfo.creator === undefined ? '' : listInfo.creator.nickname}}</span>
           <span>{{new Date(listInfo.createTime).toLocaleString().replace(/:\d{1,2}$/,' ')}}创建</span>
         </div>
         <div class="play_list_btn">
@@ -28,13 +28,13 @@
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-shoucangjia"></use>
             </svg>
-            收藏(0)
+            收藏({{listInfo.subscribedCount >= 10000 ? Math.round(listInfo.subscribedCount / 10000) + '万' : listInfo.subscribedCount}})
           </Button>
           <Button shape="circle" font-size="16px">
             <svg class="icon" aria-hidden="true">
               <use xlink:href="#icon-fenxiang1"></use>
             </svg>
-            分享(0)
+            分享({{listInfo.shareCount >= 10000 ? Math.round(listInfo.shareCount / 10000) + '万' : listInfo.shareCount}})
           </Button>
           <Button shape="circle" font-size="16px">
             <svg class="icon" aria-hidden="true">
@@ -44,8 +44,22 @@
           </Button>
         </div>
         <div class="play_list_count">
-          <div class="songs_count">歌曲 : <span>{{listInfo.trackCount}}</span></div>
-          <div class="play_count">播放 : <span>{{listInfo.playCount}}</span></div>
+          <div class="play_list_lable">标签 : <span>日语/经典</span></div>
+          <div class="play_list_simple_count">
+            <div class="songs_count">歌曲 : <span>{{listInfo.trackCount}}</span></div>
+            <div class="play_count">播放 : <span>{{listInfo.playCount >= 100000 ? Math.round(listInfo.playCount / 10000) + '万' : listInfo.playCount}}</span></div>
+          </div>
+          <div class="introduc" :class="introducFlag ? '' : 'introducActive'">简介 :
+            <span ref="introducOpen" v-html="listInfo.description"></span>
+            <div ref="introducIcon">
+              <svg v-if="introducFlag" class="icon" aria-hidden="true" @click="downList">
+                <use xlink:href="#icon-top"></use>
+              </svg>
+              <svg v-else class="icon" aria-hidden="true" @click="downList">
+                <use xlink:href="#icon-xiala1"></use>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -54,7 +68,7 @@
         <TabPane label="歌曲列表" name="name1">
           <Table :columns="columns" :data="tracks" width="819" :row-class-name="rowClassName" @on-row-dblclick="playSongs">
             <template slot-scope="{ row, index }" slot="name">
-          <span class="ivu-table-cell-tooltip-content">
+              <span class="ivu-table-cell-tooltip-content">
             <span v-if="row.id !== getSongsId" class="nameOrder">{{ index < 9 ? '0'+(index+1) : (index+1)}}</span>
             <svg v-else class="icon iconOrder" aria-hidden="true">
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
@@ -121,6 +135,8 @@
             width: 80
           }
         ],
+        //简介展开flag , 默认不展开
+        introducFlag:true
       }
     },
     computed:{
@@ -152,7 +168,7 @@
             });
             console.log(res)
           }
-        })
+        });
       },
       //表格斑马样式
       rowClassName(row, index) {
@@ -167,9 +183,21 @@
         //将歌曲加入播放列表
         this.$store.commit('setPlayList',this.tracks);
       },
+      //简介详情展开
+      downList(){
+        this.introducFlag = !this.introducFlag;
+        console.log(this.introducFlag)
+      }
     },
     created() {
       this.getListDetail(this.id);
+    },
+    updated() {
+      if (this.$refs.introducOpen.offsetHeight >= 20){
+        this.$refs.introducIcon.style.display = 'block';
+      }else{
+        this.$refs.introducIcon.style.display = 'none';
+      }
     }
   }
 </script>
@@ -196,10 +224,12 @@
       }
       background-color: #2b2b2b;
       border: unset;
+      color: #878787;
     }
     td {
       background-color: unset;
       border: unset;
+      color: #878787;
     }
   }
 
@@ -207,6 +237,9 @@
     color: #e01c4c;
   }
 
+  .introducActive{
+    display: block !important;
+  }
 
   .play_list_content{
     width: 819px;
@@ -307,14 +340,36 @@
         }
         .play_list_count{
           display: flex;
+          position: relative;
           margin: 18px 0;
-          .songs_count{
-            flex: 1;
-            color:#d0d0d0;
+          flex-direction: column;
+          color:#d0d0d0;
+          width: 500px;
+          .play_list_lable{
+            span{
+              color: #85b9e6;
+            }
           }
-          .play_count{
-            flex: 5;
-            color:#d0d0d0;
+          .play_list_simple_count{
+            display: flex;
+            .songs_count{
+              flex: 1;
+            }
+            .play_count{
+              flex: 5;
+            }
+          }
+          .introduc{
+            overflow : hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            white-space: pre-line;
+            svg{
+              position: absolute;
+              top: 44px;
+              right: -20px;
+            }
           }
           span{
             color: #878787;
@@ -326,6 +381,7 @@
       /deep/ .ivu-tabs-bar{
         border: none;
         margin: 30px 15px 0;
+        color: #878787;
         .ivu-tabs-ink-bar{
           background-color: #ec4141;
         }

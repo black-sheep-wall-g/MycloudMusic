@@ -22,7 +22,7 @@
         <p style="margin-top: 5px;">每日推荐歌曲</p>
       </card>
       <Card :padding="0" :bordered="false" :dis-hover='true' v-for="(item,index) in homeCloudList" :key="index">
-        <div class="card_body" @mouseenter="listPlayEnter(index)" @mouseleave="listPlayState = -1">
+        <div class="card_body" @mouseenter="listPlayEnter(index)" @mouseleave="listPlayState = -1" @click="albumOpen(item)">
           <img :src="item.picUrl" alt="">
           <span>
             <svg class="icon" aria-hidden="true">
@@ -88,6 +88,10 @@
         getRecomMusicList().then(res => {
           console.log(res)
         })
+      },
+      //专辑
+      albumOpen(item){
+        this.$router.push({name: 'playResult',query: {id:item.id}});
       }
     }
   }

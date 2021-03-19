@@ -21,7 +21,7 @@
           <Panel name="2">
             收藏的歌单
             <div slot="content">
-              <div class="userList" v-for="(item,index) in playlist.filter(item1 => item1.subscribed)" :key="index">{{item.name}}</div>
+              <div class="userList" v-for="(item,index) in playlist.filter(item1 => item1.subscribed)" :key="index" @click="toPlayListView(item)">{{item.name}}</div>
             </div>
           </Panel>
         </Collapse>
