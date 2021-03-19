@@ -10,7 +10,7 @@
         <div class="home_content_swiper" @mouseenter="on_top_enter" @mouseleave="on_top_leave">
             <swiper class="swiper" :options="swiperOption" ref="mySwiper">
                 <swiper-slide v-for="(item,index) in banners" :key="index">
-                    <img :src="item.imageUrl" alt="banner">
+                    <img :src="item.imageUrl" alt="banner" @click="playSongs(item)">
                 <span>
                     {{item.typeTitle}}
                 </span>
@@ -115,6 +115,9 @@
                     // console.log(res)
                     this.homeCloudList = res.result
                 })
+            },
+            playSongs(item){
+                console.log(item)
             }
         },
         mounted() {
