@@ -112,7 +112,7 @@
 </template>
 
 <script>
-  import {getLikeList, getMusicDetail, getMusicUrl} from "../../network/footAudio";
+  import {getMusicDetail, getMusicUrl} from "../../network/footAudio";
   import {mapGetters} from "vuex";
 
   export default {
@@ -168,7 +168,7 @@
       }
     },
     computed: {
-      ...mapGetters(['userInfo','getSongsId','getPlayList','getPlayState']),
+      ...mapGetters(['getSongsId','getPlayList','getPlayState']),
       resultAudioPoint() {
         return (Math.floor((this.audio_point % 3600000) / 60000) < 10 ? '0' + Math.floor((this.audio_point % 3600000) / 60000) : Math.floor((this.audio_point % 3600000) / 60000)) + ':' + (Math.floor((this.audio_point % 60000) / 1000) < 10 ? '0' + Math.floor((this.audio_point % 60000) / 1000) : Math.floor((this.audio_point % 60000) / 1000));
       }
@@ -183,9 +183,6 @@
           //获取音乐detail
           this.getMusicDetail(value);
         }
-      },
-      userInfo(newVal){
-        this.getLikeList(newVal.account.id);
       }
     },
     methods: {
@@ -370,21 +367,11 @@
       playSongs(e){
         //播放点击的歌曲
         this.$store.commit('setSongsId', e.id);
-      },
-      //喜欢音乐列表
-      getLikeList(uid){
-        getLikeList(uid).then(res => {
-          if (res.code === 200){
-            this.$store.commit('setLoveList',res.ids);
-          }
-        })
       }
     },
     created() {
       this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
       this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
-      //获取当前用户喜欢音乐列表
-      this.getLikeList(this.userInfo.account.id);
     },
     mounted() {
       this.$refs.musicAudio.volume = this.volume_point / 100;

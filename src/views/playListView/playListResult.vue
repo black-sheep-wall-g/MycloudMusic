@@ -45,7 +45,7 @@
         </div>
         <div class="play_list_count">
           <div class="play_list_lable">标签 :
-            <span>{{listInfo.tags.length === 0 ? '添加标签' : ''}}</span>
+            <span>{{listInfo.tags === undefined ? '' : (listInfo.tags.length === 0 ? '添加标签' : '')}}</span>
             <span v-for="(item,index) in listInfo.tags">{{(index === 0 ? '' : ' / ') + item}}</span>
           </div>
           <div class="play_list_simple_count">
@@ -76,10 +76,10 @@
             <svg v-else class="icon iconOrder" aria-hidden="true">
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
             </svg>
-            <span title="喜欢">
-              <svg class="icon" aria-hidden="true" :class="row.loveFlag ? 'loveActive' : ''">
-              <use xlink:href="#icon-xinaixin"></use>
-            </svg>
+            <span :title="row.loveFlag ? '取消喜欢' : '喜欢'">
+              <svg class="icon loveSongs" aria-hidden="true" :class="row.loveFlag ? 'loveActive' : ''" @click="loveSong(row)">
+                <use xlink:href="#icon-xinaixin"></use>
+              </svg>
             </span>
             <svg class="icon downloadSongs" aria-hidden="true">
               <use xlink:href="#icon-46"></use>
@@ -105,6 +105,7 @@
 <script>
   import {getListDetail} from "../../network/home";
   import {mapGetters} from "vuex";
+  import {getLikeList, getLikeSongs} from "../../network/footAudio";
 
   export default {
     name: "playListResult",
@@ -145,7 +146,7 @@
       }
     },
     computed:{
-      ...mapGetters(['getLoveList','getSongsId','getPlayState']),
+      ...mapGetters(['userInfo','getLoveList','getSongsId','getPlayState']),
       //歌单id
       id(){
         return this.$route.query.id;
@@ -154,6 +155,9 @@
     watch:{
       id(newVal){
         this.getListDetail(newVal);
+      },
+      userInfo(newVal){
+        this.getLikeList(newVal.account.id);
       }
     },
     methods:{
@@ -190,10 +194,37 @@
       //简介详情展开
       downList(){
         this.introducFlag = !this.introducFlag;
-        console.log(this.introducFlag)
+      },
+      //喜欢音乐
+      getLikeSongs(id,like){
+        getLikeSongs(id,like).then(res => {
+          if (res.code === 200){
+            this.$Message.success('操作成功!');
+          }
+        })
+      },
+      //添加给钱到喜欢歌曲列表
+      loveSong(e){
+        this.tracks.map(item => {
+          if (item.id === e.id){
+            item.loveFlag = !item.loveFlag;
+          }
+        })
+        this.getLikeSongs(e.id,!e.loveFlag);
+      },
+      //喜欢音乐列表
+      getLikeList(uid){
+        getLikeList(uid).then(res => {
+          if (res.code === 200){
+            this.$store.commit('setLoveList',res.ids);
+          }
+        })
       }
     },
     created() {
+      //获取当前用户喜欢音乐列表
+      this.getLikeList(this.userInfo.account.id);
+      //获取歌单
       this.getListDetail(this.id);
     },
     updated() {
@@ -417,7 +448,6 @@
       .loveSongs{
         font-size: 15px;
         margin-left: 5px;
-        color: #e01c4c;
       }
       .downloadSongs{
         font-size: 16px;
