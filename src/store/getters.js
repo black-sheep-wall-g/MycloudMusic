@@ -44,4 +44,8 @@ export default {
     getPlayState: state => {
         return state.playState;
     },
+    //获取喜欢列表
+    getLoveList: state => {
+        return state.loveList;
+    }
 }

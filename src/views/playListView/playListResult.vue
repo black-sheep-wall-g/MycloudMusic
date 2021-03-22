@@ -44,13 +44,16 @@
           </Button>
         </div>
         <div class="play_list_count">
-          <div class="play_list_lable">标签 : <span>日语/经典</span></div>
+          <div class="play_list_lable">标签 :
+            <span>{{listInfo.tags.length === 0 ? '添加标签' : ''}}</span>
+            <span v-for="(item,index) in listInfo.tags">{{(index === 0 ? '' : ' / ') + item}}</span>
+          </div>
           <div class="play_list_simple_count">
             <div class="songs_count">歌曲 : <span>{{listInfo.trackCount}}</span></div>
             <div class="play_count">播放 : <span>{{listInfo.playCount >= 100000 ? Math.round(listInfo.playCount / 10000) + '万' : listInfo.playCount}}</span></div>
           </div>
           <div class="introduc" :class="introducFlag ? '' : 'introducActive'">简介 :
-            <span ref="introducOpen" v-html="listInfo.description"></span>
+            <span ref="introducOpen" :style="listInfo.description || 'color: #85b9e6;'" v-html="listInfo.description || '添加标签'"></span>
             <div ref="introducIcon">
               <svg v-if="introducFlag" class="icon" aria-hidden="true" @click="downList">
                 <use xlink:href="#icon-top"></use>
@@ -73,9 +76,11 @@
             <svg v-else class="icon iconOrder" aria-hidden="true">
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
             </svg>
-            <svg class="icon loveSongs" aria-hidden="true">
+            <span title="喜欢">
+              <svg class="icon" aria-hidden="true" :class="row.loveFlag ? 'loveActive' : ''">
               <use xlink:href="#icon-xinaixin"></use>
             </svg>
+            </span>
             <svg class="icon downloadSongs" aria-hidden="true">
               <use xlink:href="#icon-46"></use>
             </svg>
@@ -140,12 +145,11 @@
       }
     },
     computed:{
-      ...mapGetters(['getSongsId','getPlayState']),
+      ...mapGetters(['getLoveList','getSongsId','getPlayState']),
       //歌单id
       id(){
         return this.$route.query.id;
       }
-
     },
     watch:{
       id(newVal){
@@ -163,10 +167,10 @@
                 singer: item.ar,
                 album: item.al,
                 times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0'+Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
-                id: item.id
+                id: item.id,
+                loveFlag: this.getLoveList.some(item1 => item1 === item.id)
               };
             });
-            console.log(res)
           }
         });
       },

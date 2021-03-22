@@ -117,7 +117,8 @@
                 })
             },
             playSongs(item){
-                console.log(item)
+                //播放歌曲
+                this.$store.commit('setSongsId', item.targetId);
             }
         },
         mounted() {

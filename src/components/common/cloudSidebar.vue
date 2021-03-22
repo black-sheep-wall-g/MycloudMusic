@@ -15,7 +15,7 @@
           <Panel name="1">
             创建的歌单
             <div slot="content">
-              <div class="userList" v-for="(item,index) in playlist.filter(item1 => !item1.subscribed)" :key="index" @click="toPlayListView(item)">{{item.name}}</div>
+              <div class="userList" v-for="(item,index) in playlist.filter(item1 => !item1.subscribed)" :key="index" @click="toPlayListView(item)">{{ index === 0 ? '我喜欢的音乐' : item.name}}</div>
             </div>
           </Panel>
           <Panel name="2">

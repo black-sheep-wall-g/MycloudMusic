@@ -52,5 +52,9 @@ export default{
     //保存播放状态
     setPlayState(state,playState){
         state.playState = playState;
+    },
+    //保存当前用户喜欢列表
+    setLoveList(state,loveList){
+        state.loveList = loveList;
     }
 }
