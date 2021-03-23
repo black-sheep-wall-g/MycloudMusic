@@ -142,11 +142,13 @@
           }
         ],
         //简介展开flag , 默认不展开
-        introducFlag:true
+        introducFlag:true,
+        //喜欢列表
+        loveList: []
       }
     },
     computed:{
-      ...mapGetters(['userInfo','getLoveList','getSongsId','getPlayState']),
+      ...mapGetters(['getLoveList','userInfo','getSongsId','getPlayState']),
       //歌单id
       id(){
         return this.$route.query.id;
@@ -158,6 +160,14 @@
       },
       userInfo(newVal){
         this.getLikeList(newVal.account.id);
+      },
+      //监听路由变化
+      $route(){
+        this.getLikeList(this.id)
+      },
+      //监听love音乐列表变化
+      getLoveList(){
+        this.getListDetail(this.id)
       }
     },
     methods:{
@@ -200,6 +210,12 @@
         getLikeSongs(id,like).then(res => {
           if (res.code === 200){
             this.$Message.success('操作成功!');
+            if (this.getLoveList.some(item => item === id)){
+              this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== id));
+            }else {
+              console.log(this.getLoveList.push(id));
+              this.$store.commit('setLoveList',this.getLoveList.push(id));
+            }
           }
         })
       },
@@ -216,15 +232,15 @@
       getLikeList(uid){
         getLikeList(uid).then(res => {
           if (res.code === 200){
-            this.$store.commit('setLoveList',res.ids);
+            this.loveList = res.ids;
+            //获取歌单
+            this.getListDetail(this.id);
           }
         })
       }
     },
     created() {
       //获取当前用户喜欢音乐列表
-      this.getLikeList(this.userInfo.account.id);
-      //获取歌单
       this.getListDetail(this.id);
     },
     updated() {
@@ -439,6 +455,7 @@
       }
       .nameOrder{
         margin: 0 8px;
+        color: #525252;
       }
       .iconOrder{
         margin: 0 8px;
@@ -452,6 +469,7 @@
       .downloadSongs{
         font-size: 16px;
         margin: 0 8px;
+        color: #525252;
       }
       .nameStyle {
         color: snow;

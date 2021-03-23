@@ -42,9 +42,11 @@
             <svg v-else class="icon iconOrder" aria-hidden="true">
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
             </svg>
-            <svg class="icon loveSongs" aria-hidden="true">
-              <use xlink:href="#icon-xinaixin"></use>
-            </svg>
+            <span :title="row.loveFlag ? '取消喜欢' : '喜欢'">
+              <svg class="icon loveSongs" aria-hidden="true">
+                <use xlink:href="#icon-xinaixin"></use>
+              </svg>
+            </span>
             <svg class="icon downloadSongs" aria-hidden="true">
               <use xlink:href="#icon-46"></use>
             </svg>
@@ -168,10 +170,12 @@
       }
       background-color: #2b2b2b;
       border: unset;
+      color: #878787;
     }
     td {
       background-color: unset;
       border: unset;
+      color: #878787;
     }
   }
 
@@ -305,6 +309,7 @@
       }
       .nameOrder{
         margin: 0 8px;
+        color: #525252;
       }
       .iconOrder{
         margin: 0 8px;
@@ -314,11 +319,11 @@
       .loveSongs{
         font-size: 15px;
         margin-left: 5px;
-        color: #e01c4c;
       }
       .downloadSongs{
         font-size: 16px;
         margin: 0 8px;
+        color: #525252;
       }
       .nameStyle {
         color: snow;

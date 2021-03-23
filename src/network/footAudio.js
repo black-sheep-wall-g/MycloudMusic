@@ -23,6 +23,7 @@ export function getLikeSongs(id,like) {
         params:{
             id, //歌曲 id
             like, //布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+            timerstamp:`${Date.now()}`
         },
         withCredentials: true //跨域
     }).catch(err => err);
@@ -33,6 +34,7 @@ export function getLikeList(uid) {
         url: "/likelist",
         params:{
             uid, //歌曲 id
+            timerstamp:`${Date.now()}`
         },
         withCredentials: true //跨域
     }).catch(err => err);
