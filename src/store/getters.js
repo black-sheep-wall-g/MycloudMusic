@@ -31,6 +31,9 @@ export default {
     },
     //获取歌曲id
     getSongsId: state => {
+        if (state.songsId === ''){
+            state.songsId = JSON.parse(localStorage.getItem('songsId'));
+        }
         return state.songsId;
     },
     //获取播放列表
