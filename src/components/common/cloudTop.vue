@@ -171,7 +171,7 @@
                             <Icon type="ios-arrow-down"></Icon>
                         </a>
                         <DropdownMenu slot="list">
-                            <DropdownItem><span @click="logout">北方的及</span></DropdownItem>
+                            <DropdownItem><span @click="logout">登出</span></DropdownItem>
                             <DropdownItem><span @click="">北方的及</span></DropdownItem>
                             <DropdownItem><span @click="">北方的及</span></DropdownItem>
                             <DropdownItem><span @click="">北方的及</span></DropdownItem>
@@ -326,7 +326,7 @@
                     if (res.code === 200) {
                         this.userInfo = res;
                         this.$store.commit('setUserInfo', res);
-                        console.log(JSON.stringify(res))
+                        // console.log(JSON.stringify(res))
                     }
                 }).catch(err => {
                     console.log(err);
@@ -358,7 +358,7 @@
             //刷新登录
             refresh() {
                 refresh().then(res => {
-                    console.log(res)
+                    // console.log(res)
                 })
             },
             //获取热搜列表详情

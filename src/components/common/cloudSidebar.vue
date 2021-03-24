@@ -57,7 +57,7 @@
           //跳转到首页
           this.$router.push({name: 'Home'})
         }
-        console.log(i, index,this.userInfo)
+        // console.log(i, index,this.userInfo)
       },
       getUserSongList(uid){
         if (uid !== undefined){

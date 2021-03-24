@@ -9,7 +9,7 @@
           </div>
           <div class="audio_song_info">
             <div class="audio_song_name" :title="getSongsId === '' ? '' : songsName">{{getSongsId === '' ? '' : songsName}}</div>
-            <div class="audio_song_author" :title="getSongsId === '' ? '' : songsSinger">{{getSongsId === '' ? '' : songsSinger}}</div>
+            <div class="audio_song_author" :title="getSongsId === '' ? '' : songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
           </div>
           <div class="audio_like">
             <svg class="icon footer_left_icon" aria-hidden="true">
@@ -49,7 +49,7 @@
             <label class="audio_article_start">{{resultAudioPoint}}</label>
             <Slider class="audio_article" @on-change="audio_change" :max="songsRealTime" show-tip="never"
                     v-model="audio_point"></Slider>
-            <label class="audio_article_end">{{songsTime}}</label>
+            <label class="audio_article_end">{{songsTime === '' ? '00:00' : songsTime}}</label>
           </div>
         </div>
       </Col>
@@ -134,7 +134,7 @@
         //歌曲名称
         songsName: '',
         //歌曲演唱者
-        songsSinger: '',
+        songsSinger: [],
         //歌曲图片
         songsUrl: '',
         //音量状态
@@ -168,9 +168,11 @@
       }
     },
     computed: {
-      ...mapGetters(['userInfo','getSongsId','getPlayList','getPlayState']),
+      ...mapGetters(['getLoveList','userInfo','getSongsId','getPlayList','getPlayState']),
       resultAudioPoint() {
-        return (Math.floor((this.audio_point % 3600000) / 60000) < 10 ? '0' + Math.floor((this.audio_point % 3600000) / 60000) : Math.floor((this.audio_point % 3600000) / 60000)) + ':' + (Math.floor((this.audio_point % 60000) / 1000) < 10 ? '0' + Math.floor((this.audio_point % 60000) / 1000) : Math.floor((this.audio_point % 60000) / 1000));
+        const m = Math.floor((this.audio_point % 3600000) / 60000);
+        const s = Math.floor((this.audio_point % 60000) / 1000);
+        return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
       }
     },
     watch: {
@@ -183,7 +185,10 @@
           //获取音乐detail
           this.getMusicDetail(value);
         }
-      }
+      },
+      userInfo(newVal){
+        this.getLikeList(newVal.account.id);
+      },
     },
     methods: {
       //双击播放
@@ -243,10 +248,11 @@
       },
       //渲染歌曲头像及名称歌手
       drawingMusicDetail(item) {
+        const m = Math.floor((item.dt % 3600000) / 60000),s = Math.floor((item.dt % 60000) / 1000);
         this.songsRealTime = item.dt;
-        this.songsTime = Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0' + Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000));
+        this.songsTime = (m < 10 ? ('0' + m) : m) + ':' + (s < 10 ? ('0' + s) : s);
         this.songsName = item.name;
-        this.songsSinger = item.ar[0].name;
+        this.songsSinger = item.ar;
         this.songsUrl = item.al.picUrl;
       },
       //音量状态

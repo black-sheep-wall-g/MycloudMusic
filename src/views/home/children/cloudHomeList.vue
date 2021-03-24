@@ -74,13 +74,13 @@
       //刷新登录
       refresh() {
         refresh().then(res => {
-          console.log(res)
+          // console.log(res)
         })
       },
       //获取账号登录状态
       getUserStatus() {
         getUserStatus().then(res => {
-          console.log(res)
+          // console.log(res)
         })
       },
       //每日推荐歌单

@@ -77,8 +77,8 @@
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
             </svg>
             <span :title="row.loveFlag ? '取消喜欢' : '喜欢'">
-              <svg class="icon loveSongs" aria-hidden="true" :class="row.loveFlag ? 'loveActive' : ''" @click="loveSong(row)">
-                <use xlink:href="#icon-xinaixin"></use>
+              <svg class="icon loveSongs" aria-hidden="true" @click="loveSong(row)">
+                <use :xlink:href="row.loveFlag ? '#icon-xinaixin' : '#icon-aixin'"></use>
               </svg>
             </span>
             <svg class="icon downloadSongs" aria-hidden="true">
@@ -105,7 +105,7 @@
 <script>
   import {getListDetail} from "../../network/home";
   import {mapGetters} from "vuex";
-  import {getLikeList, getLikeSongs} from "../../network/footAudio";
+  import {getLikeSongs} from "../../network/footAudio";
 
   export default {
     name: "playListResult",
@@ -148,7 +148,7 @@
       }
     },
     computed:{
-      ...mapGetters(['getLoveList','userInfo','getSongsId','getPlayState']),
+      ...mapGetters(['getLoveList','getSongsId','getPlayState']),
       //歌单id
       id(){
         return this.$route.query.id;
@@ -157,13 +157,6 @@
     watch:{
       id(newVal){
         this.getListDetail(newVal);
-      },
-      userInfo(newVal){
-        this.getLikeList(newVal.account.id);
-      },
-      //监听路由变化
-      $route(){
-        this.getLikeList(this.id)
       },
       //监听love音乐列表变化
       getLoveList(){
@@ -176,11 +169,12 @@
           if (res.code === 200){
             this.listInfo = res.playlist;
             this.tracks = res.playlist.tracks.map(item => {
+              const m = Math.floor((item.dt % 3600000) / 60000),s = Math.floor((item.dt % 60000) / 1000);
               return {
                 name: item.name,
                 singer: item.ar,
                 album: item.al,
-                times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0'+Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
+                times: (m < 10 ? ('0' + m) : m) + ':' + (s < 10 ? ('0' + s) : s),
                 id: item.id,
                 loveFlag: this.getLoveList.some(item1 => item1 === item.id)
               };
@@ -213,30 +207,15 @@
             if (this.getLoveList.some(item => item === id)){
               this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== id));
             }else {
-              console.log(this.getLoveList.push(id));
-              this.$store.commit('setLoveList',this.getLoveList.push(id));
+              this.getLoveList.push(id);
+              this.$store.commit('setLoveList',this.getLoveList);
             }
           }
-        })
+        });
       },
       //添加给钱到喜欢歌曲列表
       loveSong(e){
-        this.tracks.map(item => {
-          if (item.id === e.id){
-            item.loveFlag = !item.loveFlag;
-          }
-        })
         this.getLikeSongs(e.id,!e.loveFlag);
-      },
-      //喜欢音乐列表
-      getLikeList(uid){
-        getLikeList(uid).then(res => {
-          if (res.code === 200){
-            this.loveList = res.ids;
-            //获取歌单
-            this.getListDetail(this.id);
-          }
-        })
       }
     },
     created() {
@@ -463,7 +442,7 @@
         color: #ec4141;
       }
       .loveSongs{
-        font-size: 15px;
+        font-size: 16px;
         margin-left: 5px;
       }
       .downloadSongs{

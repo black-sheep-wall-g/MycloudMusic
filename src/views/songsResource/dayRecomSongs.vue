@@ -43,8 +43,8 @@
               <use :xlink:href="getPlayState ? '#icon-yinliang3' : '#icon-laba'"></use>
             </svg>
             <span :title="row.loveFlag ? '取消喜欢' : '喜欢'">
-              <svg class="icon loveSongs" aria-hidden="true">
-                <use xlink:href="#icon-xinaixin"></use>
+              <svg class="icon loveSongs" aria-hidden="true" @click="loveSong(row)">
+                <use :xlink:href="row.loveFlag ? '#icon-xinaixin' : '#icon-aixin'"></use>
               </svg>
             </span>
             <svg class="icon downloadSongs" aria-hidden="true">
@@ -67,6 +67,7 @@
 <script>
   import {getRecomSongs} from "../../network/home";
   import {mapGetters} from "vuex";
+  import {getLikeSongs} from "../../network/footAudio";
 
   export default {
     name: "dayRecomSongs",
@@ -108,7 +109,7 @@
       this.getRecomSongs();
     },
     computed:{
-      ...mapGetters(['getSongsId','getPlayState'])
+      ...mapGetters(['getLoveList','getSongsId','getPlayState'])
     },
     methods: {
       //每日推荐歌曲
@@ -116,12 +117,14 @@
         getRecomSongs().then(res => {
           if (res.code === 200) {
             this.dataList = res.data.dailySongs.map(item => {
+              const m = Math.floor((item.dt % 3600000) / 60000),s = Math.floor((item.dt % 60000) / 1000);
               return {
                 name: item.name,
                 singer: item.ar,
                 album: item.al,
-                times: Math.floor((item.dt % 3600000) / 60000) + ':' + (Math.floor((item.dt % 60000) / 1000) < 10 ? ('0'+Math.floor((item.dt % 60000) / 1000)) : Math.floor((item.dt % 60000) / 1000)),
-                id: item.id
+                times: (m < 10 ? ('0' + m) : m) + ':' + (s < 10 ? ('0' + s) : s),
+                id: item.id,
+                loveFlag: this.getLoveList.some(item1 => item1 === item.id)
               };
             })
           }
@@ -143,7 +146,26 @@
       //跳转到对应的歌手或者专辑页
       toResult(index){
         console.log(index)
-      }
+      },
+      //喜欢音乐
+      loveSong(e){
+        this.dataList.map(item => {
+          if (item.id === e.id){
+            item.loveFlag = !item.loveFlag;
+          }
+        });
+        getLikeSongs(e.id,!e.loveFlag).then(res => {
+          if (res.code === 200){
+            this.$Message.success('操作成功!');
+            if (this.getLoveList.some(item => item === e.id)){
+              this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== e.id));
+            }else {
+              this.getLoveList.push(e.id);
+              this.$store.commit('setLoveList',this.getLoveList);
+            }
+          }
+        });
+      },
     }
   }
 </script>
@@ -317,7 +339,7 @@
         color: #ec4141;
       }
       .loveSongs{
-        font-size: 15px;
+        font-size: 16px;
         margin-left: 5px;
       }
       .downloadSongs{
