@@ -1,15 +1,15 @@
 <template>
   <Footer class="layout_footer_audio">
     <Row>
-      <audio preload ref="musicAudio" :src="getSongsId === '' ? '' : songsObj.url" @timeupdate="audio_time_update" @ended="endSong"></audio>
+      <audio preload ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update" @ended="endSong"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
           <div class="audio_thumbnail">
-            <img :src="getSongsId === '' ? '' : songsUrl" alt="">
+            <img :src="songsUrl" alt="">
           </div>
           <div class="audio_song_info">
-            <div class="audio_song_name" :title="getSongsId === '' ? '' : songsName">{{getSongsId === '' ? '' : songsName}}</div>
-            <div class="audio_song_author" :title="getSongsId === '' ? '' : songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
+            <div class="audio_song_name" :title="songsName">{{songsName}}</div>
+            <div class="audio_song_author" :title="songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
           </div>
           <div class="audio_like">
             <svg class="icon footer_left_icon" aria-hidden="true">
@@ -123,8 +123,6 @@
         volume_point: 0,
         //歌曲url详情对象
         songsObj: {},
-        //歌曲状态
-        songsState: false,
         //歌曲详情
         songsDetail: {},
         //歌曲实时播放时间
@@ -179,11 +177,13 @@
       //歌曲变化监听
       getSongsId: {
         deep: true,
-        handler(value) {
-          //获取音乐url
-          this.getMusicUrl(value);
+        async handler(value) {
           //获取音乐detail
           this.getMusicDetail(value);
+          //获取音乐url
+          await this.getMusicUrl(value);
+          //播放音乐
+          await this.playMusic();
         }
       },
       userInfo(newVal){
@@ -191,26 +191,34 @@
       },
     },
     methods: {
+      //数据加载
+      init(){
+        this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
+        this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
+        this.getLikeList(this.userInfo.account.id);
+        //获取音乐url
+        this.getMusicUrl(this.getSongsId);
+        //获取音乐detail
+        this.getMusicDetail(this.getSongsId);
+      },
       //双击播放
       playMusic() {
         this.$refs.musicAudio.play();
         //歌曲状态
-        this.songsState = true;
-        this.$store.commit('setPlayState',this.songsState)
+        this.$store.commit('setPlayState',true);
         //歌曲进度初始化
         this.audio_point = this.$refs.musicAudio.currentTime;
       },
       //播放控制
       controlMusic() {
-        if (this.songsState) {
+        if (this.getPlayState) {
           //暂停歌曲
           this.$refs.musicAudio.pause();
-          this.songsState = false;
+          this.$store.commit('setPlayState',false);
         } else {
           this.$refs.musicAudio.play();
-          this.songsState = true;
+          this.$store.commit('setPlayState',true);
         }
-        this.$store.commit('setPlayState',this.songsState)
       },
       //音量设置
       volume_change() {
@@ -223,23 +231,20 @@
         }
       },
       //获取音乐url
-      getMusicUrl(id) {
-        getMusicUrl(id).then(res => {
+     async getMusicUrl(id) {
+      await getMusicUrl(id).then(res => {
           if (res.code === 200) {
-            this.songsObj = res.data[0];
-            setTimeout(() => {
-              this.playMusic();
-            }, 0)
+           this.songsObj = res.data[0];
           }
         }).catch(err => {
           console.log(err);
-        })
+        });
       },
       //获取音乐详情
       getMusicDetail(ids) {
         getMusicDetail(ids).then(res => {
           if (res.code === 200) {
-            this.songsDetail = res.songs[0]
+            this.songsDetail = res.songs[0];
             this.drawingMusicDetail(this.songsDetail);
           }
         }).catch(err => {
@@ -299,7 +304,7 @@
       downSong() {
         let currIndex = -1;
         //重置歌曲状态
-        this.$store.commit('setPlayState',true)
+        this.$store.commit('setPlayState',true);
         //获取当前播放歌曲在播放list中的index
         this.getPlayList.map((item,index) => {
           if (item.id === this.getSongsId){
@@ -313,8 +318,7 @@
           if (currIndex >= this.getPlayList.length - 1){
             if (this.playNum === 3){
               this.$store.commit('setSongsId', '');
-              this.songsState = false;
-              this.$store.commit('setPlayState',this.songsState)
+              this.$store.commit('setPlayState',false);
             }else {
               currIndex = 0;
               this.$store.commit('setSongsId', this.getPlayList[currIndex].id);
@@ -383,9 +387,7 @@
       }
     },
     created() {
-      this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
-      this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
-      this.getLikeList(this.userInfo.account.id)
+      this.init();
     },
     mounted() {
       this.$refs.musicAudio.volume = this.volume_point / 100;

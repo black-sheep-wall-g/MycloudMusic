@@ -81,7 +81,7 @@
       }
     },
     computed:{
-      ...mapGetters(['getLoveList','getSongsId','getPlayState'])
+      ...mapGetters(['getPlayList','getLoveList','getSongsId','getPlayState'])
     },
     watch: {
       searchResult() {
@@ -108,6 +108,9 @@
         })
       },
       playMusic(e, i) {
+        this.getPlayList.unshift(e);
+        //将歌曲加入播放列表
+        this.$store.commit('setPlayList',this.getPlayList);
         this.$store.commit('setSongsId', e.id);
       },
       //点击歌手或者专辑跳转到对应的页面
