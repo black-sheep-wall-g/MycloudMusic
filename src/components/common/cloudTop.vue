@@ -277,7 +277,6 @@
                 this.qrScanFlag = false;
                 this.phone = '';
                 this.pwd = '';
-
                 const _this = this;
                 let timer = null;
                 this.getqrKey();
@@ -352,8 +351,8 @@
                return getQrState(key).then(res => res)
             },
             //用户等登录状态
-            getUserStatus(){
-               return getUserStatus().then(res => res)
+            async getUserStatus(){
+               return await getUserStatus().then(res => res)
             },
             //刷新登录
             refresh() {
