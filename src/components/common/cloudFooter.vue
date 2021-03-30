@@ -195,7 +195,9 @@
       init(){
         this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
         this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
-        this.getLikeList(this.userInfo.account.id);
+        if (this.userInfo.length !== 0){
+          this.getLikeList(this.userInfo.account.id);
+        }
         //获取音乐url
         this.getMusicUrl(this.getSongsId);
         //获取音乐detail
