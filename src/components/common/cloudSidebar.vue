@@ -44,11 +44,18 @@
       }
     },
     computed:{
-      ...mapGetters(['userInfo']),
+      ...mapGetters(['getuserInfo']),
     },
     watch:{
-      userInfo(newVal){
-        this.getUserSongList(newVal.account.id);
+      //监听用户信息变化
+      getuserInfo(newVal){
+        console.log(newVal)
+        if (newVal.account !== null){
+          this.getUserSongList(newVal.account.id);
+        }else {
+          //用户退出登录时清空
+          this.playlist = [];
+        }
       }
     },
     methods: {
@@ -57,10 +64,9 @@
           //跳转到首页
           this.$router.push({name: 'Home'})
         }
-        // console.log(i, index,this.userInfo)
+        // console.log(i, index,this.getuserInfo)
       },
       getUserSongList(uid){
-        if (uid !== undefined){
           getUserSongList(uid).then(res => {
             if (res.code === 200){
               this.playlist = res.playlist;
@@ -68,14 +74,10 @@
           }).catch(err => {
             console.log(err);
           })
-        }
       },
       toPlayListView(item){
         this.$router.push({name: 'playResult',query: {id:item.id}})
       }
-    },
-    created() {
-      this.getUserSongList(this.userInfo.length === 0 ? undefined : this.userInfo.account.id);
     }
   }
 </script>

@@ -114,7 +114,7 @@
         </col>
         <Col span="8">
             <div class="nav_right">
-                <div class="user_login" @click="toLogin" v-if="userInfo.length === 0">
+                <div class="user_login" @click="toLogin" v-if="this.getuserInfo.account === null">
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
                     <p>未登录</p>
                     <Icon type="ios-arrow-down"></Icon>
@@ -152,7 +152,7 @@
                                         <use xlink:href="#icon-shouji"></use>
                                     </svg>
                                 </Input>
-                                <Input v-model="pwd" name="pwd" autocomplete="off" @on-focus="$event.target.type = 'password'" placeholder="请输入密码" style="width: 260px">
+                                <Input v-model="pwd" name="pwd" autocomplete="off" @on-focus="$event.target.type = 'password'" @on-enter="phoneLogin" placeholder="请输入密码" style="width: 260px">
                                     <svg slot="prefix" class="icon login_icon" aria-hidden="true">
                                         <use xlink:href="#icon-suo"></use>
                                     </svg>
@@ -164,10 +164,10 @@
                     </Modal>
                 </div>
                 <div v-else>
-                    <Avatar :src="userInfo.profile.avatarUrl"/>
+                    <Avatar :src="Object.keys(getuserInfo).length === 0 ? '' : getuserInfo.profile.avatarUrl"/>
                     <Dropdown trigger="click" style="margin-left: 15px">
                         <a href="javascript:void(0)">
-                            {{userInfo.profile.nickname}}
+                            {{Object.keys(getuserInfo).length === 0 ? '': getuserInfo.profile.nickname}}
                             <Icon type="ios-arrow-down"></Icon>
                         </a>
                         <DropdownMenu slot="list">
@@ -200,6 +200,7 @@
         userLogout
     } from "../../network/cloudTop";
     import CloudCard from "./cloudCard";
+    import {mapGetters} from "vuex";
 
 
     export default {
@@ -209,8 +210,6 @@
             return {
                 phone: '',
                 pwd: '',
-                //用户信息
-                userInfo: [],
                 //搜索历史模态框
                 modal1: false,
                 //搜索模态框
@@ -247,21 +246,28 @@
         },
         computed: {
             //用户登录信息
-            initInfo() {
-                return this.$store.getters.userInfo
-            }
+            ...mapGetters(['getuserInfo'])
         },
         watch:{
             // 监听路由跳转。
-            $route(newRoute, oldRoute) {
+            $route() {
                 if (this.bcakFlag){
                     this.bcakFlag = false
                 }else {
                     this.address++;
                 }
+            },
+            getuserInfo(valuer){
+                console.log(valuer)
             }
         },
         methods: {
+            //渲染数据
+            init(){
+                this.assignLocalStorage();
+                this.getUserStatus();
+                this.getHotList();
+            },
             //搜索框历史信息
             searchHistory() {
                 //获取本地搜索数据
@@ -278,7 +284,7 @@
                 this.phone = '';
                 this.pwd = '';
                 const _this = this;
-                let timer = null;
+                let timer;
                 this.getqrKey();
                 timer = setInterval(async() => {
                     if(!this.toLoginModel){
@@ -294,12 +300,8 @@
                     }
                     if (qrState.code === 803){
                         clearInterval(timer);
-                        let {data} = await _this.getUserStatus();
-                        if (data.code === 200){
-                            _this.userInfo = data;
-                            _this.$store.commit('setUserInfo', data);
-                            _this.$Modal.remove()
-                        }
+                        _this.getUserStatus();
+                        _this.$Modal.remove();
                     }
                 },3000);
             },
@@ -313,9 +315,8 @@
                 this.toLoginModel = false;
                 userLogout().then(res => {
                     if (res.code === 200) {
-                        this.$store.commit('logout')
+                        this.getUserStatus();
                         this.$Modal.remove();
-                        this.userInfo = [];
                     }
                 });
             },
@@ -323,9 +324,7 @@
             getLogin() {
                 getLogin(this.phone, this.pwd).then(res => {
                     if (res.code === 200) {
-                        this.userInfo = res;
                         this.$store.commit('setUserInfo', res);
-                        // console.log(JSON.stringify(res))
                     }
                 }).catch(err => {
                     console.log(err);
@@ -351,13 +350,16 @@
                return getQrState(key).then(res => res)
             },
             //用户等登录状态
-            async getUserStatus(){
-               return await getUserStatus().then(res => res)
+            getUserStatus(){
+                getUserStatus().then(res => {
+                    console.log(res.data)
+                    this.$store.commit('setUserInfo', res.data);
+                })
             },
             //刷新登录
             refresh() {
                 refresh().then(res => {
-                    // console.log(res)
+                    console.log(res)
                 })
             },
             //获取热搜列表详情
@@ -477,9 +479,7 @@
             }
         },
         created() {
-            this.userInfo = this.initInfo;
-            this.assignLocalStorage();
-            this.getHotList();
+            this.init();
         }
     }
 </script>

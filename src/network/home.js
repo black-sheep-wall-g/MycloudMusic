@@ -1,13 +1,21 @@
 //首页信息
 export function getIndexInfo() {
     return axios({
-        url:'/homepage/block/page'
+        url:'/homepage/block/page',
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
     }).catch(err => err);
 }
 //首页轮播图
 export function getIndexBanner() {
     return axios({
-        url:'/banner'
+        url:'/banner',
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
     }).catch(err => err);
 }
 
@@ -16,15 +24,21 @@ export function getUserInfo(uid) {
     return axios({
         url: "/user/detail",
         params:{
-            uid
-        }
+            uid,
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
     }).catch(err => err);
 }
 
 //首页推荐歌单
 export function getMusicList() {
     return axios({
-        url: "/personalized"
+        url: "/personalized",
+        params:{
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true
     }).catch(err => err);
 }
 

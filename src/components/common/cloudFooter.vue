@@ -12,9 +12,11 @@
             <div class="audio_song_author" :title="songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
           </div>
           <div class="audio_like">
-            <svg class="icon footer_left_icon" aria-hidden="true">
-              <use xlink:href="#icon-xihuan"></use>
-            </svg>
+            <span :title="loveSongFlag ? '取消喜欢' : '喜欢'">
+              <svg class="icon footer_left_icon" aria-hidden="true" @click="loveSong">
+                <use :xlink:href="loveSongFlag ? '#icon-xinaixin' : '#icon-aixin'"></use>
+              </svg>
+            </span>
           </div>
         </div>
       </Col>
@@ -142,7 +144,7 @@
         //播放列表Flag
         playListFlag: false,
         //播放列表历史记录flag
-        playFlag:true,
+        playFlag: true,
         //播放列表表头
         playListColumns: [
           {
@@ -162,11 +164,13 @@
           }
         ],
         //播放方式Num,0为列表循环，1为单曲循环，2为随机播放，3为顺序播放
-        playNum:0
+        playNum: 0,
+        //歌曲喜欢状态
+        loveSongFlag: false
       }
     },
     computed: {
-      ...mapGetters(['getLoveList','userInfo','getSongsId','getPlayList','getPlayState']),
+      ...mapGetters(['getLoveList','getuserInfo','getSongsId','getPlayList','getPlayState']),
       resultAudioPoint() {
         const m = Math.floor((this.audio_point % 3600000) / 60000);
         const s = Math.floor((this.audio_point % 60000) / 1000);
@@ -186,8 +190,10 @@
           await this.playMusic();
         }
       },
-      userInfo(newVal){
-        this.getLikeList(newVal.account.id);
+      getuserInfo(newVal){
+        if (newVal.account !== null){
+          this.getLikeList(newVal.account.id);
+        }
       },
     },
     methods: {
@@ -195,13 +201,15 @@
       init(){
         this.volume_point = Number(localStorage.getItem('volume') === null ? this.volume_point : localStorage.getItem('volume'));
         this.playNum = Number(localStorage.getItem('playNum') === null ? 0 : localStorage.getItem('playNum'));
-        if (this.userInfo.length !== 0){
-          this.getLikeList(this.userInfo.account.id);
+        if (Object.keys(this.getuserInfo).length !== 0){
+          this.getLikeList(this.getuserInfo.account.id);
         }
         //获取音乐url
-        this.getMusicUrl(this.getSongsId);
-        //获取音乐detail
-        this.getMusicDetail(this.getSongsId);
+        if (this.getSongsId){
+          this.getMusicUrl(this.getSongsId);
+          //获取音乐detail
+          this.getMusicDetail(this.getSongsId);
+        }
       },
       //双击播放
       playMusic() {
@@ -233,8 +241,8 @@
         }
       },
       //获取音乐url
-     async getMusicUrl(id) {
-      await getMusicUrl(id).then(res => {
+      getMusicUrl(id) {
+        getMusicUrl(id).then(res => {
           if (res.code === 200) {
            this.songsObj = res.data[0];
           }
@@ -383,9 +391,14 @@
       getLikeList(uid){
         getLikeList(uid).then(res => {
           if (res.code === 200){
+            console.log(res)
             this.$store.commit('setLoveList',res.ids);
           }
         })
+      },
+      loveSong(){
+        console.log(this.getSongsId);
+        this.loveSongFlag = true
       }
     },
     created() {

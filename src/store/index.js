@@ -8,8 +8,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state:{
-    userInfo:[], //用户信息
-    token:null,//用户token
+    userInfo:{}, //用户信息
     searchDataList:[], //搜索历史
     searchResult:{},//搜索结果数据
     songsId:'',//歌曲id
