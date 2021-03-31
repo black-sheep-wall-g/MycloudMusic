@@ -157,7 +157,7 @@
           width: 140px;
           height: 140px;
           text-align: center;
-          background-image: url(~assets/img/daySongs.png);
+          background-image: url(~assets/img/sl3.jpg);
           background-size: 140px 140px;
           border-radius: 5px;
           .dayRecomTitle{

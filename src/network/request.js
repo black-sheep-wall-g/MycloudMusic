@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = 'http://localhost:3000';
+const url = 'http://8.136.218.194:3000';
 
 let config = {
     baseURL:url,
