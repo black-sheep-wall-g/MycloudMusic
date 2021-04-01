@@ -4,9 +4,19 @@
       <audio preload ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update" @ended="endSong"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
-          <div class="audio_thumbnail">
+          <div class="audio_thumbnail" @click="songsDetailModal = true">
             <img :src="songsUrl" alt="">
           </div>
+          <Modal
+                  v-model="songsDetailModal"
+                  :mask-closable="false"
+                  :mask="false"
+                  :footer-hide="true"
+                  :transition-names="['ease']"
+                  :styles="{width: '1020px',top: '60px'}"
+          >
+            <p>Content of dialog</p>
+          </Modal>
           <div class="audio_song_info">
             <div class="audio_song_name" :title="songsName">{{songsName}}</div>
             <div class="audio_song_author" :title="songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
@@ -70,7 +80,7 @@
         <svg class="icon listIcon" aria-hidden="true" @click="playListFlag = true">
           <use xlink:href="#icon-gedan"></use>
         </svg>
-        <Modal width="425" v-model="playListFlag" :closable="false" :footer-hide="true">
+        <Modal width="425" v-model="playListFlag" :closable="false" :footer-hide="true" :styles="{position: 'relative',top: '60px',left:' 297px'}">
           <div class="playTab">
             <div class="playListBtn" :class="playFlag ? 'listActive' : '' " @click="playListClick">播放列表</div>
             <div class="historyBtn"  :class="!playFlag ? 'listActive' : '' " @click="historyListClick">历史记录</div>
@@ -114,7 +124,7 @@
 </template>
 
 <script>
-  import {getLikeList, getMusicDetail, getMusicUrl} from "../../network/footAudio";
+  import {getLikeList, getLikeSongs, getLyric, getMusicDetail, getMusicUrl} from "../../network/footAudio";
   import {mapGetters} from "vuex";
 
   export default {
@@ -166,7 +176,11 @@
         //播放方式Num,0为列表循环，1为单曲循环，2为随机播放，3为顺序播放
         playNum: 0,
         //歌曲喜欢状态
-        loveSongFlag: false
+        loveSongFlag: false,
+        //歌曲详情modal，光翼展开
+        songsDetailModal:false,
+        //歌词
+        lyric:0
       }
     },
     computed: {
@@ -183,11 +197,13 @@
         deep: true,
         async handler(value) {
           //获取音乐detail
-          this.getMusicDetail(value);
+          await this.getMusicDetail(value);
           //获取音乐url
           await this.getMusicUrl(value);
           //播放音乐
           await this.playMusic();
+          //监听歌曲喜欢状态
+          this.loveSongFlag = this.getLoveList.some(item => item === value);
         }
       },
       getuserInfo(newVal){
@@ -218,6 +234,8 @@
         this.$store.commit('setPlayState',true);
         //歌曲进度初始化
         this.audio_point = this.$refs.musicAudio.currentTime;
+        //获取歌词
+        this.getLyric(this.getSongsId);
       },
       //播放控制
       controlMusic() {
@@ -241,10 +259,10 @@
         }
       },
       //获取音乐url
-      getMusicUrl(id) {
-        getMusicUrl(id).then(res => {
+      async getMusicUrl(id) {
+        await getMusicUrl(id).then(res => {
           if (res.code === 200) {
-           this.songsObj = res.data[0];
+            this.songsObj = res.data[0];
           }
         }).catch(err => {
           console.log(err);
@@ -388,6 +406,7 @@
         //播放点击的歌曲
         this.$store.commit('setSongsId', e.id);
       },
+      //获取喜欢音乐列表
       getLikeList(uid){
         getLikeList(uid).then(res => {
           if (res.code === 200){
@@ -396,9 +415,28 @@
           }
         })
       },
+      //喜欢音乐
       loveSong(){
-        console.log(this.getSongsId);
-        this.loveSongFlag = true
+        getLikeSongs(this.getSongsId,!this.loveSongFlag).then(res => {
+          if (res.code === 200){
+            if (this.getLoveList.some(item => item === this.getSongsId)){
+              this.loveSongFlag = false;
+              this.$Message.success('取消喜欢成功!');
+              this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== this.getSongsId));
+            }else {
+              this.loveSongFlag = true;
+              this.$Message.success('已添加到我喜欢的音乐!');
+              this.getLoveList.push(this.getSongsId);
+              this.$store.commit('setLoveList',this.getLoveList);
+            }
+          }
+        });
+      },
+      //获取歌词
+      getLyric(id){
+        getLyric(id).then(res => {
+          console.log(res)
+        })
       }
     },
     created() {
@@ -418,9 +456,6 @@
   /deep/ .ivu-modal-wrap{
   }
   /deep/ .ivu-modal {
-    position: relative;
-    top: 60px;
-    left: 297px;
     .ivu-modal-content {
       border-top-right-radius: unset;
       border-bottom-right-radius: unset;

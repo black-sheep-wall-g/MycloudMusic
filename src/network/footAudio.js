@@ -43,3 +43,14 @@ export function getLikeList(uid) {
         withCredentials: true //跨域
     }).catch(err => err);
 }
+//获取歌词
+export function getLyric(id) {
+    return axios({
+        url: "/lyric",
+        params:{
+            id, //音乐 id
+            timerstamp:`${Date.now()}`
+        },
+        withCredentials: true //跨域
+    }).catch(err => err);
+}

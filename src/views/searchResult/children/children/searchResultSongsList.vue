@@ -131,10 +131,11 @@
         });
         getLikeSongs(e.id,!e.loveFlag).then(res => {
           if (res.code === 200){
-            this.$Message.success('操作成功!');
             if (this.getLoveList.some(item => item === e.id)){
+              this.$Message.success('取消喜欢成功!');
               this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== e.id));
             }else {
+              this.$Message.success('已添加到我喜欢的音乐!');
               this.getLoveList.push(e.id);
               this.$store.commit('setLoveList',this.getLoveList);
             }

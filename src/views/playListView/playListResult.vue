@@ -203,10 +203,11 @@
       getLikeSongs(id,like){
         getLikeSongs(id,like).then(res => {
           if (res.code === 200){
-            this.$Message.success('操作成功!');
             if (this.getLoveList.some(item => item === id)){
+              this.$Message.success('取消喜欢成功!');
               this.$store.commit('setLoveList',this.getLoveList.filter(item => item !== id));
             }else {
+              this.$Message.success('已添加到我喜欢的音乐!');
               this.getLoveList.push(id);
               this.$store.commit('setLoveList',this.getLoveList);
             }
