@@ -68,6 +68,7 @@
   import {getRecomSongs} from "../../network/home";
   import {mapGetters} from "vuex";
   import {getLikeSongs} from "../../network/footAudio";
+  import {getUserStatus} from "../../network/cloudTop";
 
   export default {
     name: "dayRecomSongs",
@@ -106,7 +107,9 @@
       }
     },
     created() {
-      this.getRecomSongs();
+      debugger;
+      this.getUserStatus();
+      // this.getRecomSongs();
     },
     computed:{
       ...mapGetters(['getLoveList','getSongsId','getPlayState'])
@@ -165,6 +168,12 @@
             }
           }
         });
+      },
+      //用户等登录状态
+      async getUserStatus(){
+        await getUserStatus().then(res => {
+          console.log(res);
+        })
       },
     }
   }

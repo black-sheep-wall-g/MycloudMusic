@@ -9,7 +9,7 @@
         <router-view/>
       </Content>
       <template>
-        <cloud-footer style="height: 70px;"></cloud-footer>
+        <cloud-footer style="height: 70px;border-top: 1px solid;z-index: 1;"></cloud-footer>
       </template>
     </Layout>
   </div>

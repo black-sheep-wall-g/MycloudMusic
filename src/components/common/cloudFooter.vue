@@ -15,7 +15,33 @@
                   :transition-names="['ease']"
                   :styles="{width: '1020px',top: '60px'}"
           >
-            <p>Content of dialog</p>
+            <div class="detail_content">
+              <div class="detail_top">
+                <div class="detail_disc"></div>
+                <div class="detail_lyric">
+                  <div class="detail_lyric_title">
+                    <div class="detail_song_name">告辞</div>
+                    <div class="detail_lyric_title_content">
+                      <div class="detail_lyric_title_album">
+                        专辑
+                        <span>表情包</span>
+                      </div>
+                      <div class="detail_lyric_title_singer">
+                        歌手
+                        <span>冷鸢yousa</span>
+                      </div>
+                      <div class="detail_lyric_title_from">
+                        来源
+                        <span>我喜欢的音乐</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="detail_lyric_content">
+                  </div>
+                </div>
+              </div>
+              <div></div>
+            </div>
           </Modal>
           <div class="audio_song_info">
             <div class="audio_song_name" :title="songsName">{{songsName}}</div>
@@ -180,7 +206,7 @@
         //歌曲详情modal，光翼展开
         songsDetailModal:false,
         //歌词
-        lyric:0
+        lyric:null
       }
     },
     computed: {
@@ -702,5 +728,48 @@
     position: relative;
     background-color: unset;
     border: unset;
+  }
+
+  .detail_content{
+    width: 100%;
+    height: 100%;
+    padding: 0 70px;
+    .detail_top{
+      width: 100%;
+      height: 440px;
+      display: flex;
+      .detail_disc{
+        width: 330px;
+        height: 100%;
+        background-color: #fff;
+      }
+      .detail_lyric{
+        width: 400px;
+        margin-left: 120px;
+        .detail_lyric_title{
+          .detail_song_name{
+            font-size: 22px;
+            color: #c7c7c7;
+          }
+          .detail_lyric_title_content{
+            display: flex;
+            .detail_lyric_title_album{
+              flex: 1;
+            }
+            .detail_lyric_title_singer{
+              flex: 1;
+
+            }
+            .detail_lyric_title_from{
+              flex: 1;
+
+            }
+          }
+        }
+        .detail_lyric_content{
+
+        }
+      }
+    }
   }
 </style>
