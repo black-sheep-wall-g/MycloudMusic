@@ -23,20 +23,25 @@
                     <div class="detail_song_name">告辞</div>
                     <div class="detail_lyric_title_content">
                       <div class="detail_lyric_title_album">
-                        专辑
+                        专辑:
                         <span>表情包</span>
                       </div>
                       <div class="detail_lyric_title_singer">
-                        歌手
+                        歌手:
                         <span>冷鸢yousa</span>
                       </div>
                       <div class="detail_lyric_title_from">
-                        来源
+                        来源:
                         <span>我喜欢的音乐</span>
                       </div>
                     </div>
                   </div>
-                  <div class="detail_lyric_content">
+                  <div class="detail_lyric_content" ref="lyric_text">
+                    <div class="lyric_list">
+                      <div v-for="(item,index) in lyric" class="lyric_list_detail">
+                        <div>{{item.text}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -205,8 +210,10 @@
         loveSongFlag: false,
         //歌曲详情modal，光翼展开
         songsDetailModal:false,
-        //歌词
-        lyric:null
+        //原始歌词
+        lyric:[],
+        //翻译歌词
+        tlyric: []
       }
     },
     computed: {
@@ -260,8 +267,6 @@
         this.$store.commit('setPlayState',true);
         //歌曲进度初始化
         this.audio_point = this.$refs.musicAudio.currentTime;
-        //获取歌词
-        this.getLyric(this.getSongsId);
       },
       //播放控制
       controlMusic() {
@@ -289,6 +294,8 @@
         await getMusicUrl(id).then(res => {
           if (res.code === 200) {
             this.songsObj = res.data[0];
+            //获取歌词
+            this.getLyric(this.getSongsId);
           }
         }).catch(err => {
           console.log(err);
@@ -327,10 +334,37 @@
       //音乐进度条变化
       audio_change(e) {
         this.$refs.musicAudio.currentTime = e / 1000;
+        // console.log(this.$refs.musicAudio.currentTime)
       },
       //监听音频播放进度
       audio_time_update(e) {
-        this.audio_point = e.target.currentTime * 1000;
+        const _this = this;
+        let currTime = e.target.currentTime;
+        console.log(currTime)
+        this.lyric.forEach((item,index) => {
+          if (item.time === Math.round(currTime)){
+            let scrollTop = _this.$refs.lyric_text.scrollTop;
+            // scrollTop = index * 20;
+            // 返回顶部动画特效
+            setTimeout(function animation() {
+              if (scrollTop > 0) {
+                setTimeout(() => {
+                  // 步进速度
+                  scrollTop = scrollTop + 5;
+                  // 返回顶部
+                  if(scrollTop < index * 20) {
+                    document.documentElement.scrollTop = scrollTop - 30;
+                  }
+                  animation();
+                }, 1);
+              }
+            }, 1);
+
+
+
+          }
+        })
+        this.audio_point = currTime * 1000;
       },
       //上一首
       upSong() {
@@ -461,8 +495,36 @@
       //获取歌词
       getLyric(id){
         getLyric(id).then(res => {
+          if(res.code === 200){
+            this.formatLyric(res.lrc.lyric)
+            // this.lyric = res.lrc.lyric.split('\n');
+            // this.tlyric = res.tlyric.lyric.split('\n')
+            // console.log(this.lyric)
+          }
           console.log(res)
         })
+      },
+      //歌词处理
+      formatLyric(text) {
+        let arr = text.split("\n"); //通过换行符“\n”进行切割
+        let lyricArr = [];
+        arr.map(item => {
+          let temp_arr = item.split("]"); //时间和文本进行分离
+          let text = temp_arr.pop(); //歌词
+          temp_arr.forEach(item1 => {
+            let obj = {};
+            let time_arr = item1.substr(1, item1.length - 1).split(":");//先把多余的“[”去掉，再分离出分、秒
+             //把时间转换成与currentTime相同的类型，方便待会实现滚动效果
+            obj.time = parseInt(time_arr[0]) * 60 + Math.ceil(parseInt(time_arr[1]));
+            obj.text = text;
+            lyricArr.push(obj); //每一行歌词对象存到组件的lyric歌词属性里
+          });
+        })
+        this.lyric.sort(this.sortRule); //防止不同时间的相同歌词排到一起，所以这里要以时间顺序重新排列一下
+        this.lyric = lyricArr;
+      },
+      sortRule(a, b) { //设置一下排序规则
+        return a.time - b.time;
       }
     },
     created() {
@@ -733,7 +795,7 @@
   .detail_content{
     width: 100%;
     height: 100%;
-    padding: 0 70px;
+    padding: 35px 70px;
     .detail_top{
       width: 100%;
       height: 440px;
@@ -747,12 +809,18 @@
         width: 400px;
         margin-left: 120px;
         .detail_lyric_title{
+          margin-bottom: 30px;
           .detail_song_name{
+            margin-bottom: 10px;
             font-size: 22px;
             color: #c7c7c7;
           }
           .detail_lyric_title_content{
             display: flex;
+            font-size: 12px;
+            span{
+              color: #85b9e6;
+            }
             .detail_lyric_title_album{
               flex: 1;
             }
@@ -767,7 +835,21 @@
           }
         }
         .detail_lyric_content{
+          height: 340px;
+          overflow-y: scroll;
+          &::-webkit-scrollbar {
+            width: 4px;
+          }
 
+          &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: darkcyan;
+          }
+          .lyric_list{
+            .lyric_list_detail{
+              margin: 5px 0;
+            }
+          }
         }
       }
     }
