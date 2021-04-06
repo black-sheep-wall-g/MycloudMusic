@@ -39,7 +39,8 @@
                   <div class="detail_lyric_content" ref="lyric_text">
                     <div class="lyric_list">
                       <div v-for="(item,index) in lyric" class="lyric_list_detail">
-                        <div>{{item.text}}</div>
+                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.text}}</div>
+                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{tlyric.filter(item1 => { if(item1.time === item.time){ return item1.text} })}}</div>
                       </div>
                     </div>
                   </div>
@@ -212,6 +213,10 @@
         songsDetailModal:false,
         //原始歌词
         lyric:[],
+        //原始歌词高亮
+        lyricIndex:-1,
+        //audio进度判断
+        audio_index:0,
         //翻译歌词
         tlyric: []
       }
@@ -267,6 +272,10 @@
         this.$store.commit('setPlayState',true);
         //歌曲进度初始化
         this.audio_point = this.$refs.musicAudio.currentTime;
+        //歌词进度重置
+        this.$refs.lyric_text.scrollTop = 0;
+        //歌词常亮重置
+        this.lyricIndex = -1;
       },
       //播放控制
       controlMusic() {
@@ -340,28 +349,36 @@
       audio_time_update(e) {
         const _this = this;
         let currTime = e.target.currentTime;
-        console.log(currTime)
         this.lyric.forEach((item,index) => {
           if (item.time === Math.round(currTime)){
-            let scrollTop = _this.$refs.lyric_text.scrollTop;
-            // scrollTop = index * 20;
-            // 返回顶部动画特效
-            setTimeout(function animation() {
-              if (scrollTop > 0) {
-                setTimeout(() => {
-                  // 步进速度
-                  scrollTop = scrollTop + 5;
-                  // 返回顶部
-                  if(scrollTop < index * 20) {
-                    document.documentElement.scrollTop = scrollTop - 30;
-                  }
-                  animation();
-                }, 1);
-              }
-            }, 1);
-
-
-
+            if (_this.audio_index !== item.time){
+              //歌词高亮
+              _this.lyricIndex = index;
+              //防止重复进入方法
+              _this.audio_index = item.time;
+              let scrollTop = _this.$refs.lyric_text.scrollTop;
+              let height = _this.$refs.lyric_text.clientHeight;
+              // 歌词滚动动画特效
+              setTimeout(function animation() {
+                if (scrollTop < index * 30 - height / 2) {
+                  setTimeout(() => {
+                    // 步进速度
+                    if (index * 30 > height/2){
+                      _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop + 2;
+                    }
+                    animation();
+                  }, 1);
+                }
+                else if (scrollTop > index * 30 - height / 2){
+                  setTimeout(() => {
+                    // 步进速度
+                    _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop - 2;
+                    animation();
+                  }, 1);
+                }
+              }, 100);
+              clearTimeout();
+            }
           }
         })
         this.audio_point = currTime * 1000;
@@ -496,10 +513,9 @@
       getLyric(id){
         getLyric(id).then(res => {
           if(res.code === 200){
-            this.formatLyric(res.lrc.lyric)
-            // this.lyric = res.lrc.lyric.split('\n');
-            // this.tlyric = res.tlyric.lyric.split('\n')
-            // console.log(this.lyric)
+            this.lyric = this.formatLyric(res.lrc.lyric);
+            this.tlyric = this.formatLyric(res.tlyric.lyric);
+            console.log(this.tlyric)
           }
           console.log(res)
         })
@@ -520,8 +536,8 @@
             lyricArr.push(obj); //每一行歌词对象存到组件的lyric歌词属性里
           });
         })
-        this.lyric.sort(this.sortRule); //防止不同时间的相同歌词排到一起，所以这里要以时间顺序重新排列一下
-        this.lyric = lyricArr;
+        lyricArr.sort(this.sortRule); //防止不同时间的相同歌词排到一起，所以这里要以时间顺序重新排列一下
+        return lyricArr;
       },
       sortRule(a, b) { //设置一下排序规则
         return a.time - b.time;
@@ -649,6 +665,10 @@
 
   .loveActive{
     color: #eb4040 !important;
+  }
+
+  .lyricActive {
+    color: white;
   }
 
   .ivu-layout-footer {
@@ -847,7 +867,9 @@
           }
           .lyric_list{
             .lyric_list_detail{
-              margin: 5px 0;
+              /*margin: 5px 0;*/
+              height: 30px;
+              line-height: 30px;
             }
           }
         }
