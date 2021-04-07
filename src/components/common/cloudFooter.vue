@@ -40,7 +40,8 @@
                     <div class="lyric_list">
                       <div v-for="(item,index) in lyric" class="lyric_list_detail">
                         <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.text}}</div>
-                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{tlyric.filter(item1 => { if(item1.time === item.time){ return item1.text} })}}</div>
+                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.time === item}}</div>
+<!--                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{tlyric[tlyric.indexOf(item1 => item1.time === item.time)].text}}</div>-->
                       </div>
                     </div>
                   </div>
@@ -513,34 +514,41 @@
       getLyric(id){
         getLyric(id).then(res => {
           if(res.code === 200){
-            this.lyric = this.formatLyric(res.lrc.lyric);
-            this.tlyric = this.formatLyric(res.tlyric.lyric);
-            console.log(this.tlyric)
+            this.lyric = this.formatLyric(res);
           }
           console.log(res)
         })
       },
       //歌词处理
       formatLyric(text) {
-        let arr = text.split("\n"); //通过换行符“\n”进行切割
+        let arr = text.lrc.lyric.split("\n"); //通过换行符“\n”进行切割
         let lyricArr = [];
+        this.playLyricArr(arr,lyricArr,'lrc');
+        if (text.tlyric.lyric){
+          let tlyricArr = text.tlyric.lyric.split("\n");//通过换行符“\n”进行切割
+          this.playLyricArr(tlyricArr,lyricArr,'tlyric');
+        }
+        return lyricArr;
+      },
+      sortRule(a, b) { //设置一下排序规则
+        return a.time - b.time;
+      },
+      playLyricArr(arr,lyricArr,type){
         arr.map(item => {
           let temp_arr = item.split("]"); //时间和文本进行分离
           let text = temp_arr.pop(); //歌词
           temp_arr.forEach(item1 => {
             let obj = {};
             let time_arr = item1.substr(1, item1.length - 1).split(":");//先把多余的“[”去掉，再分离出分、秒
-             //把时间转换成与currentTime相同的类型，方便待会实现滚动效果
+            //把时间转换成与currentTime相同的类型，方便待会实现滚动效果
             obj.time = parseInt(time_arr[0]) * 60 + Math.ceil(parseInt(time_arr[1]));
             obj.text = text;
+            obj.type = type
             lyricArr.push(obj); //每一行歌词对象存到组件的lyric歌词属性里
           });
         })
         lyricArr.sort(this.sortRule); //防止不同时间的相同歌词排到一起，所以这里要以时间顺序重新排列一下
         return lyricArr;
-      },
-      sortRule(a, b) { //设置一下排序规则
-        return a.time - b.time;
       }
     },
     created() {
