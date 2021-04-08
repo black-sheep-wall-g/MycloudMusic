@@ -28,5 +28,9 @@ export default {
     //获取喜欢列表
     getLoveList: state => {
         return state.loveList;
+    },
+    //获取歌曲来源
+    getSongSource(state){
+        return state.songSource;
     }
 }

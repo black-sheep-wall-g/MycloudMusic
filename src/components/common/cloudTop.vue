@@ -256,9 +256,6 @@
                 }else {
                     this.address++;
                 }
-            },
-            getuserInfo(valuer){
-                console.log(valuer)
             }
         },
         methods: {
@@ -352,7 +349,6 @@
             //用户等登录状态
             getUserStatus(){
                 getUserStatus().then(res => {
-                    console.log(res.data)
                     this.$store.commit('setUserInfo', res.data);
                 })
             },

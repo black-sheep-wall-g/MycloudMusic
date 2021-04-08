@@ -14,7 +14,8 @@ export default new Vuex.Store({
     songsId:'',//歌曲id
     playList:[],//播放列表
     playState:false,//歌曲状态
-    loveList:[]//喜欢列表
+    loveList:[],//喜欢列表
+    songSource:''//歌曲来源
   },
   getters,
   mutations,

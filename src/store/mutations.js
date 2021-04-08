@@ -34,5 +34,9 @@ export default{
     //保存当前用户喜欢列表
     setLoveList(state,loveList){
         state.loveList = loveList;
+    },
+    //保存歌曲来源
+    setSongSource(state,songSource){
+        state.songSource = songSource;
     }
 }

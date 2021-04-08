@@ -4,8 +4,8 @@
       <audio preload ref="musicAudio" :src="songsObj.url" @timeupdate="audio_time_update" @ended="endSong"></audio>
       <Col span="6" class="footer_left">
         <div class="audio_left">
-          <div class="audio_thumbnail" @click="songsDetailModal = true">
-            <img :src="songsUrl" alt="">
+          <div class="audio_thumbnail" @click="songsDetailModal = !songsDetailModal;getCommentNew()">
+            <img :src="songsAl.picUrl" alt="">
           </div>
           <Modal
                   v-model="songsDetailModal"
@@ -14,45 +14,58 @@
                   :footer-hide="true"
                   :transition-names="['ease']"
                   :styles="{width: '1020px',top: '60px'}"
+                  :scrollable="true"
           >
             <div class="detail_content">
               <div class="detail_top">
                 <div class="detail_disc"></div>
                 <div class="detail_lyric">
                   <div class="detail_lyric_title">
-                    <div class="detail_song_name">告辞</div>
+                    <div class="detail_song_name" :title="songsName">{{songsName}}</div>
                     <div class="detail_lyric_title_content">
                       <div class="detail_lyric_title_album">
                         专辑:
-                        <span>表情包</span>
+                        <span :title="songsAl.name">{{songsAl.name}}</span>
                       </div>
                       <div class="detail_lyric_title_singer">
                         歌手:
-                        <span>冷鸢yousa</span>
+                        <span :title="songsSinger.map(item => item.name).join('/')">
+                          <span v-for="(item1,index1) in songsSinger" :key="index1" style="cursor: pointer;">{{index1 !== 0 ? ' / ' : ''}}{{item1.name}}</span>
+                        </span>
                       </div>
                       <div class="detail_lyric_title_from">
                         来源:
-                        <span>我喜欢的音乐</span>
+                        <span>{{getSongSource}}</span>
                       </div>
                     </div>
                   </div>
                   <div class="detail_lyric_content" ref="lyric_text">
                     <div class="lyric_list">
-                      <div v-for="(item,index) in lyric" class="lyric_list_detail">
-                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.text}}</div>
-                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.time === item}}</div>
-<!--                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{tlyric[tlyric.indexOf(item1 => item1.time === item.time)].text}}</div>-->
+                      <div v-for="(item,index) in lyric" class="lyric_list_detail" :style="tlyric ? 'height : 50px' : ''">
+                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.lyric}}</div>
+                        <div :class=" index === lyricIndex ? 'lyricActive' : ''">{{item.tlyric}}</div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div></div>
+              <div class="detail_btn">
+                <div class="comment">
+                  <div class="send_comment">
+                    <div>评论(已有61756条评论)</div>
+                    <div></div>
+                  </div>
+                  <div class="hot_comment">
+
+                  </div>
+                </div>
+                <div class="similar"></div>
+              </div>
             </div>
           </Modal>
           <div class="audio_song_info">
             <div class="audio_song_name" :title="songsName">{{songsName}}</div>
-            <div class="audio_song_author" :title="songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1">{{index1 !== 0 ? ' / ' : ''}}<span style="cursor: pointer;">{{item1.name}}</span></span></div>
+            <div class="audio_song_author" :title="songsSinger.map(item => item.name).join('/')"><span v-for="(item1,index1) in songsSinger" :key="index1" style="cursor: pointer;">{{index1 !== 0 ? ' / ' : ''}}{{item1.name}}</span></div>
           </div>
           <div class="audio_like">
             <span :title="loveSongFlag ? '取消喜欢' : '喜欢'">
@@ -157,7 +170,14 @@
 </template>
 
 <script>
-  import {getLikeList, getLikeSongs, getLyric, getMusicDetail, getMusicUrl} from "../../network/footAudio";
+  import {
+    getCommentNew,
+    getLikeList,
+    getLikeSongs,
+    getLyric,
+    getMusicDetail,
+    getMusicUrl
+  } from "../../network/footAudio";
   import {mapGetters} from "vuex";
 
   export default {
@@ -178,8 +198,8 @@
         songsName: '',
         //歌曲演唱者
         songsSinger: [],
-        //歌曲图片
-        songsUrl: '',
+        //歌曲专辑
+        songsAl: {},
         //音量状态
         volumeState: true,
         //音乐进度条
@@ -212,18 +232,18 @@
         loveSongFlag: false,
         //歌曲详情modal，光翼展开
         songsDetailModal:false,
-        //原始歌词
+        //歌词
         lyric:[],
         //原始歌词高亮
         lyricIndex:-1,
         //audio进度判断
         audio_index:0,
-        //翻译歌词
-        tlyric: []
+        //是否有翻译
+        tlyric:false
       }
     },
     computed: {
-      ...mapGetters(['getLoveList','getuserInfo','getSongsId','getPlayList','getPlayState']),
+      ...mapGetters(['getLoveList','getuserInfo','getSongsId','getPlayList','getPlayState','getSongSource']),
       resultAudioPoint() {
         const m = Math.floor((this.audio_point % 3600000) / 60000);
         const s = Math.floor((this.audio_point % 60000) / 1000);
@@ -250,6 +270,10 @@
           this.getLikeList(newVal.account.id);
         }
       },
+      //喜欢列表变化监听
+      getLoveList(){
+        this.loveSongFlag = this.getLoveList.some(item => item === this.getSongsId);
+      }
     },
     methods: {
       //数据加载
@@ -329,7 +353,7 @@
         this.songsTime = (m < 10 ? ('0' + m) : m) + ':' + (s < 10 ? ('0' + s) : s);
         this.songsName = item.name;
         this.songsSinger = item.ar;
-        this.songsUrl = item.al.picUrl;
+        this.songsAl = item.al;
       },
       //音量状态
       setVolumeState() {
@@ -344,7 +368,6 @@
       //音乐进度条变化
       audio_change(e) {
         this.$refs.musicAudio.currentTime = e / 1000;
-        // console.log(this.$refs.musicAudio.currentTime)
       },
       //监听音频播放进度
       audio_time_update(e) {
@@ -361,7 +384,7 @@
               let height = _this.$refs.lyric_text.clientHeight;
               // 歌词滚动动画特效
               setTimeout(function animation() {
-                if (scrollTop < index * 30 - height / 2) {
+                if (scrollTop < index * (_this.tlyric ? 50 : 30) - height / 2) {
                   setTimeout(() => {
                     // 步进速度
                     if (index * 30 > height/2){
@@ -370,7 +393,7 @@
                     animation();
                   }, 1);
                 }
-                else if (scrollTop > index * 30 - height / 2){
+                else if (scrollTop > index * (_this.tlyric ? 50 : 30) - height / 2){
                   setTimeout(() => {
                     // 步进速度
                     _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop - 2;
@@ -523,17 +546,27 @@
       formatLyric(text) {
         let arr = text.lrc.lyric.split("\n"); //通过换行符“\n”进行切割
         let lyricArr = [];
-        this.playLyricArr(arr,lyricArr,'lrc');
+        lyricArr = this.playLyricArr(arr);
+        this.tlyric = false;
         if (text.tlyric.lyric){
           let tlyricArr = text.tlyric.lyric.split("\n");//通过换行符“\n”进行切割
-          this.playLyricArr(tlyricArr,lyricArr,'tlyric');
+          let Arr = this.playLyricArr(tlyricArr);
+          this.tlyric = true;
+          lyricArr.map(item => {
+            Arr.map(item1 => {
+              if (item1.time === item.time){
+                item.tlyric = item1.lyric
+              }
+            });
+          })
         }
         return lyricArr;
       },
       sortRule(a, b) { //设置一下排序规则
         return a.time - b.time;
       },
-      playLyricArr(arr,lyricArr,type){
+      playLyricArr(arr){
+        let lyricArr = [];
         arr.map(item => {
           let temp_arr = item.split("]"); //时间和文本进行分离
           let text = temp_arr.pop(); //歌词
@@ -542,13 +575,20 @@
             let time_arr = item1.substr(1, item1.length - 1).split(":");//先把多余的“[”去掉，再分离出分、秒
             //把时间转换成与currentTime相同的类型，方便待会实现滚动效果
             obj.time = parseInt(time_arr[0]) * 60 + Math.ceil(parseInt(time_arr[1]));
-            obj.text = text;
-            obj.type = type
+            obj.lyric = text;
             lyricArr.push(obj); //每一行歌词对象存到组件的lyric歌词属性里
           });
         })
         lyricArr.sort(this.sortRule); //防止不同时间的相同歌词排到一起，所以这里要以时间顺序重新排列一下
         return lyricArr;
+      },
+      //获取并渲染评论
+      getCommentNew(){
+        debugger
+        console.log(this.getSongsId);
+        getCommentNew(29822017,0).then(res => {
+          console.log(res);
+        })
       }
     },
     created() {
@@ -851,6 +891,9 @@
             }
             .detail_lyric_title_album{
               flex: 1;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
             .detail_lyric_title_singer{
               flex: 1;
@@ -858,7 +901,9 @@
             }
             .detail_lyric_title_from{
               flex: 1;
-
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
           }
         }
@@ -875,9 +920,8 @@
           }
           .lyric_list{
             .lyric_list_detail{
-              /*margin: 5px 0;*/
               height: 30px;
-              line-height: 30px;
+              /*line-height: 30px;*/
             }
           }
         }

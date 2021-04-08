@@ -49,7 +49,6 @@
     watch:{
       //监听用户信息变化
       getuserInfo(newVal){
-        console.log(newVal)
         if (newVal.account !== null){
           this.getUserSongList(newVal.account.id);
         }else {

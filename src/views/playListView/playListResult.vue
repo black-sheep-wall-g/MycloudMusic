@@ -194,6 +194,8 @@
         this.$store.commit('setSongsId', e.id);
         //将歌曲加入播放列表
         this.$store.commit('setPlayList',this.tracks);
+        //保存歌曲来源
+        this.$store.commit('setSongSource',this.listInfo.name);
       },
       //简介详情展开
       downList(){
