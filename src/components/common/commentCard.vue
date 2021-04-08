@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <div class="comment">
      <div class="images">
        <img :src="url" alt="">
      </div>
@@ -34,6 +34,24 @@
   }
 </script>
 
-<style scoped>
-
+<style scoped lang="less">
+  .comment{
+    display: flex;
+    border-bottom: 1px solid #464646;
+    .images{
+      overflow: hidden;
+      height: 35px;
+      width: 35px;
+      border-radius: 18px;
+      img{
+        width: 100%;
+      }
+    }
+    .content{
+      .title{}
+      .footer{
+        display: flex;
+      }
+    }
+  }
 </style>

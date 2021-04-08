@@ -56,7 +56,7 @@
                     <div></div>
                   </div>
                   <div class="hot_comment">
-
+                    <comment-card v-for="(item,index) in comments" :key="index" :url="item.user.avatarUrl" :name="item.user.nickname" :content="item.content"/>
                   </div>
                 </div>
                 <div class="similar"></div>
@@ -179,9 +179,11 @@
     getMusicUrl
   } from "../../network/footAudio";
   import {mapGetters} from "vuex";
+  import CommentCard from "./commentCard";
 
   export default {
     name: "cloudFooter",
+    components: {CommentCard},
     data() {
       return {
         //音量
@@ -239,7 +241,9 @@
         //audio进度判断
         audio_index:0,
         //是否有翻译
-        tlyric:false
+        tlyric:false,
+        //评论
+        comments:[]
       }
     },
     computed: {
@@ -584,9 +588,10 @@
       },
       //获取并渲染评论
       getCommentNew(){
-        debugger
-        console.log(this.getSongsId);
         getCommentNew(29822017,0).then(res => {
+          if (res.code === 200){
+            this.comments = res.data.comments;
+          }
           console.log(res);
         })
       }
@@ -864,6 +869,15 @@
     width: 100%;
     height: 100%;
     padding: 35px 70px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: darkcyan;
+    }
     .detail_top{
       width: 100%;
       height: 440px;
