@@ -52,11 +52,23 @@
               <div class="detail_btn">
                 <div class="comment">
                   <div class="send_comment">
-                    <div>评论(已有61756条评论)</div>
+                    <div>评论(已有{{comments.totalCount}}条评论)</div>
                     <div></div>
                   </div>
                   <div class="hot_comment">
-                    <comment-card v-for="(item,index) in comments" :key="index" :url="item.user.avatarUrl" :name="item.user.nickname" :content="item.content"/>
+                    <comment-card v-for="(item,index) in comments.comments"
+                                  :key="index"
+                                  :url="item.user.avatarUrl"
+                                  :name="item.user.nickname"
+                                  :content="item.content"
+                                  :width="550"
+                                  :count="item.likedCount" :temptime="item.time">
+                      <template slot="iconImg">
+                        <svg class="icon footer_left_icon" aria-hidden="true">
+                          <use xlink:href="#icon-like2"></use>
+                        </svg>
+                      </template>
+                    </comment-card>
                   </div>
                 </div>
                 <div class="similar"></div>
@@ -243,7 +255,7 @@
         //是否有翻译
         tlyric:false,
         //评论
-        comments:[]
+        comments: {}
       }
     },
     computed: {
@@ -386,15 +398,16 @@
               _this.audio_index = item.time;
               let scrollTop = _this.$refs.lyric_text.scrollTop;
               let height = _this.$refs.lyric_text.clientHeight;
+              console.log(scrollTop,height)
               // 歌词滚动动画特效
               setTimeout(function animation() {
                 if (scrollTop < index * (_this.tlyric ? 50 : 30) - height / 2) {
                   setTimeout(() => {
                     // 步进速度
-                    if (index * 30 > height/2){
+                    if (index * (_this.tlyric ? 50 : 30) > height/2){
                       _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop + 2;
+                      animation();
                     }
-                    animation();
                   }, 1);
                 }
                 else if (scrollTop > index * (_this.tlyric ? 50 : 30) - height / 2){
@@ -588,9 +601,9 @@
       },
       //获取并渲染评论
       getCommentNew(){
-        getCommentNew(29822017,0).then(res => {
+        getCommentNew(this.getSongsId,0,1,20,2).then(res => {
           if (res.code === 200){
-            this.comments = res.data.comments;
+            this.comments = res.data;
           }
           console.log(res);
         })
@@ -911,7 +924,9 @@
             }
             .detail_lyric_title_singer{
               flex: 1;
-
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
             .detail_lyric_title_from{
               flex: 1;
