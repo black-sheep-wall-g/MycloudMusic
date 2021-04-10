@@ -18,7 +18,12 @@
           >
             <div class="detail_content">
               <div class="detail_top">
-                <div class="detail_disc"></div>
+                <div class="detail_disc">
+                  <div class="detail_disc_img">
+                    <img :src="songsAl.picUrl" alt="">
+                  </div>
+                  <div></div>
+                </div>
                 <div class="detail_lyric">
                   <div class="detail_lyric_title">
                     <div class="detail_song_name" :title="songsName">{{songsName}}</div>
@@ -389,6 +394,7 @@
       audio_time_update(e) {
         const _this = this;
         let currTime = e.target.currentTime;
+        this.audio_point = currTime * 1000;
         this.lyric.forEach((item,index) => {
           if (item.time === Math.round(currTime)){
             if (_this.audio_index !== item.time){
@@ -396,33 +402,31 @@
               _this.lyricIndex = index;
               //防止重复进入方法
               _this.audio_index = item.time;
-              let scrollTop = _this.$refs.lyric_text.scrollTop;
+              let scrollTop = Math.round(_this.$refs.lyric_text.scrollTop/10)*10;
               let height = _this.$refs.lyric_text.clientHeight;
-              console.log(scrollTop,height)
               // 歌词滚动动画特效
               setTimeout(function animation() {
                 if (scrollTop < index * (_this.tlyric ? 50 : 30) - height / 2) {
                   setTimeout(() => {
                     // 步进速度
                     if (index * (_this.tlyric ? 50 : 30) > height/2){
-                      _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop + 2;
+                      _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop + 5;
                       animation();
                     }
-                  }, 1);
+                  }, 10);
                 }
                 else if (scrollTop > index * (_this.tlyric ? 50 : 30) - height / 2){
                   setTimeout(() => {
                     // 步进速度
-                    _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop - 2;
+                    _this.$refs.lyric_text.scrollTop = scrollTop = scrollTop - 5;
                     animation();
-                  }, 1);
+                  }, 10);
                 }
               }, 100);
               clearTimeout();
             }
           }
         })
-        this.audio_point = currTime * 1000;
       },
       //上一首
       upSong() {
@@ -528,7 +532,6 @@
       getLikeList(uid){
         getLikeList(uid).then(res => {
           if (res.code === 200){
-            console.log(res)
             this.$store.commit('setLoveList',res.ids);
           }
         })
@@ -554,9 +557,12 @@
       getLyric(id){
         getLyric(id).then(res => {
           if(res.code === 200){
-            this.lyric = this.formatLyric(res);
+            if (res.nolyric){
+              this.lyric = [{ lyric:'纯音乐,请您欣赏'}]
+            }else {
+              this.lyric = this.formatLyric(res);
+            }
           }
-          console.log(res)
         })
       },
       //歌词处理
@@ -898,7 +904,15 @@
       .detail_disc{
         width: 330px;
         height: 100%;
-        background-color: #fff;
+        .detail_disc_img{
+          width: 330px;
+          height: 330px;
+          img{
+            overflow: hidden;
+            width: 100%;
+            border-radius: 165px;
+          }
+        }
       }
       .detail_lyric{
         width: 400px;
