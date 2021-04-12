@@ -107,7 +107,6 @@
       }
     },
     created() {
-      debugger;
       this.getUserStatus();
       // this.getRecomSongs();
     },

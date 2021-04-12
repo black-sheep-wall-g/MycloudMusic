@@ -20,7 +20,7 @@
               <div class="detail_top">
                 <div class="detail_disc">
                   <div class="detail_disc_img">
-                    <img :src="songsAl.picUrl" alt="">
+                    <img class="desc_img" ref="desc_img" :src="songsAl.picUrl" alt="">
                   </div>
                   <div></div>
                 </div>
@@ -76,7 +76,9 @@
                     </comment-card>
                   </div>
                 </div>
-                <div class="similar"></div>
+                <div class="similar">
+                  <Page size="small" :page-size="20" :total="comments.totalCount" @on-change="toPage($event)" />
+                </div>
               </div>
             </div>
           </Modal>
@@ -286,6 +288,7 @@
           this.loveSongFlag = this.getLoveList.some(item => item === value);
         }
       },
+      //监听用户变化
       getuserInfo(newVal){
         if (newVal.account !== null){
           this.getLikeList(newVal.account.id);
@@ -294,6 +297,10 @@
       //喜欢列表变化监听
       getLoveList(){
         this.loveSongFlag = this.getLoveList.some(item => item === this.getSongsId);
+      },
+      //监听歌曲状态
+      getPlayState(newVal){
+        this.$refs.desc_img.style.webkitAnimationPlayState  = newVal ? 'running' : 'paused';
       }
     },
     methods: {
@@ -351,6 +358,8 @@
             this.songsObj = res.data[0];
             //获取歌词
             this.getLyric(this.getSongsId);
+            //获取评论
+            this.getCommentNew();
           }
         }).catch(err => {
           console.log(err);
@@ -606,13 +615,16 @@
         return lyricArr;
       },
       //获取并渲染评论
-      getCommentNew(){
-        getCommentNew(this.getSongsId,0,1,20,2).then(res => {
+      getCommentNew(page){
+        getCommentNew(this.getSongsId,0,page,20,2).then(res => {
           if (res.code === 200){
             this.comments = res.data;
           }
           console.log(res);
         })
+      },
+      toPage(e){
+        this.getCommentNew(e)
       }
     },
     created() {
@@ -620,6 +632,8 @@
     },
     mounted() {
       this.$refs.musicAudio.volume = this.volume_point / 100;
+      //默认图片不转动
+      this.$refs.desc_img.style.webkitAnimationPlayState = 'paused';
     }
   }
 </script>
@@ -628,8 +642,6 @@
   /deep/ .ivu-modal-mask{
     background-color: unset;
     height: 600px;
-  }
-  /deep/ .ivu-modal-wrap{
   }
   /deep/ .ivu-modal {
     .ivu-modal-content {
@@ -971,4 +983,18 @@
       }
     }
   }
+
+  .desc_img{
+    animation: bounce-in 10s linear 0.2s infinite;
+  }
+
+  @keyframes bounce-in {
+    0%{
+      transform: rotate(0deg);
+    }
+    100%{
+      transform: rotate(360deg);
+    }
+  }
+
 </style>
