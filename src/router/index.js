@@ -4,6 +4,7 @@ import Home from '@/views/home/Home'
 import SearchResult from "@/views/searchResult/SearchResult";
 import dayRecomSongs from "../views/songsResource/dayRecomSongs";
 import playListResult from "../views/playListView/playListResult";
+import videoView from "../views/video/videoView";
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/playResult',
     name: 'playResult',
     component: playListResult
+  },
+  {
+    path: '/videoResult',
+    name: 'videoResult',
+    component: videoView
   }
 ]
 //防止重复点击路由造成的冗余导航

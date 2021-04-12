@@ -77,7 +77,7 @@
                   </div>
                 </div>
                 <div class="similar">
-                  <Page size="small" :page-size="20" :total="comments.totalCount" @on-change="toPage($event)" />
+                  <Page size="small" :styles="{'margin':'10px 0 0 140px'}" :page-size="20" :total="comments.totalCount" @on-change="toPage($event)" />
                 </div>
               </div>
             </div>

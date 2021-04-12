@@ -59,9 +59,16 @@
     },
     methods: {
       siderbarClick(i, index) {
-        if (index === 0) {
-          //跳转到首页
-          this.$router.push({name: 'Home'})
+        switch (index) {
+          case 0 : {
+            //跳转到首页
+            this.$router.push({name: 'Home'})
+            break;
+          }
+          case 1 :{
+            //跳转到视频
+            this.$router.push({name:'videoResult'})
+          }
         }
         // console.log(i, index,this.getuserInfo)
       },
