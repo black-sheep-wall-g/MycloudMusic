@@ -98,7 +98,7 @@
                         :styles="{'height':'400px'}"
                         class-name="hotList"
                 >
-                    <p class="search_about" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果 >`"></p>
+                    <p class="search_about" @click="search" v-html="`搜索&quot;<a style='color:red;'>`+searchData+`</a>&quot;相关的结果 >`"></p>
                     <cloud-card v-for="(item,index) in suggestList" :key="index" :title="item[0].title" :content="item" :search-data="searchData"></cloud-card>
                 </Modal>
                 <Modal class-name="hotList" v-model="modalDelete" width="350">
@@ -461,7 +461,8 @@
             },
             //点击热搜歌曲
             hotListSongs(item){
-                console.log(item)
+                this.searchData = item.searchWord;
+                this.search();
             },
             //返回上一个页面
             back(){
