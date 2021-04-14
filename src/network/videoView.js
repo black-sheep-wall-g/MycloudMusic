@@ -43,3 +43,13 @@ export function getVideoAll(offset) {
     withCredentials: true
   }).catch(err => err);
 }
+//获取视频播放地址
+export function getVideoUrl() {
+  return axios({
+    url:'/video/url',
+    params:{
+      timerstamp:`${Date.now()}`
+    },
+    withCredentials: true
+  }).catch(err => err);
+}

@@ -67,7 +67,7 @@
           }
           case 1 :{
             //跳转到视频
-            this.$router.push({name:'videoResult'})
+            this.$router.push({name:'videoView'})
           }
         }
         // console.log(i, index,this.getuserInfo)

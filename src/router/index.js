@@ -5,6 +5,7 @@ import SearchResult from "@/views/searchResult/SearchResult";
 import dayRecomSongs from "../views/songsResource/dayRecomSongs";
 import playListResult from "../views/playListView/playListResult";
 import videoView from "../views/video/videoView";
+import playVideo from "../views/video/playVideo";
 
 Vue.use(VueRouter)
 
@@ -30,9 +31,14 @@ const routes = [
     component: playListResult
   },
   {
-    path: '/videoResult',
-    name: 'videoResult',
+    path: '/videoView',
+    name: 'videoView',
     component: videoView
+  },
+  {
+    path: '/playVideo',
+    name: 'playVideo',
+    component: playVideo
   }
 ]
 //防止重复点击路由造成的冗余导航

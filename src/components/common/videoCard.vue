@@ -1,19 +1,19 @@
 <template>
-  <div class="video_card" v-for="(item,index) in videoList" :key="index">
-    <div class="card_img">
-      <img :src="hoverIndex === index ? item.data.previewUrl : item.data.coverUrl" alt="" @mouseenter="hoverIndex = index" @mouseleave="hoverIndex = -1" @click="toPlayVideo(item.data.vid)">
+  <div class="video_card">
+    <div class="card_img" @click="$emit('toVideoView')">
+      <img :src="imgFlag ? dynImg : staticImg" alt="" @mouseenter="imgFlag = true" @mouseleave="imgFlag = false">
       <span class="card_count">
-              <svg class="icon" aria-hidden="true">
-                <use xlink:href="#icon-yousanjiao"></use>
-              </svg>
-              {{item.data.playTime >= 100000 ? Math.round(item.data.playTime / 10000) + '万' : item.data.playTime}}
-            </span>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-yousanjiao"></use>
+        </svg>
+        {{count >= 100000 ? Math.round(count / 10000) + '万' : count}}
+      </span>
       <span class="card_time">
-              {{(Math.floor((item.data.durationms % 3600000) / 60000) < 10 ? ('0' + Math.floor((item.data.durationms % 3600000) / 60000)) : Math.floor((item.data.durationms % 3600000) / 60000)) + ':' + (Math.floor((item.data.durationms % 60000) / 1000) < 10 ? ('0' + Math.floor((item.data.durationms % 60000) / 1000)) : Math.floor((item.data.durationms % 60000) / 1000))}}
-            </span>
+        {{this.times}}
+      </span>
     </div>
-    <div class="card_name" :title="item.data.title">{{item.data.title}}</div>
-    <div class="card_by" :title="item.data.creator.nickname">by {{item.data.creator.nickname}}</div>
+    <div class="card_name" :title="title">{{title}}</div>
+    <div class="card_by" :title="name">by {{name}}</div>
   </div>
 </template>
 
@@ -22,11 +22,27 @@
     name: "videoCard",
     data(){
       return{
-
+        imgFlag:false
+      }
+    },
+    computed:{
+      times(){
+        const m = Math.floor((this.time % 3600000) / 60000);
+        const s = Math.floor((this.time % 60000) / 1000);
+        return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
       }
     },
     props:{
-
+      //动态图片
+      dynImg:String,
+      //静态图片
+      staticImg:String,
+      //次数
+      count:Number,
+      //时间
+      time:Number,
+      title:String,
+      name:String
     }
   }
 </script>
