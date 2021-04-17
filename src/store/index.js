@@ -10,7 +10,6 @@ export default new Vuex.Store({
   state:{
     userInfo:{}, //用户信息
     searchDataList:[], //搜索历史
-    searchResult:{},//搜索结果数据
     songsId:'',//歌曲id
     playList:[],//播放列表
     playState:false,//歌曲状态

@@ -193,7 +193,6 @@
         getQrKeyLogin,
         getQrLogin,
         getQrState,
-        getSearch,
         getUserStatus,
         refresh,
         suggest,
@@ -378,15 +377,7 @@
                     // 关闭模态框
                     this.modal2 = false;
                     //跳转到搜索结果页
-                    this.$router.push({name:'SearchResult',params:this.searchData})
-                    //获取搜索完成后列表并跳转页面
-                    getSearch(this.searchData).then(res => {
-                        if (res.code === 200) {
-                            this.$store.commit('setSearchResult', res);
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                    })
+                    this.$router.push({name:'SearchResult',params: {search:this.searchData}})
                 }
             },
             //赋值本地历史数据

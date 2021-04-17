@@ -3,10 +3,6 @@ export default {
     getuserInfo: state => {
         return JSON.parse(JSON.stringify(state.userInfo))
     },
-    //获取搜索结果信息
-    getSearchResult: state => {
-        return state.searchResult;
-    },
     //获取歌曲id
     getSongsId: state => {
         if (state.songsId === '' && localStorage.getItem('songsId') !== null){

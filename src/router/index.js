@@ -16,7 +16,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/SearchResult',
+    path: '/SearchResult/:search',
     name: 'SearchResult',
     component: SearchResult
   },
@@ -26,7 +26,7 @@ const routes = [
     component: dayRecomSongs
   },
   {
-    path: '/playResult',
+    path: '/playResult/:id',
     name: 'playResult',
     component: playListResult
   },
@@ -36,7 +36,7 @@ const routes = [
     component: videoView
   },
   {
-    path: '/playVideo',
+    path: '/playVideo/:id',
     name: 'playVideo',
     component: playVideo
   }

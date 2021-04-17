@@ -91,7 +91,7 @@
       },
       //专辑
       albumOpen(item){
-        this.$router.push({name: 'playResult',query: {id:item.id}});
+        this.$router.push({name: 'playResult',params: {id:item.id}});
       }
     }
   }

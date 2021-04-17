@@ -620,7 +620,6 @@
           if (res.code === 200){
             this.comments = res.data;
           }
-          console.log(res);
         })
       },
       toPage(e){

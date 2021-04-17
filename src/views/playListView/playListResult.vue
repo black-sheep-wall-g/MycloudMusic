@@ -151,7 +151,7 @@
       ...mapGetters(['getLoveList','getSongsId','getPlayState']),
       //歌单id
       id(){
-        return this.$route.query.id;
+        return this.$route.params.id;
       }
     },
     watch:{

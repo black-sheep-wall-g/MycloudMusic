@@ -141,7 +141,7 @@
       },
       toPlayVideo(id){
         //跳转到视频播放页
-        this.$router.push({name:'playVideo'});
+        this.$router.push({name:'playVideo',params: {id:id}});
       }
     },
     created() {

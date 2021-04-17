@@ -44,10 +44,11 @@ export function getVideoAll(offset) {
   }).catch(err => err);
 }
 //获取视频播放地址
-export function getVideoUrl() {
+export function getVideoUrl(id) {
   return axios({
     url:'/video/url',
     params:{
+      id,
       timerstamp:`${Date.now()}`
     },
     withCredentials: true

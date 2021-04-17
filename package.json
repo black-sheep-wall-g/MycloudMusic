@@ -12,6 +12,7 @@
     "less": "^3.12.2",
     "less-loader": "^7.0.2",
     "swiper": "^5.4.5",
+    "video.js": "^7.11.8",
     "view-design": "^4.4.0",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^4.1.1",
