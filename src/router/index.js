@@ -1,11 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '@/views/home/Home'
-import SearchResult from "@/views/searchResult/SearchResult";
-import dayRecomSongs from "../views/songsResource/dayRecomSongs";
-import playListResult from "../views/playListView/playListResult";
-import videoView from "../views/video/videoView";
-import playVideo from "../views/video/playVideo";
 
 Vue.use(VueRouter)
 
@@ -13,32 +7,34 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import('@/views/home/Home')
+
   },
   {
     path: '/SearchResult/:search',
     name: 'SearchResult',
-    component: SearchResult
+    component: () => import('@/views/searchResult/SearchResult')
+
   },
   {
     path: '/dayRecom',
     name: 'dayRecom',
-    component: dayRecomSongs
+    component: () => import('@/views/songsResource/dayRecomSongs')
   },
   {
     path: '/playResult/:id',
     name: 'playResult',
-    component: playListResult
+    component: () => import('@/views/playListView/playListResult')
   },
   {
     path: '/videoView',
     name: 'videoView',
-    component: videoView
+    component: () => import('@/views/video/videoView')
   },
   {
     path: '/playVideo/:id',
     name: 'playVideo',
-    component: playVideo
+    component: () => import('@/views/video/playVideo')
   }
 ]
 //防止重复点击路由造成的冗余导航

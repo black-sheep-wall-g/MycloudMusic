@@ -12,16 +12,17 @@ import "./assets/css/normalize.css";
 //全局引入vue_swiper插件
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import 'swiper/css/swiper.css'
-//全局引入video插件
-import Video from 'video.js'
-import 'video.js/dist/video-js.css'
+// //全局引入video插件
+// import Video from 'video.js'
+// import 'video.js/dist/video-js.css'
 
 
-Vue.prototype.$video = Video
+// Vue.prototype.$video = Video
 Vue.config.productionTip = false
 
 Vue.use(VueAwesomeSwiper);
 Vue.use(ViewUI);
+
 
 new Vue({
   router,

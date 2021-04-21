@@ -103,7 +103,7 @@
                 </Modal>
                 <Modal class-name="hotList" v-model="modalDelete" width="350">
                     <div style="text-align:center;height: 100px;line-height: 100px;font-size: 18px;color: orangered">
-                        <Icon type="ios-information-circle"></Icon>
+<!--                        <Icon type="ios-information-circle"></Icon>-->
                         <span>是否删除全部搜索记录</span>
                     </div>
                     <div slot="footer">
@@ -117,7 +117,7 @@
                 <div class="user_login" @click="toLogin" v-if="this.getuserInfo.account === null">
                     <Avatar src="https://i.loli.net/2017/08/21/599a521472424.jpg" size="22"/>
                     <p>未登录</p>
-                    <Icon type="ios-arrow-down"></Icon>
+<!--                    <Icon type="ios-arrow-down"></Icon>-->
                     <Modal :footer-hide="true" style="position:relative;" v-model="toLoginModel" width="350" class-name="login_modal">
                         <div v-if="qrFlag" style="text-align: center;margin-top: 76px">
                             <div style="font-size: 28px;">扫码登录</div>
@@ -168,7 +168,7 @@
                     <Dropdown trigger="click" style="margin-left: 15px">
                         <a href="javascript:void(0)">
                             {{Object.keys(getuserInfo).length === 0 ? '': getuserInfo.profile.nickname}}
-                            <Icon type="ios-arrow-down"></Icon>
+<!--                            <Icon type="ios-arrow-down"></Icon>-->
                         </a>
                         <DropdownMenu slot="list">
                             <DropdownItem><span @click="logout">登出</span></DropdownItem>

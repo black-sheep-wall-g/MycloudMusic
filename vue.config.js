@@ -13,6 +13,9 @@ module.exports = {
                 views: "@/views"
             }
         },
+        externals : {
+            'video': 'video.js'
+        },
         plugins:[
             new CompressionWebpackPlugin({
                 filename: '[path].gz[query]',

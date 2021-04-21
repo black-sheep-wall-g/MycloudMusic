@@ -107,8 +107,8 @@
       }
     },
     created() {
-      this.getUserStatus();
-      // this.getRecomSongs();
+      // this.getUserStatus();
+      this.getRecomSongs();
     },
     computed:{
       ...mapGetters(['getLoveList','getSongsId','getPlayState'])
