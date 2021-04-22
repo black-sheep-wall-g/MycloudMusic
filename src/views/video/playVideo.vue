@@ -4,22 +4,22 @@
       <div class="play_video">
         <div class="play_video_title">< 视频详情</div>
         <div class="play_video_control">
-          <video id="myVideo" class="video-js">
-            <source src="http://vodkgeyttp9.vod.126.net/vodkgeyttp8/tWRCiYCn_2360696489_sd.mp4?ts=1618644903&rid=7027483D15A062AE7737668E7CA6C274&rl=3&rs=IWjUREjHnnZyJfknbPPdlWLyJgnVjYJp&sign=f6f64781d0872d82c821b7721862b8ec&ext=8xWS5q31kcq4RAsXCzALJjrRzDFdwX04%2FeQC7tZfCB48kbCZWJfB2mmX7Ow0L2AlD0CRvuNNO0QBVO2lrkqyPIInfNmYhi%2BRUJASqNuDQnLpclD3pWvHDkYOsNEQYv6PvhKMRNDFDbskjk8niBmCW3a7dIIi2VxWZub%2BctRJTd1nNv8GJibXm2cQhphXc7uJMHjEFgRbrneKP9wBzBMzOPeHp93MVg4Z7EZxn0Upr4SiAndRxxkaXq7mXF%2BxSNms" type="video/mp4" />
+          <video id="myVideo" class="video-js vjs-big-play-centered">
+            <source :src="videoUrl.url" type="video/mp4" />
           </video>
         </div>
       </div>
       <div class="video_owner">
         <div class="owner_detail">
           <span class="owner_pic">
-            <img src="http://p2.music.126.net/O0RfViXh42WVp2pBE44eVQ==/109951164221517276.jpg" alt="">
+            <img :src="videoDetail.avatarUrl" alt="">
           </span>
-          <span class="owner_name">欧美音乐榜</span>
+          <span class="owner_name">{{videoDetail ? '' : videoDetail.creator.nickname}}</span>
           <span class="owner_btn">+ 关注</span>
         </div>
-        <div class="video_title">《THE SOUND OF SLIENCE晋级之声》现场版</div>
+        <div class="video_title">{{videoDetail.title}}</div>
         <div class="video_time">
-          <span>发布：2017-07-20</span>
+          <span>发布：{{ new Date(videoDetail.publishTime)}}</span>
           <span>播放：146万次</span>
         </div>
         <div class="video_category">
@@ -36,17 +36,31 @@
 </template>
 
 <script>
-  import {getVideoUrl} from "../../network/videoView";
+  import {getVideoDetail, getVideoUrl} from "../../network/videoView";
 
   export default {
     name: "playVideo",
-    mounted() {
-      this.init();
+    data(){
+      return{
+        //视频地址
+        videoUrl:{},
+        //视频详情
+        videoDetail:{}
+      }
+    },
+    computed:{
+      id(){
+        return this.$route.params.id;
+      }
     },
     methods:{
-      init() {
+      init(){
+       this.getVideoUrl(this.id);
+       this.getVideoDetail(this.id);
+      },
+      init_video() {
         //初始化视频方法
-        let myPlayer = videojs(myVideo, {
+        let myPlayer = videojs('myVideo', {
           //确定播放器是否具有用户可以与之交互的控件。没有控件，启动视频播放的唯一方法是使用autoplay属性或通过Player API。
           controls: true,
           //自动播放属性,muted:静音播放
@@ -58,13 +72,30 @@
           //设置视频播放器的显示高度（以像素为单位）
           height: "350px"
         });
-        this.getVideoUrl(this.$route.params.id);
       },
+      //获取视频url
       getVideoUrl(id){
+       const _this = this;
         getVideoUrl(id).then(res => {
-          console.log(res)
-        })
+          if (res.code === 200){
+            _this.videoUrl = res.urls[0];
+            _this.$nextTick(() => {
+              _this.init_video();
+            })
+          }
+        }).catch(res => res);
+      },
+      //获取视频详情
+      getVideoDetail(id){
+        getVideoDetail(id).then(res => {
+          if (res.code === 200){
+            this.videoDetail = res.data;
+          }
+        }).catch(res => res);
       }
+    },
+    created() {
+      this.init();
     }
   }
 </script>

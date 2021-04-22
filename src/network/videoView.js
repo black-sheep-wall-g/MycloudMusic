@@ -54,3 +54,14 @@ export function getVideoUrl(id) {
     withCredentials: true
   }).catch(err => err);
 }
+//获取视频播放地址
+export function getVideoDetail(id) {
+  return axios({
+    url:'/video/detail',
+    params:{
+      id,
+      timerstamp:`${Date.now()}`
+    },
+    withCredentials: true
+  }).catch(err => err);
+}

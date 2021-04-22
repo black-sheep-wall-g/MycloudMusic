@@ -355,7 +355,7 @@
       async getMusicUrl(id) {
         await getMusicUrl(id).then(res => {
           if (res.code === 200) {
-            res.data[0].url = res.data[0].url.replaceAll(/http/gi,'https');
+            res.data[0].url = res.data[0].url.replace(/http/g,'https');
             this.songsObj = res.data[0];
             //获取歌词
             this.getLyric(this.getSongsId);
