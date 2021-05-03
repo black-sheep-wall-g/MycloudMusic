@@ -45,7 +45,9 @@
         //视频地址
         videoUrl:{},
         //视频详情
-        videoDetail:{}
+        videoDetail:{},
+        //video實例
+        myPlayer:null
       }
     },
     computed:{
@@ -60,7 +62,7 @@
       },
       init_video() {
         //初始化视频方法
-        let myPlayer = videojs('myVideo', {
+        this.myPlayer = videojs('myVideo', {
           //确定播放器是否具有用户可以与之交互的控件。没有控件，启动视频播放的唯一方法是使用autoplay属性或通过Player API。
           controls: true,
           //自动播放属性,muted:静音播放
@@ -96,6 +98,9 @@
     },
     created() {
       this.init();
+    },
+    destroyed() {
+      this.myPlayer.dispose();
     }
   }
 </script>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = 'https://8.136.218.194:3000';
+const url = 'https://www.yeteacher.top:3000';
 
 let config = {
     baseURL:url,
